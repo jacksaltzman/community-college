@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Community College District Map | Accountable</title>
+  <!-- Mapbox GL JS v3 -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+  <!-- Google Fonts: DM Sans + Oswald -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #FDFBF9;
+    }
+
+    #app {
+      display: flex;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── Token Warning Banner ── */
+    #token-warning {
+      display: none;
+      background: #FE4F40;
+      color: white;
+      text-align: center;
+      padding: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+    }
+    #token-warning a { color: white; font-weight: 700; }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      width: 320px;
+      min-width: 320px;
+      height: 100vh;
+      overflow-y: auto;
+      background: #FDFBF9;
+      border-right: 1px solid #C8C1B6;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      background: #111111;
+      padding: 16px;
+    }
+    .logo-text {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      color: white;
+      letter-spacing: 0.15em;
+    }
+    .header-subtitle {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      color: #78716C;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    .sidebar-section {
+      padding: 16px;
+      border-bottom: 1px solid #EEEAE4;
+    }
+    .sidebar-section:last-child {
+      border-bottom: none;
+    }
+
+    .section-label {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 11px;
+      color: #78716C;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    /* ── Search ── */
+    .search-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #C8C1B6;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      background: white;
+      color: #111111;
+      outline: none;
+    }
+    .search-input::placeholder { color: #9CA3AF; }
+    .search-input:focus { border-color: #4C6971; }
+
+    /* ── State Dropdown ── */
+    .state-select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #C8C1B6;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      background: white;
+      color: #111111;
+      outline: none;
+      margin-top: 8px;
+      cursor: pointer;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2378716C' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+    .state-select:focus { border-color: #4C6971; }
+
+    /* ── Layer Toggles ── */
+    .toggle-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: #111111;
+      cursor: pointer;
+    }
+    .toggle-label input[type="checkbox"] {
+      accent-color: #4C6971;
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+    }
+
+    /* ── Legend ── */
+    .legend-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: #111111;
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    /* ── Stats ── */
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+    }
+    .stat-label {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 10px;
+      color: #78716C;
+      font-weight: 700;
+    }
+    .stat-value {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: #111111;
+      font-weight: 500;
+    }
+
+    /* ── Map ── */
+    #map {
+      flex: 1;
+      height: 100vh;
+    }
+
+    /* ── District Tooltip ── */
+    #district-tooltip {
+      display: none;
+      position: fixed;
+      pointer-events: none;
+      background: #111111;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      z-index: 100;
+      white-space: nowrap;
+    }
+
+    /* ── Popup Styles ── */
+    .campus-popup { min-width: 220px; }
+    .popup-title {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: #111111;
+      text-transform: uppercase;
+      margin: 0;
+      letter-spacing: 0.05em;
+    }
+    .popup-subtitle {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: #78716C;
+      margin: 2px 0 8px;
+    }
+    .popup-label {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 10px;
+      color: #78716C;
+      font-weight: 700;
+    }
+    .popup-value {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: #111111;
+      font-weight: 500;
+      text-align: right;
+    }
+    .popup-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+      border-bottom: 1px solid #EEEAE4;
+      gap: 12px;
+    }
+    .popup-row:last-child { border-bottom: none; }
+    .popup-stats { margin-top: 4px; }
+
+    /* Override Mapbox popup defaults */
+    .mapboxgl-popup-content {
+      border-radius: 6px;
+      border: 1px solid rgba(200,193,182,0.5);
+      padding: 12px;
+      box-shadow: none;
+    }
+    .mapboxgl-popup-close-button {
+      font-size: 18px;
+      color: #78716C;
+      padding: 4px 8px;
+    }
+
+    /* ── Search Results Highlight ── */
+    .search-results {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #C8C1B6;
+      border-radius: 6px;
+      background: white;
+      margin-top: 4px;
+      display: none;
+    }
+    .search-result-item {
+      padding: 6px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      border-bottom: 1px solid #EEEAE4;
+    }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: #F5F0EB; }
+    .search-result-name { color: #111111; font-weight: 500; }
+    .search-result-loc { color: #78716C; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <div id="token-warning">
+    Add your Mapbox token to use this map. Get a free token at
+    <a href="https://account.mapbox.com/auth/signup/" target="_blank">mapbox.com</a>
+  </div>
+
+  <div id="app">
+    <div id="sidebar">
+      <div class="sidebar-header">
+        <span class="logo-text">ACCOUNTABLE</span>
+        <div class="header-subtitle">Community College District Map</div>
+      </div>
+
+      <!-- Search & Filter -->
+      <div class="sidebar-section">
+        <div class="section-label">Search</div>
+        <input type="text" id="search-input" class="search-input" placeholder="Search colleges...">
+        <div id="search-results" class="search-results"></div>
+        <select id="state-select" class="state-select">
+          <option value="">All States</option>
+        </select>
+      </div>
+
+      <!-- Layer Toggles -->
+      <div class="sidebar-section">
+        <div class="section-label">Layers</div>
+        <div class="toggle-group">
+          <label class="toggle-label">
+            <input type="checkbox" id="toggle-campuses" checked>
+            Campus Points
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="toggle-circles" checked>
+            Commute Circles
+          </label>
+          <label class="toggle-label">
+            <input type="checkbox" id="toggle-districts" checked>
+            District Boundaries
+          </label>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div class="sidebar-section">
+        <div class="section-label">Campus Type</div>
+        <div class="legend-items">
+          <div class="legend-item">
+            <span class="legend-dot" style="background:#FE4F40"></span>
+            Compact
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background:#4C6971"></span>
+            Mid-Size
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background:#D4F72A"></span>
+            Large Metro
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot" style="background:#9CA3AF"></span>
+            Sprawl-Fragmented
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="sidebar-section">
+        <div class="section-label">Summary</div>
+        <div id="stats">
+          <div class="stat-row">
+            <span class="stat-label">TOTAL CAMPUSES</span>
+            <span class="stat-value">--</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">AVG DISTRICTS REACHED</span>
+            <span class="stat-value">--</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="map"></div>
+  </div>
+
+  <div id="district-tooltip"></div>
+
+  <script>
+    /* ================================================================
+       Mapbox Token — replace with your own
+       ================================================================ */
+    const MAPBOX_TOKEN = 'YOUR_MAPBOX_TOKEN_HERE';
+
+    // Show warning banner if token not set
+    if (MAPBOX_TOKEN === 'YOUR_MAPBOX_TOKEN_HERE') {
+      document.getElementById('token-warning').style.display = 'block';
+    }
+
+    mapboxgl.accessToken = MAPBOX_TOKEN;
+
+    /* ── State name lookup for dropdown ── */
+    const STATE_NAMES = {
+      AL:'Alabama',AK:'Alaska',AS:'American Samoa',AZ:'Arizona',AR:'Arkansas',
+      CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',DC:'District of Columbia',
+      FL:'Florida',GA:'Georgia',GU:'Guam',HI:'Hawaii',ID:'Idaho',IL:'Illinois',
+      IN:'Indiana',IA:'Iowa',KS:'Kansas',KY:'Kentucky',LA:'Louisiana',ME:'Maine',
+      MD:'Maryland',MA:'Massachusetts',MI:'Michigan',MN:'Minnesota',MS:'Mississippi',
+      MO:'Missouri',MT:'Montana',MP:'Northern Mariana Islands',NE:'Nebraska',
+      NV:'Nevada',NH:'New Hampshire',NJ:'New Jersey',NM:'New Mexico',NY:'New York',
+      NC:'North Carolina',ND:'North Dakota',OH:'Ohio',OK:'Oklahoma',OR:'Oregon',
+      PA:'Pennsylvania',PR:'Puerto Rico',RI:'Rhode Island',SC:'South Carolina',
+      SD:'South Dakota',TN:'Tennessee',TX:'Texas',UT:'Utah',VT:'Vermont',
+      VI:'U.S. Virgin Islands',VA:'Virginia',WA:'Washington',WV:'West Virginia',
+      WI:'Wisconsin',WY:'Wyoming'
+    };
+
+    /* ── Global references ── */
+    let campusesData = null;
+    let circlesData = null;
+
+    /* ── Initialize Map ── */
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [-98.5, 39.8],
+      zoom: 4,
+    });
+
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    /* ── Campus type color expression ── */
+    const campusTypeColors = [
+      'match', ['get', 'campus_type'],
+      'Compact', '#FE4F40',
+      'Mid-Size', '#4C6971',
+      'Large Metro', '#D4F72A',
+      'Sprawl-Fragmented', '#9CA3AF',
+      '#9CA3AF'
+    ];
+
+    /* ── Generate a circle polygon for commute sheds ── */
+    function createCirclePolygon(center, radiusMiles, properties) {
+      const radiusKm = radiusMiles * 1.60934;
+      const points = 64;
+      const coords = [];
+      for (let i = 0; i <= points; i++) {
+        const angle = (i / points) * 2 * Math.PI;
+        const dx = radiusKm * Math.cos(angle);
+        const dy = radiusKm * Math.sin(angle);
+        const lat = center[1] + (dy / 111.32);
+        const lon = center[0] + (dx / (111.32 * Math.cos(center[1] * Math.PI / 180)));
+        coords.push([lon, lat]);
+      }
+      return {
+        type: 'Feature',
+        geometry: { type: 'Polygon', coordinates: [coords] },
+        properties: properties,
+      };
+    }
+
+    /* ── Map load handler ── */
+    map.on('load', async () => {
+      try {
+        const [campusesRes, districtsRes] = await Promise.all([
+          fetch('data/campuses.geojson'),
+          fetch('data/districts.geojson'),
+        ]);
+        campusesData = await campusesRes.json();
+        const districtsData = await districtsRes.json();
+
+        /* ── Build commute circle features ── */
+        const circleFeatures = campusesData.features.map(f => {
+          const [lon, lat] = f.geometry.coordinates;
+          return createCirclePolygon([lon, lat], f.properties.radius_miles, f.properties);
+        });
+        circlesData = { type: 'FeatureCollection', features: circleFeatures };
+
+        /* ── Add sources ── */
+        map.addSource('districts', { type: 'geojson', data: districtsData });
+        map.addSource('commute-circles', { type: 'geojson', data: circlesData });
+        map.addSource('campuses', { type: 'geojson', data: campusesData });
+
+        /* ── Layer order: district fills -> district borders -> circle fills -> circle borders -> campus points ── */
+
+        map.addLayer({
+          id: 'district-fills',
+          type: 'fill',
+          source: 'districts',
+          paint: {
+            'fill-color': '#F5F0EB',
+            'fill-opacity': 0.3,
+          },
+        });
+
+        map.addLayer({
+          id: 'district-borders',
+          type: 'line',
+          source: 'districts',
+          paint: {
+            'line-color': '#111111',
+            'line-width': ['interpolate', ['linear'], ['zoom'], 3, 0.3, 10, 1.5],
+            'line-opacity': 0.5,
+          },
+        });
+
+        map.addLayer({
+          id: 'circle-fills',
+          type: 'fill',
+          source: 'commute-circles',
+          paint: {
+            'fill-color': campusTypeColors,
+            'fill-opacity': 0.12,
+          },
+        });
+
+        map.addLayer({
+          id: 'circle-borders',
+          type: 'line',
+          source: 'commute-circles',
+          paint: {
+            'line-color': campusTypeColors,
+            'line-width': 1,
+            'line-opacity': 0.4,
+          },
+        });
+
+        map.addLayer({
+          id: 'campus-points',
+          type: 'circle',
+          source: 'campuses',
+          paint: {
+            'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 10, 8],
+            'circle-color': campusTypeColors,
+            'circle-stroke-width': 1,
+            'circle-stroke-color': '#111111',
+          },
+        });
+
+        /* ── Populate state dropdown ── */
+        const stateSet = new Set();
+        campusesData.features.forEach(f => stateSet.add(f.properties.state));
+        const states = Array.from(stateSet).sort();
+        const stateSelect = document.getElementById('state-select');
+        states.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s;
+          opt.textContent = STATE_NAMES[s] ? `${STATE_NAMES[s]} (${s})` : s;
+          stateSelect.appendChild(opt);
+        });
+
+        /* ── Compute and display stats ── */
+        updateStats(campusesData.features);
+
+        /* ── Set up interactions ── */
+        setupDistrictHover();
+        setupCampusClick();
+        setupLayerToggles();
+        setupSearch();
+        setupStateFilter();
+
+      } catch (err) {
+        console.error('Failed to load map data:', err);
+      }
+    });
+
+    /* ── Update stats display ── */
+    function updateStats(features) {
+      const total = features.length;
+      const avgDistricts = total > 0
+        ? (features.reduce((sum, f) => sum + (f.properties.districts_reached || 0), 0) / total).toFixed(1)
+        : '0';
+      document.getElementById('stats').innerHTML = `
+        <div class="stat-row">
+          <span class="stat-label">TOTAL CAMPUSES</span>
+          <span class="stat-value">${total.toLocaleString()}</span>
+        </div>
+        <div class="stat-row">
+          <span class="stat-label">AVG DISTRICTS REACHED</span>
+          <span class="stat-value">${avgDistricts}</span>
+        </div>
+      `;
+    }
+
+    /* ── District hover tooltip ── */
+    function setupDistrictHover() {
+      const tooltip = document.getElementById('district-tooltip');
+
+      map.on('mousemove', 'district-fills', (e) => {
+        if (e.features && e.features.length > 0) {
+          const props = e.features[0].properties;
+          tooltip.textContent = props.cd_code + (props.name ? ' — ' + props.name : '');
+          tooltip.style.display = 'block';
+          tooltip.style.left = (e.originalEvent.clientX + 12) + 'px';
+          tooltip.style.top = (e.originalEvent.clientY - 12) + 'px';
+        }
+      });
+
+      map.on('mouseleave', 'district-fills', () => {
+        tooltip.style.display = 'none';
+      });
+    }
+
+    /* ── Campus click popup ── */
+    function setupCampusClick() {
+      map.on('click', 'campus-points', (e) => {
+        if (!e.features || e.features.length === 0) return;
+
+        const props = e.features[0].properties;
+        const coords = e.features[0].geometry.coordinates.slice();
+
+        // Ensure popup appears at clicked feature when map is zoomed
+        while (Math.abs(e.lngLat.lng - coords[0]) > 180) {
+          coords[0] += e.lngLat.lng > coords[0] ? 360 : -360;
+        }
+
+        const enrollment = props.enrollment ? Number(props.enrollment).toLocaleString() : 'N/A';
+        const coverage = props.primary_district_coverage
+          ? (Number(props.primary_district_coverage) * 100).toFixed(1) + '%'
+          : 'N/A';
+        const allDistricts = props.all_districts
+          ? String(props.all_districts).replace(/\|/g, ', ')
+          : 'N/A';
+
+        const html = `
+          <div class="campus-popup">
+            <div class="popup-title">${escapeHtml(props.name)}</div>
+            <div class="popup-subtitle">${escapeHtml(props.city)}, ${escapeHtml(props.state)}</div>
+            <div class="popup-stats">
+              <div class="popup-row"><span class="popup-label">ENROLLMENT</span><span class="popup-value">${enrollment}</span></div>
+              <div class="popup-row"><span class="popup-label">CAMPUS TYPE</span><span class="popup-value">${escapeHtml(props.campus_type)}</span></div>
+              <div class="popup-row"><span class="popup-label">COMMUTE RADIUS</span><span class="popup-value">${props.radius_miles} mi</span></div>
+              <div class="popup-row"><span class="popup-label">DISTRICTS REACHED</span><span class="popup-value">${props.districts_reached}</span></div>
+              <div class="popup-row"><span class="popup-label">PRIMARY DISTRICT</span><span class="popup-value">${escapeHtml(props.primary_district)} (${coverage})</span></div>
+              <div class="popup-row"><span class="popup-label">ALL DISTRICTS</span><span class="popup-value">${escapeHtml(allDistricts)}</span></div>
+            </div>
+          </div>
+        `;
+
+        new mapboxgl.Popup({ maxWidth: '320px' })
+          .setLngLat(coords)
+          .setHTML(html)
+          .addTo(map);
+      });
+
+      map.on('mouseenter', 'campus-points', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      map.on('mouseleave', 'campus-points', () => {
+        map.getCanvas().style.cursor = '';
+      });
+    }
+
+    /* ── Escape HTML helper ── */
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    /* ── Layer toggle controls ── */
+    function setupLayerToggles() {
+      document.getElementById('toggle-campuses').addEventListener('change', function () {
+        const vis = this.checked ? 'visible' : 'none';
+        map.setLayoutProperty('campus-points', 'visibility', vis);
+      });
+
+      document.getElementById('toggle-circles').addEventListener('change', function () {
+        const vis = this.checked ? 'visible' : 'none';
+        map.setLayoutProperty('circle-fills', 'visibility', vis);
+        map.setLayoutProperty('circle-borders', 'visibility', vis);
+      });
+
+      document.getElementById('toggle-districts').addEventListener('change', function () {
+        const vis = this.checked ? 'visible' : 'none';
+        map.setLayoutProperty('district-fills', 'visibility', vis);
+        map.setLayoutProperty('district-borders', 'visibility', vis);
+      });
+    }
+
+    /* ── Search functionality ── */
+    function setupSearch() {
+      const input = document.getElementById('search-input');
+      const resultsDiv = document.getElementById('search-results');
+
+      input.addEventListener('input', () => {
+        const query = input.value.trim().toLowerCase();
+        if (query.length < 2 || !campusesData) {
+          resultsDiv.style.display = 'none';
+          resultsDiv.innerHTML = '';
+          return;
+        }
+
+        const matches = campusesData.features
+          .filter(f => {
+            const name = (f.properties.name || '').toLowerCase();
+            const city = (f.properties.city || '').toLowerCase();
+            return name.includes(query) || city.includes(query);
+          })
+          .slice(0, 20);
+
+        if (matches.length === 0) {
+          resultsDiv.style.display = 'none';
+          resultsDiv.innerHTML = '';
+          return;
+        }
+
+        resultsDiv.innerHTML = matches.map((f, i) => `
+          <div class="search-result-item" data-index="${i}">
+            <div class="search-result-name">${escapeHtml(f.properties.name)}</div>
+            <div class="search-result-loc">${escapeHtml(f.properties.city)}, ${escapeHtml(f.properties.state)}</div>
+          </div>
+        `).join('');
+        resultsDiv.style.display = 'block';
+
+        resultsDiv.querySelectorAll('.search-result-item').forEach((el, i) => {
+          el.addEventListener('click', () => {
+            const feat = matches[i];
+            const [lon, lat] = feat.geometry.coordinates;
+            map.flyTo({ center: [lon, lat], zoom: 10 });
+            resultsDiv.style.display = 'none';
+            input.value = feat.properties.name;
+
+            // Trigger a popup for the selected campus
+            setTimeout(() => {
+              const props = feat.properties;
+              const enrollment = props.enrollment ? Number(props.enrollment).toLocaleString() : 'N/A';
+              const coverage = props.primary_district_coverage
+                ? (Number(props.primary_district_coverage) * 100).toFixed(1) + '%'
+                : 'N/A';
+              const allDistricts = props.all_districts
+                ? String(props.all_districts).replace(/\|/g, ', ')
+                : 'N/A';
+
+              const html = `
+                <div class="campus-popup">
+                  <div class="popup-title">${escapeHtml(props.name)}</div>
+                  <div class="popup-subtitle">${escapeHtml(props.city)}, ${escapeHtml(props.state)}</div>
+                  <div class="popup-stats">
+                    <div class="popup-row"><span class="popup-label">ENROLLMENT</span><span class="popup-value">${enrollment}</span></div>
+                    <div class="popup-row"><span class="popup-label">CAMPUS TYPE</span><span class="popup-value">${escapeHtml(props.campus_type)}</span></div>
+                    <div class="popup-row"><span class="popup-label">COMMUTE RADIUS</span><span class="popup-value">${props.radius_miles} mi</span></div>
+                    <div class="popup-row"><span class="popup-label">DISTRICTS REACHED</span><span class="popup-value">${props.districts_reached}</span></div>
+                    <div class="popup-row"><span class="popup-label">PRIMARY DISTRICT</span><span class="popup-value">${escapeHtml(props.primary_district)} (${coverage})</span></div>
+                    <div class="popup-row"><span class="popup-label">ALL DISTRICTS</span><span class="popup-value">${escapeHtml(allDistricts)}</span></div>
+                  </div>
+                </div>
+              `;
+
+              new mapboxgl.Popup({ maxWidth: '320px' })
+                .setLngLat([lon, lat])
+                .setHTML(html)
+                .addTo(map);
+            }, 1000);
+          });
+        });
+      });
+
+      // Close results when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('#search-input') && !e.target.closest('#search-results')) {
+          resultsDiv.style.display = 'none';
+        }
+      });
+    }
+
+    /* ── State filter ── */
+    function setupStateFilter() {
+      const stateSelect = document.getElementById('state-select');
+
+      stateSelect.addEventListener('change', () => {
+        const selected = stateSelect.value;
+
+        if (!selected) {
+          // Reset — show all
+          map.setFilter('campus-points', null);
+          map.setFilter('circle-fills', null);
+          map.setFilter('circle-borders', null);
+          if (campusesData) updateStats(campusesData.features);
+          map.flyTo({ center: [-98.5, 39.8], zoom: 4 });
+          return;
+        }
+
+        // Filter layers to selected state
+        const stateFilter = ['==', ['get', 'state'], selected];
+        map.setFilter('campus-points', stateFilter);
+        map.setFilter('circle-fills', stateFilter);
+        map.setFilter('circle-borders', stateFilter);
+
+        // Update stats for filtered set
+        if (campusesData) {
+          const filtered = campusesData.features.filter(f => f.properties.state === selected);
+          updateStats(filtered);
+
+          // Fly to state bounds
+          if (filtered.length > 0) {
+            const bounds = new mapboxgl.LngLatBounds();
+            filtered.forEach(f => bounds.extend(f.geometry.coordinates));
+            map.fitBounds(bounds, { padding: 60, maxZoom: 8 });
+          }
+        }
+      });
+    }
+  </script>
+</body>
+</html>
