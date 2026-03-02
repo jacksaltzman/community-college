@@ -215,7 +215,7 @@
     }
 
     /* ── Popup Styles ── */
-    .campus-popup { min-width: 220px; }
+    .campus-popup { min-width: 220px; max-width: 300px; }
     .popup-title {
       font-family: 'Oswald', sans-serif;
       font-weight: 700;
@@ -245,6 +245,8 @@
       color: #111111;
       font-weight: 500;
       text-align: right;
+      word-break: break-word;
+      max-width: 180px;
     }
     .popup-row {
       display: flex;
@@ -466,7 +468,7 @@
     /* ================================================================
        Mapbox Token — replace with your own
        ================================================================ */
-    const MAPBOX_TOKEN = 'YOUR_MAPBOX_TOKEN_HERE';
+    const MAPBOX_TOKEN = 'pk.eyJ1IjoiamFja3NhbHR6bWFuIiwiYSI6ImNtbTltbmVuZTA0aWEycG9pNWJuZDR6dzYifQ.UT_hl5vyNQnGVDIq1GYkTw';
 
     // Show warning banner if token not set
     if (MAPBOX_TOKEN === 'YOUR_MAPBOX_TOKEN_HERE') {
