@@ -8,8 +8,6 @@ with Detail, Summary, and Validation sheets.
 import io
 import logging
 import math
-import os
-import time
 import zipfile
 from pathlib import Path
 
@@ -33,20 +31,6 @@ log = logging.getLogger(__name__)
 BASE_DIR = Path(__file__).resolve().parent.parent        # Students Per District/
 DATA_DIR = BASE_DIR / "data"
 OUTPUT_DIR = BASE_DIR / "output"
-ENV_FILE = BASE_DIR / "Environment.txt"
-
-# ── Census API key (loaded from Environment.txt) ────────────────
-def _load_api_key() -> str:
-    """Read CENSUS_API_KEY from the project-root Environment.txt."""
-    with open(ENV_FILE, "r") as fh:
-        for line in fh:
-            line = line.strip()
-            if line.startswith("CENSUS_API_KEY="):
-                return line.split("=", 1)[1]
-    raise RuntimeError(f"CENSUS_API_KEY not found in {ENV_FILE}")
-
-CENSUS_API_KEY = _load_api_key()
-
 # ── URL constants ───────────────────────────────────────────────
 IPEDS_HD2023_URL = (
     "https://nces.ed.gov/ipeds/datacenter/data/HD2023.zip"
@@ -58,14 +42,39 @@ CD118_SHAPEFILE_URL = (
     "https://www2.census.gov/geo/tiger/GENZ2023/shp/cb_2023_us_cd118_500k.zip"
 )
 
-# ── Classification thresholds (persons per sq mi → radius in miles) ──
-CITY_TYPE_RULES = [
-    # (min_density, city_type, radius_miles)
-    (15_000, "Compact",            10),
-    ( 3_000, "Mid-Size",           13),
-    ( 1_000, "Large Metro",        17),
-    (     0, "Sprawl-Fragmented",  22),
-]
+# ── NPSAS:20 P75 radius by NCES locale code (retrieval code: swopse) ──
+LOCALE_RADIUS = {
+    11: 15,   # City Large
+    12: 19,   # City Midsize
+    13: 25,   # City Small (conservative; raw P75=35 unstable)
+    21: 15,   # Suburb Large
+    22: 22,   # Suburb Midsize
+    23: 22,   # Suburb Small
+    31: 39,   # Town Fringe
+    32: 44,   # Town Distant
+    33: 58,   # Town Remote
+    41: 27,   # Rural Fringe
+    42: 37,   # Rural Distant
+    43: 55,   # Rural Remote
+}
+
+LOCALE_LABEL = {
+    11: "Large City",
+    12: "Midsize City",
+    13: "Small City",
+    21: "Large City",
+    22: "Suburban",
+    23: "Suburban",
+    31: "Town / Remote",
+    32: "Town / Remote",
+    33: "Town / Remote",
+    41: "Rural",
+    42: "Rural",
+    43: "Town / Remote",
+}
+
+FALLBACK_RADIUS = 22
+FALLBACK_LABEL = "Suburban"
 
 # ── Projection CRS constants ───────────────────────────────────
 CRS_CONUS = "EPSG:5070"      # Albers Equal-Area for CONUS
@@ -82,16 +91,6 @@ FIPS_TO_STATE = {
     "45":"SC","46":"SD","47":"TN","48":"TX","49":"UT","50":"VT","51":"VA","53":"WA",
     "54":"WV","55":"WI","56":"WY","60":"AS","66":"GU","69":"MP","72":"PR","78":"VI",
 }
-
-# ── All 50 states + DC + territories FIPS codes ─────────────────
-ALL_STATE_FIPS = [
-    "01","02","04","05","06","08","09","10","11","12","13","15","16","17","18","19",
-    "20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35",
-    "36","37","38","39","40","41","42","44","45","46","47","48","49","50","51","53",
-    "54","55","56",
-    # Territories
-    "60","66","69","72","78",
-]
 
 
 # ====================================================================
@@ -158,47 +157,6 @@ def download_cd_shapefile() -> None:
     if shp_files:
         gdf = gpd.read_file(shp_files[0])
         log.info(f"CD shapefile: {len(gdf)} congressional districts loaded")
-
-
-def download_tract_shapefiles(state_fips_list: list[str]) -> None:
-    """Download Census tract shapefiles for all relevant states.
-
-    Parameters
-    ----------
-    state_fips_list : list[str]
-        Two-digit zero-padded state FIPS codes (e.g. ["01", "02", ...]).
-    """
-    tract_dir = DATA_DIR / "tracts"
-    tract_dir.mkdir(parents=True, exist_ok=True)
-
-    total = len(state_fips_list)
-    downloaded = 0
-
-    for i, fips in enumerate(state_fips_list, start=1):
-        # The TIGER tract shapefile naming convention
-        shp_name = f"tl_2022_{fips}_tract.shp"
-        shp_path = tract_dir / shp_name
-
-        if shp_path.exists():
-            log.info(f"[{i}/{total}] Tract shapefile for FIPS {fips} already exists, skipping")
-            continue
-
-        url = f"https://www2.census.gov/geo/tiger/TIGER2022/TRACT/tl_2022_{fips}_tract.zip"
-        log.info(f"[{i}/{total}] Downloading tract shapefile for FIPS {fips}")
-        try:
-            resp = requests.get(url, timeout=120)
-            resp.raise_for_status()
-        except requests.RequestException as exc:
-            log.warning(f"[{i}/{total}] Failed to download FIPS {fips}: {exc}")
-            continue
-
-        with zipfile.ZipFile(io.BytesIO(resp.content)) as zf:
-            zf.extractall(tract_dir)
-
-        downloaded += 1
-        log.info(f"Downloaded tracts: {downloaded}/{total} states")
-
-    log.info(f"Tract shapefile download complete. {downloaded} new, {total} total expected.")
 
 
 def build_campus_list() -> gpd.GeoDataFrame:
@@ -299,186 +257,35 @@ def build_campus_list() -> gpd.GeoDataFrame:
     return campuses
 
 
-def fetch_tract_populations(state_fips_list: list[str]) -> pd.DataFrame:
-    """Fetch tract-level population data from the Census API.
-
-    Parameters
-    ----------
-    state_fips_list : list[str]
-        Two-digit zero-padded state FIPS codes.
-
-    Returns
-    -------
-    pd.DataFrame
-        Columns: state, county, tract, population, GEOID
-    """
-    all_frames: list[pd.DataFrame] = []
-
-    for fips in state_fips_list:
-        url = (
-            f"https://api.census.gov/data/2022/acs/acs5"
-            f"?get=B01003_001E&for=tract:*&in=state:{fips}"
-            f"&key={CENSUS_API_KEY}"
-        )
-        try:
-            resp = requests.get(url, timeout=60)
-            resp.raise_for_status()
-            data = resp.json()
-        except Exception as exc:
-            log.warning(f"Census API failed for state {fips}: {exc}")
-            time.sleep(0.1)
-            continue
-
-        # First row is headers, remaining rows are data
-        headers = data[0]  # e.g. ["B01003_001E", "state", "county", "tract"]
-        rows = data[1:]
-
-        df = pd.DataFrame(rows, columns=headers)
-        df = df.rename(columns={"B01003_001E": "population"})
-        df["population"] = pd.to_numeric(df["population"], errors="coerce").fillna(0).astype(int)
-
-        # Ensure state/county/tract are strings with proper zero-padding
-        df["state"] = df["state"].astype(str).str.zfill(2)
-        df["county"] = df["county"].astype(str).str.zfill(3)
-        df["tract"] = df["tract"].astype(str).str.zfill(6)
-
-        # Build composite GEOID
-        df["GEOID"] = df["state"] + df["county"] + df["tract"]
-
-        all_frames.append(df[["state", "county", "tract", "population", "GEOID"]])
-        time.sleep(0.1)
-
-    if all_frames:
-        result = pd.concat(all_frames, ignore_index=True)
-    else:
-        result = pd.DataFrame(columns=["state", "county", "tract", "population", "GEOID"])
-
-    log.info(f"Total tracts fetched: {len(result):,}")
-    return result
-
-
 def classify_campuses(campuses: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
-    """Classify each campus into a city-type based on Census tract density.
+    """Classify each campus by NCES locale code and assign P75 radius.
 
-    Adds columns: census_tract_density, city_type, radius_miles.
-
-    Parameters
-    ----------
-    campuses : gpd.GeoDataFrame
-        Campus points in EPSG:4326 with at least a ``locale_code`` column.
-
-    Returns
-    -------
-    gpd.GeoDataFrame
-        Same rows, with three new columns added.
+    Uses NPSAS:20 75th-percentile student-to-campus distance by locale.
     """
-    # ── 1. Load all tract shapefiles ──────────────────────────────
-    tract_files = list((DATA_DIR / "tracts").glob("tl_2022_*_tract.shp"))
-    log.info(f"Loading {len(tract_files)} tract shapefiles …")
-    tracts = pd.concat([gpd.read_file(f) for f in tract_files], ignore_index=True)
-    log.info(f"Tracts loaded: {len(tracts):,} polygons")
-
-    # ── 2. Fetch population data from Census API ──────────────────
-    pop_df = fetch_tract_populations(ALL_STATE_FIPS)
-
-    # ── 3. Join population onto tracts ────────────────────────────
-    tracts = tracts.merge(pop_df[["GEOID", "population"]], on="GEOID", how="left")
-
-    # ── 4. Compute density (persons per square mile) ──────────────
-    SQ_METERS_PER_SQ_MILE = 2_589_988.11
-    tracts["ALAND"] = pd.to_numeric(tracts["ALAND"], errors="coerce").fillna(0)
-    tracts["density"] = tracts.apply(
-        lambda r: r["population"] / (r["ALAND"] / SQ_METERS_PER_SQ_MILE)
-        if r["ALAND"] > 0 else 0,
-        axis=1,
-    )
-
-    # ── 5. Spatial join: campus points → tract polygons ───────────
-    # Ensure both are in the same CRS
-    tracts = tracts.to_crs("EPSG:4326")
-    original_cols = list(campuses.columns)
-
-    campuses_with_tract = gpd.sjoin(
-        campuses,
-        tracts[["GEOID", "density", "geometry"]],
-        how="left",
-        predicate="within",
-    )
-
-    # ── 6. Rename joined density column ───────────────────────────
-    campuses_with_tract = campuses_with_tract.rename(
-        columns={"density": "census_tract_density"}
-    )
-
-    # ── 7. Apply classification rules ─────────────────────────────
-    def _classify(density):
-        """Return (city_type, radius_miles) for a given density."""
-        for min_density, city_type, radius in CITY_TYPE_RULES:
-            if density >= min_density:
-                return city_type, radius
-        # Should never reach here since last threshold is 0
-        return "Sprawl-Fragmented", 22
-
-    has_density = campuses_with_tract["census_tract_density"].notna()
-
-    city_types = []
-    radii = []
-    for _, row in campuses_with_tract.iterrows():
-        if pd.notna(row["census_tract_density"]):
-            ct, r = _classify(row["census_tract_density"])
-        else:
-            ct, r = None, None
-        city_types.append(ct)
-        radii.append(r)
-
-    campuses_with_tract["city_type"] = city_types
-    campuses_with_tract["radius_miles"] = radii
-
-    # ── 8. Fallback for missing or zero density using locale_code ──
-    #   When tract density is 0 (uninhabited tract, water, data gap),
-    #   the classification defaults to Sprawl-Fragmented which is wrong
-    #   for urban campuses like CUNY. Use IPEDS locale code instead.
-    fallback_mask = (
-        campuses_with_tract["city_type"].isna()
-        | (campuses_with_tract["census_tract_density"] == 0)
-    )
-    n_fallback = fallback_mask.sum()
-
-    def _locale_fallback(locale_code):
-        """Map IPEDS locale_code to (city_type, radius_miles)."""
+    def _assign(locale_code):
         try:
             lc = int(locale_code)
         except (TypeError, ValueError):
-            return "Sprawl-Fragmented", 22
-        if lc in (11, 12, 13):        # City: Large / Midsize / Small
-            return "Mid-Size", 13
-        elif lc in (21, 22, 23):       # Suburb: Large / Midsize / Small
-            return "Large Metro", 17
-        else:                           # Town (31-33) or Rural (41-43)
-            return "Sprawl-Fragmented", 22
+            return FALLBACK_LABEL, FALLBACK_RADIUS
+        label = LOCALE_LABEL.get(lc, FALLBACK_LABEL)
+        radius = LOCALE_RADIUS.get(lc, FALLBACK_RADIUS)
+        return label, radius
 
-    for idx in campuses_with_tract.index[fallback_mask]:
-        row = campuses_with_tract.loc[idx]
-        ct, r = _locale_fallback(row["locale_code"])
-        campuses_with_tract.at[idx, "city_type"] = ct
-        campuses_with_tract.at[idx, "radius_miles"] = r
-        campuses_with_tract.at[idx, "census_tract_density"] = 0.0
+    results = campuses["locale_code"].apply(_assign)
+    campuses["city_type"] = [r[0] for r in results]
+    campuses["radius_miles"] = [r[1] for r in results]
 
-    # ── 9. Drop extra columns from spatial join ───────────────────
-    keep = original_cols + ["census_tract_density", "city_type", "radius_miles"]
-    # index_right and GEOID may have been added by sjoin
-    campuses_with_tract = campuses_with_tract[
-        [c for c in keep if c in campuses_with_tract.columns]
-    ].copy()
-
-    # ── 10. Log summary ──────────────────────────────────────────
-    log.info(f"Campus classification complete: {len(campuses_with_tract):,} campuses")
-    counts = campuses_with_tract["city_type"].value_counts()
+    log.info(f"Campus classification complete: {len(campuses):,} campuses")
+    counts = campuses["city_type"].value_counts()
     for ct, n in counts.items():
         log.info(f"  {ct}: {n}")
-    log.info(f"Fallback classifications (from locale_code): {n_fallback}")
+    fallback_count = campuses["locale_code"].apply(
+        lambda x: int(x) not in LOCALE_RADIUS if pd.notna(x) else True
+    ).sum()
+    if fallback_count:
+        log.info(f"  Fallback classifications: {fallback_count}")
 
-    return campuses_with_tract
+    return campuses
 
 
 def build_circles(campuses: gpd.GeoDataFrame) -> list[tuple[str, gpd.GeoDataFrame]]:
@@ -611,7 +418,7 @@ def intersect_districts(circle_groups: list[tuple[str, gpd.GeoDataFrame]]) -> pd
                 "campus_lat": row["campus_lat"],
                 "campus_lon": row["campus_lon"],
                 "total_enrollment": row["total_enrollment"],
-                "census_tract_density": row["census_tract_density"],
+                "locale_code": row["locale_code"],
                 "city_type": row["city_type"],
                 "radius_miles": row["radius_miles"],
                 "cd_code": cd_code,
@@ -680,7 +487,7 @@ def build_summary(detail_df: pd.DataFrame) -> pd.DataFrame:
     id_cols = [
         "ipeds_unitid", "institution_name", "campus_city", "campus_state",
         "campus_lat", "campus_lon", "total_enrollment",
-        "census_tract_density", "city_type", "radius_miles",
+        "locale_code", "city_type", "radius_miles",
     ]
 
     rows: list[dict] = []
@@ -809,15 +616,15 @@ def run_validation(detail_df: pd.DataFrame, campuses: gpd.GeoDataFrame) -> pd.Da
             "detail": f"ipeds_unitid appears {dup_counts[uid]} times in campus list",
         })
 
-    # ── Check 5: missing_density ───────────────────────────────────
-    # Campuses where census_tract_density is null or 0
-    missing_mask = campuses["census_tract_density"].isna() | (campuses["census_tract_density"] == 0)
+    # ── Check 5: missing_locale ─────────────────────────────────
+    # Campuses where locale_code is null or -3
+    missing_mask = campuses["locale_code"].isna() | (campuses["locale_code"] == -3)
     for _, row in campuses[missing_mask].iterrows():
         flags.append({
             "ipeds_unitid": row["ipeds_unitid"],
             "institution_name": row["institution_name"],
-            "check_type": "missing_density",
-            "detail": f"census_tract_density is {row['census_tract_density']}",
+            "check_type": "missing_locale",
+            "detail": f"locale_code is {row['locale_code']}; used fallback radius",
         })
 
     # ── Build result DataFrame ─────────────────────────────────────
@@ -866,7 +673,7 @@ def write_excel(
         "campus_lat":             "Latitude",
         "campus_lon":             "Longitude",
         "total_enrollment":       "Enrollment",
-        "census_tract_density":   "Tract Density (pop/sq mi)",
+        "locale_code":            "Locale Code",
         "city_type":              "Campus Type",
         "radius_miles":           "Commute Radius (mi)",
         "cd_code":                "District",
@@ -885,7 +692,7 @@ def write_excel(
         "campus_lat":             "Latitude",
         "campus_lon":             "Longitude",
         "total_enrollment":       "Enrollment",
-        "census_tract_density":   "Tract Density (pop/sq mi)",
+        "locale_code":            "Locale Code",
         "city_type":              "Campus Type",
         "radius_miles":           "Commute Radius (mi)",
         "districts_intersected":  "Districts Reached",
@@ -926,7 +733,6 @@ def main() -> None:
 
     download_ipeds_data()
     download_cd_shapefile()
-    download_tract_shapefiles(ALL_STATE_FIPS)
     campuses = build_campus_list()
     campuses = classify_campuses(campuses)
     circle_groups = build_circles(campuses)
