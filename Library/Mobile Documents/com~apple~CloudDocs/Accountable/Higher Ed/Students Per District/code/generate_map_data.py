@@ -7,7 +7,7 @@ then writes lightweight GeoJSON files to map/data/ for the browser.
 Functions
 ---------
 generate_campuses_geojson : Read the Summary sheet → campuses.geojson
-generate_districts_geojson : (stub) Build simplified district polygons
+generate_districts_geojson : Read CD118 shapefile → districts.geojson
 """
 
 # ── Standard library ────────────────────────────────────────────
@@ -165,15 +165,82 @@ def generate_campuses_geojson() -> Path:
 
 
 # ====================================================================
-#  generate_districts_geojson  (stub — Task 2)
+#  generate_districts_geojson
 # ====================================================================
 
-def generate_districts_geojson() -> None:
-    """Build simplified district polygons GeoJSON.
+def generate_districts_geojson() -> Path:
+    """Read the CD118 shapefile and write districts.geojson.
 
-    Stub — will be implemented in Task 2.
+    Each feature is a GeoJSON Polygon/MultiPolygon with properties
+    identifying the congressional district (cd_code, state, state_fips,
+    district_number, name).
+
+    Returns
+    -------
+    Path
+        Path to the written districts.geojson file.
     """
-    pass
+    # Locate the shapefile
+    shp_files = glob.glob(str(CD118_DIR / "*.shp"))
+    if not shp_files:
+        raise FileNotFoundError(f"No .shp file found in {CD118_DIR}")
+    shp_path = shp_files[0]
+    log.info(f"Reading CD118 shapefile from {shp_path}")
+
+    gdf = gpd.read_file(shp_path)
+    log.info(f"  Loaded {len(gdf):,} rows, CRS={gdf.crs}")
+
+    # Reproject to EPSG:4326 (WGS 84) if needed
+    if gdf.crs and gdf.crs.to_epsg() != 4326:
+        log.info(f"  Reprojecting from EPSG:{gdf.crs.to_epsg()} to EPSG:4326")
+        gdf = gdf.to_crs(epsg=4326)
+
+    # Build GeoJSON feature collection
+    features = []
+    for _, row in gdf.iterrows():
+        state_fips = row["STATEFP"]
+        cd_fp = row["CD118FP"]
+        district_number = int(cd_fp)
+
+        state_abbrev = FIPS_TO_STATE.get(state_fips, state_fips)
+
+        if district_number == 0:
+            cd_code = f"{state_abbrev}-AL"
+        else:
+            cd_code = f"{state_abbrev}-{district_number}"
+
+        properties = {
+            "cd_code": cd_code,
+            "state": state_abbrev,
+            "state_fips": state_fips,
+            "district_number": district_number,
+            "name": row["NAMELSAD"],
+        }
+
+        feature = {
+            "type": "Feature",
+            "geometry": row.geometry.__geo_interface__,
+            "properties": properties,
+        }
+        features.append(feature)
+
+    geojson = {
+        "type": "FeatureCollection",
+        "features": features,
+    }
+
+    # Write output
+    MAP_DATA_DIR.mkdir(parents=True, exist_ok=True)
+    output_path = MAP_DATA_DIR / "districts.geojson"
+    with open(output_path, "w") as f:
+        json.dump(geojson, f, separators=(",", ":"))
+
+    file_size_kb = output_path.stat().st_size / 1024
+    log.info(f"Wrote {output_path}")
+    log.info(f"  Features: {len(features):,}")
+    log.info(f"  File size: {file_size_kb:.1f} KB")
+
+    return output_path
 
 
 # ====================================================================
@@ -184,6 +251,7 @@ def main() -> None:
     """Generate all map data files."""
     log.info("=== generate_map_data START ===")
     generate_campuses_geojson()
+    generate_districts_geojson()
     log.info("=== generate_map_data END ===")
 
 
