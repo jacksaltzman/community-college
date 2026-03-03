@@ -116,10 +116,10 @@ def run_cleanup():
     # Keep existing flags for non-removed campuses
     validation_clean = validation[~validation["IPEDS ID"].isin(ids_to_remove)].copy()
 
-    # Update missing_density Details text
-    mask = validation_clean["Flag Type"] == "missing_density"
+    # Update missing_locale Details text
+    mask = validation_clean["Flag Type"] == "missing_locale"
     validation_clean.loc[mask, "Details"] = (
-        "Tract density=0; classified via IPEDS locale code fallback"
+        "Locale code missing or -3; used fallback radius of 22 mi"
     )
 
     # Add removal records

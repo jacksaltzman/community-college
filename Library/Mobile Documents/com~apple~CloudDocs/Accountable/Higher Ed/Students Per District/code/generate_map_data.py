@@ -64,7 +64,7 @@ SUMMARY_TO_GEOJSON = {
     "Latitude":                   "lat",
     "Longitude":                  "lon",
     "Enrollment":                 "enrollment",
-    "Tract Density (pop/sq mi)":  "tract_density",
+    "Locale Code":                "locale_code",
     "Campus Type":                "campus_type",
     "Commute Radius (mi)":        "radius_miles",
     "Districts Reached":          "districts_reached",
