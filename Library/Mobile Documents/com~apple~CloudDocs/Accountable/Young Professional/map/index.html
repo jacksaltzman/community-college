@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Young Professional Density Map | Accountable</title>
+  <!-- Open Graph -->
+  <meta property="og:title" content="Young Professional Density Map | Accountable">
+  <meta property="og:description" content="Interactive choropleth map showing young professional (25-34) density across all 435+ congressional districts.">
+  <meta property="og:type" content="website">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Young Professional Density Map | Accountable">
+  <meta name="twitter:description" content="Interactive choropleth map showing young professional (25-34) density across all 435+ congressional districts.">
+  <!-- Mapbox GL JS v3 -->
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+  <!-- Google Fonts: DM Sans + Oswald -->
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+  <style>
+    /* ================================================================
+       CSS CUSTOM PROPERTIES
+       ================================================================ */
+    :root {
+      --coral: #FE4F40;
+      --teal: #4C6971;
+      --lime: #D4F72A;
+      --black: #111111;
+      --paper: #FDFBF9;
+      --border-main: #C8C1B6;
+      --border-light: #EEEAE4;
+      --gray-muted: #78716C;
+      --gray-lighter: #9CA3AF;
+      --gray-body: #44403C;
+      --hover-bg: #F5F0EB;
+      --font-body: 'DM Sans', sans-serif;
+      --font-heading: 'Oswald', sans-serif;
+      --nav-height: 56px;
+      /* Choropleth scale */
+      --choro-1: #EBF5FB;
+      --choro-2: #AED6F1;
+      --choro-3: #5DADE2;
+      --choro-4: #2E86C1;
+      --choro-5: #1B4F72;
+      --choro-6: #0B1D3A;
+      --choro-null: #E5E7EB;
+    }
+
+    /* ================================================================
+       RESET & BASE
+       ================================================================ */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--paper);
+      color: var(--black);
+    }
+
+    /* ================================================================
+       TOP NAVIGATION BAR
+       ================================================================ */
+    #top-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-height);
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 1000;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .nav-brand-logo {
+      height: 18px;
+      width: auto;
+      display: block;
+    }
+    .nav-brand-subtitle {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--gray-muted);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .nav-hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: white;
+      margin: 5px 0;
+      transition: 0.3s;
+    }
+
+    @media (max-width: 768px) {
+      .nav-hamburger { display: block; }
+      .nav-brand-subtitle { display: none; }
+    }
+
+    /* ================================================================
+       APP CONTAINER
+       ================================================================ */
+    #app {
+      margin-top: var(--nav-height);
+      height: calc(100vh - var(--nav-height));
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ================================================================
+       SIDEBAR
+       ================================================================ */
+    #sidebar {
+      width: 300px;
+      min-width: 300px;
+      height: 100%;
+      overflow-y: auto;
+      background: var(--paper);
+      border-right: 1px solid var(--border-main);
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+    }
+
+    .sidebar-header {
+      display: none;
+      background: var(--black);
+      padding: 0 16px;
+    }
+    .sidebar-header-left {
+      display: flex;
+      align-items: center;
+    }
+    .logo-text {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 14px;
+      color: white;
+      letter-spacing: 0.1em;
+    }
+
+    .sidebar-controls {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      padding: 18px 16px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .sidebar-section:last-child { border-bottom: none; }
+
+    .section-label {
+      font-family: var(--font-heading);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 11px;
+      color: var(--gray-muted);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    #sidebar .section-label {
+      margin: -18px -16px 12px;
+      padding: 8px 16px;
+      background: var(--hover-bg);
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    /* Search Input */
+    .search-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border-main);
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      background: white;
+      color: var(--black);
+      outline: none;
+    }
+    .search-input::placeholder { color: var(--gray-lighter); }
+    .search-input:focus { border-color: var(--teal); }
+
+    /* Search Results */
+    .search-results {
+      max-height: 220px;
+      overflow-y: auto;
+      border: 1px solid var(--border-main);
+      border-radius: 6px;
+      background: white;
+      margin-top: 4px;
+      display: none;
+    }
+    .search-results.visible { display: block; }
+    .search-result-item {
+      padding: 8px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border-light);
+      transition: background 0.1s;
+    }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: var(--hover-bg); }
+    .search-result-code {
+      font-weight: 700;
+      color: var(--black);
+    }
+    .search-result-name {
+      color: var(--gray-body);
+      font-size: 12px;
+      margin-left: 4px;
+    }
+    .search-result-density {
+      float: right;
+      color: var(--teal);
+      font-weight: 500;
+      font-size: 12px;
+    }
+    .search-no-results {
+      padding: 10px 12px;
+      font-size: 13px;
+      color: var(--gray-muted);
+    }
+
+    /* Legend */
+    .legend-bar-wrap {
+      margin-top: 4px;
+    }
+    .legend-gradient {
+      width: 100%;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid var(--border-light);
+    }
+    .legend-ticks {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4px;
+    }
+    .legend-tick {
+      font-family: var(--font-body);
+      font-size: 10px;
+      color: var(--gray-muted);
+      text-align: center;
+    }
+    .legend-subtitle {
+      font-family: var(--font-body);
+      font-size: 11px;
+      color: var(--gray-body);
+      margin-top: 8px;
+    }
+    .legend-null-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--gray-muted);
+    }
+    .legend-null-swatch {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      background: var(--choro-null);
+      border: 1px solid var(--border-light);
+      flex-shrink: 0;
+    }
+
+    /* Stats */
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+    }
+    .stat-label {
+      font-family: var(--font-heading);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 10px;
+      color: var(--gray-muted);
+      font-weight: 700;
+    }
+    .stat-value {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--black);
+      font-weight: 500;
+    }
+
+    /* Swing State Toggle */
+    .swing-toggle-btn {
+      width: 100%;
+      padding: 9px 12px;
+      border: 1px solid var(--border-main);
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      background: white;
+      color: var(--gray-body);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .swing-toggle-btn:hover {
+      background: var(--hover-bg);
+      border-color: var(--teal);
+      color: var(--teal);
+    }
+    .swing-toggle-btn.active {
+      background: var(--coral);
+      border-color: var(--coral);
+      color: white;
+    }
+    .swing-toggle-btn.active:hover {
+      background: #e5443a;
+      border-color: #e5443a;
+    }
+    .swing-toggle-icon {
+      font-size: 14px;
+    }
+
+    /* Top Districts List */
+    .top-district-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .top-district-item:last-child { border-bottom: none; }
+    .top-district-code {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--black);
+      cursor: pointer;
+    }
+    .top-district-code:hover { color: var(--teal); }
+    .top-district-density {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--teal);
+    }
+    .top-district-bar {
+      flex: 1;
+      height: 6px;
+      background: var(--border-light);
+      border-radius: 3px;
+      margin: 0 10px;
+      overflow: hidden;
+    }
+    .top-district-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--choro-3), var(--choro-5));
+    }
+
+    /* Mobile sidebar hamburger */
+    .map-hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .map-hamburger span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: white;
+      margin: 4px 0;
+      transition: 0.3s;
+    }
+
+    @media (max-width: 768px) {
+      .map-hamburger { display: block; }
+
+      #sidebar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        min-width: 0;
+        height: 48px;
+        z-index: 10;
+        overflow: hidden;
+        border-right: none;
+        border-bottom: 1px solid var(--border-main);
+        transition: height 0.3s ease;
+      }
+
+      #sidebar.open {
+        height: 100%;
+        overflow-y: auto;
+        z-index: 20;
+      }
+
+      .sidebar-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 48px;
+        padding: 0 16px;
+      }
+
+      .sidebar-header .logo-text {
+        font-size: 12px;
+        letter-spacing: 0.12em;
+      }
+
+      #map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      #app { position: relative; }
+
+      .sidebar-controls {
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        max-height: calc(100% - 48px);
+      }
+    }
+
+    /* ================================================================
+       MAP CONTAINER
+       ================================================================ */
+    #map {
+      flex: 1;
+      height: 100%;
+    }
+
+    /* ================================================================
+       TOOLTIP
+       ================================================================ */
+    #district-tooltip {
+      display: none;
+      position: fixed;
+      pointer-events: none;
+      background: var(--black);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      z-index: 100;
+      white-space: nowrap;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      max-width: 280px;
+    }
+    .tooltip-code {
+      font-weight: 700;
+      font-size: 13px;
+    }
+    .tooltip-name {
+      color: var(--gray-lighter);
+      font-size: 11px;
+      margin-top: 1px;
+    }
+    .tooltip-divider {
+      border-top: 1px solid rgba(255,255,255,0.15);
+      margin: 5px 0;
+    }
+    .tooltip-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .tooltip-label {
+      color: var(--gray-lighter);
+    }
+    .tooltip-value {
+      font-weight: 500;
+    }
+
+    /* ================================================================
+       POPUP STYLES
+       ================================================================ */
+    .district-popup {
+      min-width: 240px;
+      max-width: 320px;
+      padding: 16px 18px;
+      border-left: 4px solid var(--coral);
+    }
+    .popup-header {
+      margin-bottom: 10px;
+    }
+    .popup-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 18px;
+      color: var(--black);
+      text-transform: uppercase;
+      margin: 0;
+      letter-spacing: 0.05em;
+    }
+    .popup-subtitle {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--gray-muted);
+      margin: 2px 0 0;
+    }
+    .popup-swing-badge {
+      display: inline-block;
+      background: var(--coral);
+      color: white;
+      font-family: var(--font-heading);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-top: 6px;
+    }
+
+    .popup-section-label {
+      font-family: var(--font-heading);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 10px;
+      color: var(--gray-muted);
+      font-weight: 700;
+      margin-top: 10px;
+      margin-bottom: 4px;
+    }
+
+    .popup-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+      border-bottom: 1px solid var(--border-light);
+      gap: 12px;
+    }
+    .popup-row:last-child { border-bottom: none; }
+    .popup-label {
+      font-family: var(--font-heading);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 10px;
+      color: var(--gray-muted);
+      font-weight: 700;
+    }
+    .popup-value {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--black);
+      font-weight: 500;
+      text-align: right;
+    }
+    .popup-highlight-value {
+      color: var(--teal);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .popup-density-bar {
+      margin-top: 6px;
+      height: 6px;
+      background: var(--border-light);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .popup-density-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--choro-3), var(--choro-5));
+      transition: width 0.3s ease;
+    }
+
+    /* Override Mapbox popup defaults */
+    .mapboxgl-popup-content {
+      border-radius: 10px;
+      border: 1px solid rgba(200,193,182,0.4);
+      padding: 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+    .mapboxgl-popup-close-button {
+      font-size: 18px;
+      color: var(--gray-muted);
+      padding: 4px 8px;
+    }
+
+    /* ================================================================
+       LOADING OVERLAY
+       ================================================================ */
+    #loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(253, 251, 249, 0.92);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      transition: opacity 0.4s ease;
+    }
+    #loading-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading-spinner {
+      width: 36px;
+      height: 36px;
+      border: 3px solid var(--border-light);
+      border-top-color: var(--teal);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .loading-text {
+      font-family: var(--font-heading);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--gray-muted);
+      margin-top: 14px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       TOP NAVIGATION BAR
+       ════════════════════════════════════════════════════════════════ -->
+  <nav id="top-nav">
+    <div class="nav-brand">
+      <img src="accountable_logo.avif" alt="Accountable" class="nav-brand-logo">
+      <span class="nav-brand-subtitle">Young Professional Density Map</span>
+    </div>
+  </nav>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       APP CONTAINER
+       ════════════════════════════════════════════════════════════════ -->
+  <div id="app">
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-header-left">
+          <span class="logo-text">YP DENSITY</span>
+        </div>
+        <button class="map-hamburger" id="sidebar-toggle" aria-label="Toggle sidebar">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+
+      <div class="sidebar-controls">
+
+        <!-- Search -->
+        <div class="sidebar-section">
+          <div class="section-label">Search Districts</div>
+          <input type="text" id="district-search" class="search-input" placeholder="Search by name or code (e.g. CA-12)...">
+          <div class="search-results" id="search-results"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="sidebar-section">
+          <div class="section-label">YP Density (% of District Pop.)</div>
+          <div class="legend-bar-wrap">
+            <div class="legend-gradient" style="background: linear-gradient(90deg, #EBF5FB 0%, #AED6F1 21%, #5DADE2 36%, #2E86C1 50%, #1B4F72 71%, #0B1D3A 100%);"></div>
+            <div class="legend-ticks">
+              <span class="legend-tick">0%</span>
+              <span class="legend-tick">2%</span>
+              <span class="legend-tick">4%</span>
+              <span class="legend-tick">6%</span>
+              <span class="legend-tick">8%+</span>
+            </div>
+          </div>
+          <div class="legend-null-row">
+            <span class="legend-null-swatch"></span>
+            <span>No data available</span>
+          </div>
+        </div>
+
+        <!-- National Stats -->
+        <div class="sidebar-section">
+          <div class="section-label">National Summary</div>
+          <div class="stat-row">
+            <span class="stat-label">Total YPs (25-34)</span>
+            <span class="stat-value" id="stat-total-yp">--</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Districts Analyzed</span>
+            <span class="stat-value" id="stat-districts">--</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">National Density</span>
+            <span class="stat-value" id="stat-density">--</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Median District Density</span>
+            <span class="stat-value" id="stat-median">--</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Swing State Districts</span>
+            <span class="stat-value" id="stat-swing">--</span>
+          </div>
+        </div>
+
+        <!-- Swing State Filter -->
+        <div class="sidebar-section">
+          <div class="section-label">Filter</div>
+          <button class="swing-toggle-btn" id="swing-toggle">
+            <span class="swing-toggle-icon">&#9733;</span>
+            Highlight Swing States
+          </button>
+        </div>
+
+        <!-- Top Districts -->
+        <div class="sidebar-section">
+          <div class="section-label">Top 10 Districts by Density</div>
+          <div id="top-districts-list">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- Tooltip -->
+    <div id="district-tooltip"></div>
+
+    <!-- Loading overlay -->
+    <div id="loading-overlay">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Loading district data</div>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       JAVASCRIPT
+       ════════════════════════════════════════════════════════════════ -->
+  <script>
+    /* ----------------------------------------------------------------
+       GLOBALS
+       ---------------------------------------------------------------- */
+    mapboxgl.accessToken = 'pk.eyJ1IjoiamFja3NhbHR6bWFuIiwiYSI6ImNtbTltbmVuZTA0aWEycG9pNWJuZDR6dzYifQ.UT_hl5vyNQnGVDIq1GYkTw';
+
+    let map;
+    let geojsonData = null;
+    let hoveredDistrictId = null;
+    let swingFilterActive = false;
+    let currentPopup = null;
+
+    /* ----------------------------------------------------------------
+       HELPER FUNCTIONS
+       ---------------------------------------------------------------- */
+    function fmt(n) {
+      if (n == null) return '--';
+      return n.toLocaleString('en-US');
+    }
+
+    function fmtPct(n, decimals) {
+      if (n == null) return '--';
+      decimals = decimals != null ? decimals : 2;
+      return n.toFixed(decimals) + '%';
+    }
+
+    function getPopupMaxWidth() {
+      return window.innerWidth < 500 ? '280px' : '320px';
+    }
+
+    /* Return a density color for a given percentage (for use in JS) */
+    function densityColor(pct) {
+      if (pct == null) return '#E5E7EB';
+      if (pct <= 0)    return '#EBF5FB';
+      if (pct <= 1.5)  return '#EBF5FB';
+      if (pct <= 2.5)  return '#AED6F1';
+      if (pct <= 3.5)  return '#5DADE2';
+      if (pct <= 5.0)  return '#2E86C1';
+      if (pct <= 7.0)  return '#1B4F72';
+      return '#0B1D3A';
+    }
+
+    /* ----------------------------------------------------------------
+       TOOLTIP
+       ---------------------------------------------------------------- */
+    const tooltip = document.getElementById('district-tooltip');
+
+    function showTooltip(e, props) {
+      tooltip.innerHTML = `
+        <div class="tooltip-code">${props.cd_code}</div>
+        <div class="tooltip-name">${props.state} &mdash; ${props.name || 'Congressional District ' + props.district_number}</div>
+        <div class="tooltip-divider"></div>
+        <div class="tooltip-row">
+          <span class="tooltip-label">YP Estimate</span>
+          <span class="tooltip-value">${fmt(props.yp_estimate)}</span>
+        </div>
+        <div class="tooltip-row">
+          <span class="tooltip-label">YP Density</span>
+          <span class="tooltip-value">${fmtPct(props.yp_density_pct)}</span>
+        </div>
+      `;
+      tooltip.style.display = 'block';
+      positionTooltip(e);
+    }
+
+    function positionTooltip(e) {
+      const pad = 14;
+      let x = e.point.x + pad;
+      let y = e.point.y + pad;
+      const mapContainer = map.getContainer();
+      const rect = mapContainer.getBoundingClientRect();
+      /* Convert map-relative to viewport-relative */
+      x += rect.left;
+      y += rect.top;
+      /* Prevent overflow */
+      const tw = tooltip.offsetWidth;
+      const th = tooltip.offsetHeight;
+      if (x + tw > window.innerWidth - 10) x = x - tw - pad * 2;
+      if (y + th > window.innerHeight - 10) y = y - th - pad * 2;
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    }
+
+    function hideTooltip() {
+      tooltip.style.display = 'none';
+    }
+
+    /* ----------------------------------------------------------------
+       POPUP
+       ---------------------------------------------------------------- */
+    function buildPopupHtml(props) {
+      const densityPct = props.yp_density_pct != null ? props.yp_density_pct : 0;
+      const barWidth = Math.min(100, (densityPct / 8.5) * 100);
+
+      let swingBadge = '';
+      if (props.swing_state) {
+        swingBadge = '<div class="popup-swing-badge">Swing State</div>';
+      }
+
+      return `
+        <div class="district-popup">
+          <div class="popup-header">
+            <div class="popup-title">${props.cd_code}</div>
+            <div class="popup-subtitle">${props.state} &mdash; ${props.name || 'Congressional District ' + props.district_number}</div>
+            ${swingBadge}
+          </div>
+
+          <div class="popup-section-label">Young Professional Metrics</div>
+          <div class="popup-row">
+            <span class="popup-label">YP Estimate</span>
+            <span class="popup-value popup-highlight-value">${fmt(props.yp_estimate)}</span>
+          </div>
+          <div class="popup-row">
+            <span class="popup-label">YP Density</span>
+            <span class="popup-value popup-highlight-value">${fmtPct(props.yp_density_pct)}</span>
+          </div>
+          <div class="popup-density-bar">
+            <div class="popup-density-bar-fill" style="width: ${barWidth}%;"></div>
+          </div>
+
+          <div class="popup-section-label">Demographics</div>
+          <div class="popup-row">
+            <span class="popup-label">Total Population</span>
+            <span class="popup-value">${fmt(props.total_population)}</span>
+          </div>
+          <div class="popup-row">
+            <span class="popup-label">Pop. 25-34</span>
+            <span class="popup-value">${fmt(props.pop_25_34)}</span>
+          </div>
+          <div class="popup-row">
+            <span class="popup-label">YP Share of 25-34</span>
+            <span class="popup-value">${fmtPct(props.yp_share_of_cohort_pct)}</span>
+          </div>
+        </div>
+      `;
+    }
+
+    function openPopupAtFeature(feature) {
+      if (currentPopup) currentPopup.remove();
+
+      /* Get centroid of the polygon for popup placement */
+      const geom = feature.geometry;
+      let center;
+      if (geom.type === 'MultiPolygon') {
+        /* Use the largest polygon's first coordinate ring centroid */
+        let largest = geom.coordinates[0];
+        for (let i = 1; i < geom.coordinates.length; i++) {
+          if (geom.coordinates[i][0].length > largest[0].length) {
+            largest = geom.coordinates[i];
+          }
+        }
+        center = polygonCentroid(largest[0]);
+      } else if (geom.type === 'Polygon') {
+        center = polygonCentroid(geom.coordinates[0]);
+      } else {
+        center = [0, 0];
+      }
+
+      currentPopup = new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
+        .setLngLat(center)
+        .setHTML(buildPopupHtml(feature.properties))
+        .addTo(map);
+    }
+
+    function polygonCentroid(ring) {
+      let x = 0, y = 0;
+      for (let i = 0; i < ring.length; i++) {
+        x += ring[i][0];
+        y += ring[i][1];
+      }
+      return [x / ring.length, y / ring.length];
+    }
+
+    /* ----------------------------------------------------------------
+       SEARCH
+       ---------------------------------------------------------------- */
+    const searchInput = document.getElementById('district-search');
+    const searchResults = document.getElementById('search-results');
+
+    searchInput.addEventListener('input', function() {
+      const query = this.value.trim().toLowerCase();
+      if (!query || !geojsonData) {
+        searchResults.classList.remove('visible');
+        searchResults.innerHTML = '';
+        return;
+      }
+
+      const matches = geojsonData.features.filter(function(f) {
+        const p = f.properties;
+        const searchable = (p.cd_code + ' ' + p.state + ' ' + (p.name || '')).toLowerCase();
+        return searchable.indexOf(query) !== -1;
+      }).slice(0, 20);
+
+      if (matches.length === 0) {
+        searchResults.innerHTML = '<div class="search-no-results">No districts found</div>';
+        searchResults.classList.add('visible');
+        return;
+      }
+
+      searchResults.innerHTML = matches.map(function(f) {
+        const p = f.properties;
+        return '<div class="search-result-item" data-cd="' + p.cd_code + '">' +
+          '<span class="search-result-density">' + fmtPct(p.yp_density_pct) + '</span>' +
+          '<span class="search-result-code">' + p.cd_code + '</span>' +
+          '<span class="search-result-name">' + (p.name || '') + '</span>' +
+          '</div>';
+      }).join('');
+
+      searchResults.classList.add('visible');
+    });
+
+    searchResults.addEventListener('click', function(e) {
+      const item = e.target.closest('.search-result-item');
+      if (!item) return;
+      const cdCode = item.dataset.cd;
+      flyToDistrict(cdCode);
+      searchResults.classList.remove('visible');
+      searchInput.value = cdCode;
+    });
+
+    /* Close search results when clicking outside */
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('#district-search') && !e.target.closest('#search-results')) {
+        searchResults.classList.remove('visible');
+      }
+    });
+
+    function flyToDistrict(cdCode) {
+      const feature = geojsonData.features.find(function(f) {
+        return f.properties.cd_code === cdCode;
+      });
+      if (!feature) return;
+
+      /* Compute bounding box */
+      const coords = getAllCoords(feature.geometry);
+      let minLng = Infinity, maxLng = -Infinity, minLat = Infinity, maxLat = -Infinity;
+      coords.forEach(function(c) {
+        if (c[0] < minLng) minLng = c[0];
+        if (c[0] > maxLng) maxLng = c[0];
+        if (c[1] < minLat) minLat = c[1];
+        if (c[1] > maxLat) maxLat = c[1];
+      });
+
+      map.fitBounds([[minLng, minLat], [maxLng, maxLat]], {
+        padding: 60,
+        duration: 1200,
+        essential: true
+      });
+
+      setTimeout(function() {
+        openPopupAtFeature(feature);
+      }, 1300);
+    }
+
+    function getAllCoords(geometry) {
+      var coords = [];
+      if (geometry.type === 'Polygon') {
+        geometry.coordinates.forEach(function(ring) {
+          coords = coords.concat(ring);
+        });
+      } else if (geometry.type === 'MultiPolygon') {
+        geometry.coordinates.forEach(function(polygon) {
+          polygon.forEach(function(ring) {
+            coords = coords.concat(ring);
+          });
+        });
+      }
+      return coords;
+    }
+
+    /* ----------------------------------------------------------------
+       SIDEBAR TOGGLE (MOBILE)
+       ---------------------------------------------------------------- */
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebar = document.getElementById('sidebar');
+
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener('click', function() {
+        sidebar.classList.toggle('open');
+      });
+    }
+
+    /* ----------------------------------------------------------------
+       SWING STATE FILTER
+       ---------------------------------------------------------------- */
+    const swingToggle = document.getElementById('swing-toggle');
+    swingToggle.addEventListener('click', function() {
+      swingFilterActive = !swingFilterActive;
+      this.classList.toggle('active', swingFilterActive);
+      this.innerHTML = swingFilterActive
+        ? '<span class="swing-toggle-icon">&#9733;</span> Showing Swing States Only'
+        : '<span class="swing-toggle-icon">&#9733;</span> Highlight Swing States';
+      applySwingFilter();
+    });
+
+    function applySwingFilter() {
+      if (!map.getLayer('district-fills')) return;
+
+      if (swingFilterActive) {
+        /* Dim non-swing districts */
+        map.setPaintProperty('district-fills', 'fill-opacity', [
+          'case',
+          ['==', ['get', 'swing_state'], true], 0.85,
+          0.15
+        ]);
+        map.setPaintProperty('district-borders', 'line-opacity', [
+          'case',
+          ['==', ['get', 'swing_state'], true], 1,
+          0.2
+        ]);
+      } else {
+        map.setPaintProperty('district-fills', 'fill-opacity', 0.85);
+        map.setPaintProperty('district-borders', 'line-opacity', 1);
+      }
+    }
+
+    /* ----------------------------------------------------------------
+       POPULATE STATS & TOP DISTRICTS
+       ---------------------------------------------------------------- */
+    function populateStats(data) {
+      const features = data.features;
+      let totalYP = 0, totalPop = 0, swingCount = 0;
+      const densities = [];
+
+      features.forEach(function(f) {
+        const p = f.properties;
+        if (p.yp_estimate) totalYP += p.yp_estimate;
+        if (p.total_population) totalPop += p.total_population;
+        if (p.swing_state) swingCount++;
+        if (p.yp_density_pct != null) densities.push(p.yp_density_pct);
+      });
+
+      densities.sort(function(a, b) { return a - b; });
+      const medianIdx = Math.floor(densities.length / 2);
+      const median = densities.length > 0 ? densities[medianIdx] : 0;
+      const natDensity = totalPop > 0 ? (totalYP / totalPop * 100) : 0;
+
+      document.getElementById('stat-total-yp').textContent = fmt(totalYP);
+      document.getElementById('stat-districts').textContent = fmt(features.length);
+      document.getElementById('stat-density').textContent = fmtPct(natDensity);
+      document.getElementById('stat-median').textContent = fmtPct(median);
+      document.getElementById('stat-swing').textContent = fmt(swingCount);
+
+      /* Top 10 districts */
+      const sorted = features.slice().sort(function(a, b) {
+        return (b.properties.yp_density_pct || 0) - (a.properties.yp_density_pct || 0);
+      });
+      const top10 = sorted.slice(0, 10);
+      const maxDensity = top10[0] ? (top10[0].properties.yp_density_pct || 1) : 1;
+
+      const listEl = document.getElementById('top-districts-list');
+      listEl.innerHTML = top10.map(function(f) {
+        const p = f.properties;
+        const barPct = ((p.yp_density_pct || 0) / maxDensity * 100).toFixed(1);
+        return '<div class="top-district-item">' +
+          '<span class="top-district-code" data-cd="' + p.cd_code + '">' + p.cd_code + '</span>' +
+          '<div class="top-district-bar"><div class="top-district-bar-fill" style="width:' + barPct + '%;"></div></div>' +
+          '<span class="top-district-density">' + fmtPct(p.yp_density_pct) + '</span>' +
+          '</div>';
+      }).join('');
+
+      /* Click handler for top districts */
+      listEl.querySelectorAll('.top-district-code').forEach(function(el) {
+        el.addEventListener('click', function() {
+          flyToDistrict(this.dataset.cd);
+        });
+      });
+    }
+
+    /* ----------------------------------------------------------------
+       MAP INITIALIZATION
+       ---------------------------------------------------------------- */
+    function initMap() {
+      map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/light-v11',
+        center: [-98, 39.5],
+        zoom: 3.8,
+        minZoom: 2,
+        maxZoom: 12,
+        attributionControl: true,
+      });
+
+      map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+      map.on('style.load', async function() {
+        try {
+          const response = await fetch('data/districts.geojson');
+          geojsonData = await response.json();
+
+          /* Assign a unique numeric id to each feature for hover state */
+          geojsonData.features.forEach(function(f, i) {
+            f.id = i;
+          });
+
+          /* Add source */
+          map.addSource('districts', {
+            type: 'geojson',
+            data: geojsonData,
+            generateId: false,
+          });
+
+          /* Choropleth fill layer */
+          map.addLayer({
+            id: 'district-fills',
+            type: 'fill',
+            source: 'districts',
+            paint: {
+              'fill-color': [
+                'case',
+                ['==', ['get', 'yp_density_pct'], null], '#E5E7EB',
+                [
+                  'interpolate',
+                  ['linear'],
+                  ['get', 'yp_density_pct'],
+                  0,   '#EBF5FB',
+                  1.5, '#AED6F1',
+                  2.5, '#5DADE2',
+                  3.5, '#2E86C1',
+                  5,   '#1B4F72',
+                  7,   '#0B1D3A'
+                ]
+              ],
+              'fill-opacity': 0.85,
+            },
+          });
+
+          /* Border layer */
+          map.addLayer({
+            id: 'district-borders',
+            type: 'line',
+            source: 'districts',
+            paint: {
+              'line-color': '#C8C1B6',
+              'line-width': 0.5,
+              'line-opacity': 1,
+            },
+          });
+
+          /* Hover highlight border */
+          map.addLayer({
+            id: 'district-hover',
+            type: 'line',
+            source: 'districts',
+            paint: {
+              'line-color': '#FE4F40',
+              'line-width': 2.5,
+              'line-opacity': 1,
+            },
+            filter: ['==', ['id'], -1],
+          });
+
+          /* State boundaries from Mapbox vector tiles */
+          map.addSource('state-boundaries', {
+            type: 'vector',
+            url: 'mapbox://mapbox.mapbox-streets-v8',
+          });
+
+          map.addLayer({
+            id: 'state-borders',
+            type: 'line',
+            source: 'state-boundaries',
+            'source-layer': 'admin',
+            filter: [
+              'all',
+              ['==', ['get', 'admin_level'], 1],
+              ['==', ['get', 'iso_3166_1'], 'US'],
+            ],
+            paint: {
+              'line-color': '#78716C',
+              'line-width': 1,
+              'line-opacity': 0.5,
+            },
+          });
+
+          /* ── Interactions ── */
+
+          /* Hover */
+          map.on('mousemove', 'district-fills', function(e) {
+            if (e.features.length === 0) return;
+            map.getCanvas().style.cursor = 'pointer';
+            const feature = e.features[0];
+
+            /* Update hover highlight */
+            if (hoveredDistrictId !== null && hoveredDistrictId !== feature.id) {
+              map.setFilter('district-hover', ['==', ['id'], -1]);
+            }
+            hoveredDistrictId = feature.id;
+            map.setFilter('district-hover', ['==', ['id'], feature.id]);
+
+            showTooltip(e, feature.properties);
+          });
+
+          map.on('mouseleave', 'district-fills', function() {
+            map.getCanvas().style.cursor = '';
+            if (hoveredDistrictId !== null) {
+              map.setFilter('district-hover', ['==', ['id'], -1]);
+              hoveredDistrictId = null;
+            }
+            hideTooltip();
+          });
+
+          /* Click */
+          map.on('click', 'district-fills', function(e) {
+            if (e.features.length === 0) return;
+            const feature = e.features[0];
+
+            /* Find the original geojson feature for full geometry (query features may be clipped) */
+            const fullFeature = geojsonData.features.find(function(f) {
+              return f.properties.cd_code === feature.properties.cd_code;
+            });
+
+            if (fullFeature) {
+              openPopupAtFeature(fullFeature);
+            } else {
+              /* Fallback: use click location */
+              if (currentPopup) currentPopup.remove();
+              currentPopup = new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
+                .setLngLat(e.lngLat)
+                .setHTML(buildPopupHtml(feature.properties))
+                .addTo(map);
+            }
+
+            hideTooltip();
+          });
+
+          /* Populate stats */
+          populateStats(geojsonData);
+
+          /* Hide loading overlay */
+          document.getElementById('loading-overlay').classList.add('hidden');
+
+        } catch (err) {
+          console.error('Error loading district data:', err);
+          document.querySelector('.loading-text').textContent = 'Error loading data';
+        }
+      });
+    }
+
+    /* ----------------------------------------------------------------
+       BOOT
+       ---------------------------------------------------------------- */
+    initMap();
+  </script>
+</body>
+</html>
