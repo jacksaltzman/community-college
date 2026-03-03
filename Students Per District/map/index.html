@@ -486,10 +486,16 @@
     }
 
     .sidebar-section {
-      padding: 16px;
+      padding: 18px 16px;
       border-bottom: 1px solid var(--border-light);
     }
     .sidebar-section:last-child { border-bottom: none; }
+    #sidebar .section-label {
+      margin: -18px -16px 12px;
+      padding: 8px 16px;
+      background: var(--hover-bg);
+      border-bottom: 1px solid var(--border-light);
+    }
 
     /* Layer Toggles */
     .toggle-group {
@@ -597,7 +603,10 @@
       min-width: 0;
     }
     .map-filter-input::placeholder { color: var(--gray-lighter); }
-    .map-filter-input:focus { border-color: var(--teal); }
+    .map-filter-input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 2px rgba(76,105,113,0.12);
+    }
     .map-filter-dash {
       color: var(--gray-muted);
       font-size: 13px;
