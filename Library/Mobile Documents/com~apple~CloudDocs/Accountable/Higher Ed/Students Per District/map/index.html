@@ -180,6 +180,36 @@
       margin-top: 1px;
     }
 
+    /* ── Tab Bar ── */
+    .tab-bar {
+      display: flex;
+      border-bottom: 1px solid #EEEAE4;
+      background: #FDFBF9;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 10px 0;
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-align: center;
+      border: none;
+      background: none;
+      color: #9CA3AF;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-btn:hover { color: #4C6971; }
+    .tab-btn.active {
+      color: #111111;
+      border-bottom-color: #FE4F40;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
     /* ── Stats ── */
     .stat-row {
       display: flex;
@@ -199,6 +229,102 @@
       font-size: 13px;
       color: #111111;
       font-weight: 500;
+    }
+
+    /* ── Key Figures Tab ── */
+    .kf-section {
+      padding: 12px 16px;
+      border-bottom: 1px solid #EEEAE4;
+    }
+    .kf-section:last-child { border-bottom: none; }
+    .kf-section-title {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #78716C;
+      margin-bottom: 8px;
+    }
+    .kf-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 3px 0;
+      gap: 8px;
+    }
+    .kf-metric {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: #44403C;
+      flex: 1;
+    }
+    .kf-value {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      color: #111111;
+      font-weight: 700;
+      text-align: right;
+      white-space: nowrap;
+    }
+    .kf-note {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      color: #9CA3AF;
+      line-height: 1.3;
+      margin-top: 1px;
+    }
+    .kf-big {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #111111;
+      line-height: 1;
+    }
+    .kf-big-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      color: #78716C;
+      margin-top: 2px;
+    }
+    .kf-hero {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 4px;
+    }
+    .kf-hero-item { flex: 1; }
+    .kf-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 2px 0;
+    }
+    .kf-bar-label {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      color: #44403C;
+      width: 90px;
+      flex-shrink: 0;
+    }
+    .kf-bar-track {
+      flex: 1;
+      height: 6px;
+      background: #EEEAE4;
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .kf-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+    .kf-bar-value {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      color: #111111;
+      font-weight: 500;
+      width: 32px;
+      text-align: right;
+      flex-shrink: 0;
     }
 
     /* ── Map ── */
@@ -387,7 +513,16 @@
         </button>
       </div>
 
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="map-tab">Map</button>
+        <button class="tab-btn" data-tab="kf-tab">Key Figures</button>
+      </div>
+
       <div class="sidebar-controls">
+
+      <!-- ═══ MAP TAB ═══ -->
+      <div id="map-tab" class="tab-content active">
+
         <!-- Search & Filter -->
         <div class="sidebar-section">
           <div class="section-label">Search</div>
@@ -480,7 +615,19 @@
             </div>
           </div>
         </div>
+
+      </div><!-- end #map-tab -->
+
+      <!-- ═══ KEY FIGURES TAB ═══ -->
+      <div id="kf-tab" class="tab-content">
+        <div id="key-figures-content">
+          <div class="kf-section" style="text-align:center; color:#9CA3AF; padding:32px 16px;">
+            Loading...
+          </div>
+        </div>
       </div>
+
+      </div><!-- end .sidebar-controls -->
     </div>
 
     <div id="map"></div>
@@ -494,6 +641,193 @@
       const sidebar = document.getElementById('sidebar');
       sidebar.classList.toggle('open');
     });
+
+    /* ── Tab switching ── */
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    /* ── Key Figures builder ── */
+    function buildKeyFigures(features) {
+      const n = features.length;
+      if (!n) return;
+
+      const totalEnrollment = features.reduce((s, f) => s + (f.properties.enrollment || 0), 0);
+      const avgDistricts = (features.reduce((s, f) => s + (f.properties.districts_reached || 0), 0) / n).toFixed(1);
+      const medianDistricts = (() => {
+        const sorted = features.map(f => f.properties.districts_reached || 0).sort((a, b) => a - b);
+        const mid = Math.floor(sorted.length / 2);
+        return sorted.length % 2 ? sorted[mid] : ((sorted[mid - 1] + sorted[mid]) / 2);
+      })();
+
+      // Concentration
+      const lte3 = features.filter(f => (f.properties.districts_reached || 0) <= 3);
+      const lte3Pct = ((lte3.length / n) * 100).toFixed(0);
+      const lte3Students = lte3.reduce((s, f) => s + (f.properties.enrollment || 0), 0);
+
+      // Primary district coverage
+      const coverages = features.map(f => f.properties.primary_district_coverage || 0);
+      const avgCoverage = ((coverages.reduce((s, v) => s + v, 0) / n) * 100).toFixed(1);
+      const over50 = coverages.filter(c => c >= 0.5).length;
+      const over50Pct = ((over50 / n) * 100).toFixed(0);
+
+      // Campus type distribution
+      const typeColors = {
+        'Large City': '#FE4F40', 'Midsize City': '#4C6971', 'Suburban': '#D4F72A',
+        'Small City': '#E8A838', 'Rural': '#8B6F47', 'Town / Remote': '#9CA3AF'
+      };
+      const typeCounts = {};
+      features.forEach(f => {
+        const t = f.properties.campus_type || 'Unknown';
+        typeCounts[t] = (typeCounts[t] || 0) + 1;
+      });
+      const maxTypeCount = Math.max(...Object.values(typeCounts));
+
+      // Top states
+      const stateCounts = {};
+      const stateEnroll = {};
+      features.forEach(f => {
+        const st = f.properties.state || '?';
+        stateCounts[st] = (stateCounts[st] || 0) + 1;
+        stateEnroll[st] = (stateEnroll[st] || 0) + (f.properties.enrollment || 0);
+      });
+      const topStates = Object.entries(stateEnroll)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 8);
+      const maxStateEnroll = topStates.length ? topStates[0][1] : 1;
+
+      // Swing states
+      const swingSet = new Set(['AZ','GA','MI','NV','NC','PA','WI']);
+      const swingFeatures = features.filter(f => swingSet.has(f.properties.state));
+      const swingEnroll = swingFeatures.reduce((s, f) => s + (f.properties.enrollment || 0), 0);
+
+      // All districts
+      const allDistricts = new Set();
+      features.forEach(f => {
+        if (f.properties.all_districts) {
+          f.properties.all_districts.split('|').forEach(d => allDistricts.add(d));
+        }
+      });
+
+      const el = document.getElementById('key-figures-content');
+      el.innerHTML = `
+        <div class="kf-section">
+          <div class="kf-hero">
+            <div class="kf-hero-item">
+              <div class="kf-big">${n.toLocaleString()}</div>
+              <div class="kf-big-label">Campuses</div>
+            </div>
+            <div class="kf-hero-item">
+              <div class="kf-big">${(totalEnrollment / 1000000).toFixed(1)}M</div>
+              <div class="kf-big-label">Students</div>
+            </div>
+            <div class="kf-hero-item">
+              <div class="kf-big">${allDistricts.size}</div>
+              <div class="kf-big-label">Districts</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="kf-section">
+          <div class="kf-section-title">Concentration</div>
+          <div class="kf-row">
+            <span class="kf-metric">Avg districts reached</span>
+            <span class="kf-value">${avgDistricts}</span>
+          </div>
+          <div class="kf-row">
+            <span class="kf-metric">Median districts reached</span>
+            <span class="kf-value">${medianDistricts}</span>
+          </div>
+          <div class="kf-row">
+            <span class="kf-metric">Campuses reaching &le; 3 districts</span>
+            <span class="kf-value">${lte3.length.toLocaleString()} (${lte3Pct}%)</span>
+          </div>
+          <div class="kf-note" style="margin-left:0;">${lte3Students.toLocaleString()} students</div>
+          <div class="kf-row" style="margin-top:4px;">
+            <span class="kf-metric">Covering &gt; 50% of primary district</span>
+            <span class="kf-value">${over50.toLocaleString()} (${over50Pct}%)</span>
+          </div>
+          <div class="kf-row">
+            <span class="kf-metric">Avg primary district coverage</span>
+            <span class="kf-value">${avgCoverage}%</span>
+          </div>
+        </div>
+
+        <div class="kf-section">
+          <div class="kf-section-title">Campus Types</div>
+          ${['Large City','Midsize City','Suburban','Small City','Rural','Town / Remote'].map(t => {
+            const count = typeCounts[t] || 0;
+            const pct = ((count / n) * 100).toFixed(0);
+            const barW = ((count / maxTypeCount) * 100).toFixed(1);
+            return `<div class="kf-bar-row">
+              <span class="kf-bar-label">${t}</span>
+              <div class="kf-bar-track"><div class="kf-bar-fill" style="width:${barW}%;background:${typeColors[t]}"></div></div>
+              <span class="kf-bar-value">${count}</span>
+            </div>`;
+          }).join('')}
+        </div>
+
+        <div class="kf-section">
+          <div class="kf-section-title">Top States by Enrollment</div>
+          ${topStates.map(([st, enroll]) => {
+            const barW = ((enroll / maxStateEnroll) * 100).toFixed(1);
+            const label = enroll >= 1000000 ? (enroll / 1000000).toFixed(1) + 'M' : (enroll / 1000).toFixed(0) + 'K';
+            return `<div class="kf-bar-row">
+              <span class="kf-bar-label">${st} (${stateCounts[st]})</span>
+              <div class="kf-bar-track"><div class="kf-bar-fill" style="width:${barW}%;background:#4C6971"></div></div>
+              <span class="kf-bar-value">${label}</span>
+            </div>`;
+          }).join('')}
+        </div>
+
+        <div class="kf-section">
+          <div class="kf-section-title">2024 Swing States</div>
+          <div class="kf-row">
+            <span class="kf-metric">Campuses</span>
+            <span class="kf-value">${swingFeatures.length.toLocaleString()}</span>
+          </div>
+          <div class="kf-row">
+            <span class="kf-metric">Students</span>
+            <span class="kf-value">${swingEnroll >= 1000000 ? (swingEnroll/1000000).toFixed(1)+'M' : (swingEnroll/1000).toFixed(0)+'K'}</span>
+          </div>
+          ${['NC','AZ','MI','GA','PA','WI','NV'].filter(st => stateEnroll[st]).map(st => {
+            const enr = stateEnroll[st] || 0;
+            const cnt = stateCounts[st] || 0;
+            const label = enr >= 1000000 ? (enr / 1000000).toFixed(1) + 'M' : (enr / 1000).toFixed(0) + 'K';
+            return `<div class="kf-row">
+              <span class="kf-metric" style="padding-left:8px;">${st}</span>
+              <span class="kf-value">${label} &middot; ${cnt} campuses</span>
+            </div>`;
+          }).join('')}
+        </div>
+
+        <div class="kf-section">
+          <div class="kf-section-title">Enrollment</div>
+          <div class="kf-row">
+            <span class="kf-metric">Total enrollment</span>
+            <span class="kf-value">${totalEnrollment.toLocaleString()}</span>
+          </div>
+          <div class="kf-row">
+            <span class="kf-metric">Median campus enrollment</span>
+            <span class="kf-value">${(() => {
+              const sorted = features.map(f => f.properties.enrollment || 0).sort((a, b) => a - b);
+              const mid = Math.floor(sorted.length / 2);
+              return (sorted.length % 2 ? sorted[mid] : Math.round((sorted[mid-1] + sorted[mid]) / 2)).toLocaleString();
+            })()}</span>
+          </div>
+          <div class="kf-row">
+            <span class="kf-metric">Campuses &ge; 5K enrollment</span>
+            <span class="kf-value">${features.filter(f => (f.properties.enrollment || 0) >= 5000).length}</span>
+          </div>
+          <div class="kf-note">85% of total enrollment</div>
+        </div>
+      `;
+    }
 
     /* ── Helper: determine popup maxWidth based on viewport ── */
     function getPopupMaxWidth() {
@@ -666,6 +1000,7 @@
 
         /* ── Compute and display stats ── */
         updateStats(campusesData.features);
+        buildKeyFigures(campusesData.features);
 
         /* ── Set up interactions ── */
         setupDistrictHover();
@@ -905,7 +1240,10 @@
           map.setFilter('campus-points', null);
           map.setFilter('circle-fills', null);
           map.setFilter('circle-borders', null);
-          if (campusesData) updateStats(campusesData.features);
+          if (campusesData) {
+            updateStats(campusesData.features);
+            buildKeyFigures(campusesData.features);
+          }
           map.flyTo({ center: [-98.5, 39.8], zoom: 4 });
           return;
         }
@@ -920,6 +1258,7 @@
         if (campusesData) {
           const filtered = campusesData.features.filter(f => f.properties.state === selected);
           updateStats(filtered);
+          buildKeyFigures(filtered);
 
           // Fly to state bounds
           if (filtered.length > 0) {
