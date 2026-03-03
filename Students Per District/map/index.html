@@ -2127,7 +2127,7 @@
           const feat = campusesData.features.find(f => f.properties.name === campusName);
           if (feat) {
             const [lon, lat] = feat.geometry.coordinates;
-            map.flyTo({ center: [lon, lat], zoom: 10 });
+            map.flyTo({ center: [lon, lat], zoom: Math.max(map.getZoom(), 8), duration: 1000, essential: true });
             setTimeout(() => {
               highlightCampusDistricts(feat.properties.all_districts, feat.properties.primary_district);
               const popup = new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
@@ -2695,6 +2695,13 @@
 
         highlightCampusDistricts(props.all_districts, props.primary_district);
 
+        map.flyTo({
+          center: coords,
+          zoom: Math.max(map.getZoom(), 8),
+          duration: 1000,
+          essential: true,
+        });
+
         const popup = new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
           .setLngLat(coords)
           .setHTML(buildPopupHtml(props))
@@ -2804,7 +2811,7 @@
           el.addEventListener('click', () => {
             const feat = matches[i];
             const [lon, lat] = feat.geometry.coordinates;
-            map.flyTo({ center: [lon, lat], zoom: 10 });
+            map.flyTo({ center: [lon, lat], zoom: Math.max(map.getZoom(), 8), duration: 1000, essential: true });
             resultsDiv.style.display = 'none';
             input.value = feat.properties.name;
 
@@ -3215,7 +3222,7 @@
           /* Wait for map to be ready, then fly to campus */
           const flyAndPopup = () => {
             const [lon, lat] = feat.geometry.coordinates;
-            map.flyTo({ center: [lon, lat], zoom: 10 });
+            map.flyTo({ center: [lon, lat], zoom: Math.max(map.getZoom(), 8), duration: 1000, essential: true });
             setTimeout(() => {
               highlightCampusDistricts(feat.properties.all_districts, feat.properties.primary_district);
               const popup = new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
