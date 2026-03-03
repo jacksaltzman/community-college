@@ -318,3 +318,247 @@ def compute_yp_estimates(df: pd.DataFrame) -> pd.DataFrame:
     log.info(f"  Max density: {df['yp_density_pct'].max():.2f}%")
 
     return df
+
+
+# =========================================================================
+# Output Table & File Export
+# =========================================================================
+
+def build_output_table(df: pd.DataFrame) -> pd.DataFrame:
+    """Select and rename columns for the final output table.
+
+    Produces a clean, analysis-ready table sorted by YP density descending.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Full pipeline DataFrame with all computed columns.
+
+    Returns
+    -------
+    pd.DataFrame
+        Output table with standardized column names, sorted by yp_density_pct.
+    """
+    output_cols = {
+        "district_code": "district_code",
+        "state": "state",
+        "district_number": "district_number",
+        "total_pop": "total_population",
+        "pop_25_34": "pop_25_34",
+        "yp_estimate": "yp_estimate",
+        "yp_density_pct": "yp_density_pct",
+        "yp_share_of_cohort_pct": "yp_share_of_cohort_pct",
+        "swing_state": "swing_state",
+        "pct_bachelors": "pct_bachelors",
+        "pct_employed": "pct_employed",
+        "pct_income_40k_200k": "pct_income_40k_200k",
+        "pct_not_enrolled": "pct_not_enrolled",
+    }
+    out = df[list(output_cols.keys())].rename(columns=output_cols).copy()
+    out = out.sort_values("yp_density_pct", ascending=False).reset_index(drop=True)
+
+    log.info(f"Output table built: {len(out)} rows, {len(out.columns)} columns")
+    return out
+
+
+def write_outputs(out_df: pd.DataFrame) -> None:
+    """Write CSV and XLSX output files to OUTPUT_DIR.
+
+    Creates the output directory if it does not exist. Writes both a CSV
+    and an XLSX workbook with a named sheet.
+    """
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+
+    csv_path = OUTPUT_DIR / "yp_density_by_district.csv"
+    xlsx_path = OUTPUT_DIR / "yp_density_by_district.xlsx"
+
+    out_df.to_csv(csv_path, index=False)
+    log.info(f"CSV written: {csv_path} ({len(out_df)} rows)")
+
+    out_df.to_excel(xlsx_path, index=False, sheet_name="YP Density by District")
+    log.info(f"XLSX written: {xlsx_path} ({len(out_df)} rows)")
+
+
+# =========================================================================
+# Summary Markdown Generation
+# =========================================================================
+
+def write_summary(df: pd.DataFrame, out_df: pd.DataFrame) -> None:
+    """Write yp_analysis_summary.md with methodology, rankings, and findings.
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+        Full pipeline DataFrame (used for any additional detail lookups).
+    out_df : pd.DataFrame
+        Clean output table produced by build_output_table().
+    """
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    summary_path = OUTPUT_DIR / "yp_analysis_summary.md"
+
+    lines = []
+    lines.append("# Young Professional Density Analysis -- Summary\n")
+    lines.append(f"**Generated:** {pd.Timestamp.now().strftime('%Y-%m-%d')}\n")
+
+    # -- Methodology -------------------------------------------------------
+    lines.append("## Methodology\n")
+    lines.append("### Data Source\n")
+    lines.append("American Community Survey (ACS) 5-year estimates, 2022 vintage (2018-2022),")
+    lines.append("pulled via Census Bureau API at the congressional district level (CD118, 118th Congress).\n")
+
+    lines.append("### Persona Definition\n")
+    lines.append("| Filter | Definition | ACS Table | Age Bracket |")
+    lines.append("|--------|-----------|-----------|-------------|")
+    lines.append("| Age | 25-34 | B01001 | 25-29, 30-34 |")
+    lines.append("| Education | Bachelor's degree or higher | B15001 | 25-34 |")
+    lines.append("| Employment | Civilian employed | B23001 | 25-29, 30-34 |")
+    lines.append("| Income | $40K-$200K household income | B19037 | 25-44 (householder) |")
+    lines.append("| Enrollment | Not enrolled in college/grad school | B14004 | 25-34 |\n")
+
+    lines.append("### Estimation Method\n")
+    lines.append("Stepwise proportional estimation applied per-district:\n")
+    lines.append("```")
+    lines.append("yp_estimate = pop_25_34 x pct_bachelors x pct_employed x pct_income_40k_200k x pct_not_enrolled")
+    lines.append("```\n")
+    lines.append("Each proportion is district-specific. This assumes approximate independence between filters.\n")
+
+    # -- Caveats -----------------------------------------------------------
+    lines.append("### Caveats\n")
+    lines.append("1. **Age approximation**: ACS brackets give 25-34; spec requested 22-35.")
+    lines.append("2. **Independence assumption**: Filters are applied multiplicatively, assuming independence. Education and employment are positively correlated, so this may slightly overcount.")
+    lines.append("3. **Income table age bracket**: B19037 uses householder age 25-44, not 25-34. This includes older householders (35-44) in the income proportion.")
+    lines.append("4. **Householder vs individual**: B19037 measures household income by householder age. YPs in shared housing where someone else is the householder may be undercounted.")
+    lines.append("5. **ACS margins of error**: Small districts may have significant sampling error. Estimates should be treated as approximations.\n")
+
+    # -- National summary --------------------------------------------------
+    lines.append("## National Summary\n")
+    total_yp = out_df["yp_estimate"].sum()
+    median_yp = out_df["yp_estimate"].median()
+    mean_yp = out_df["yp_estimate"].mean()
+    total_pop = out_df["total_population"].sum()
+    total_25_34 = out_df["pop_25_34"].sum()
+
+    lines.append(f"- **Total estimated YPs nationally**: {total_yp:,.0f}")
+    lines.append(f"- **Total population (all districts)**: {total_pop:,}")
+    lines.append(f"- **Total 25-34 population**: {total_25_34:,}")
+    lines.append(f"- **National YP density**: {total_yp / total_pop * 100:.2f}%")
+    lines.append(f"- **YPs as share of 25-34 cohort**: {total_yp / total_25_34 * 100:.2f}%")
+    lines.append(f"- **Median YP count per district**: {median_yp:,.0f}")
+    lines.append(f"- **Mean YP count per district**: {mean_yp:,.0f}")
+    lines.append(f"- **Districts analyzed**: {len(out_df)}\n")
+
+    # -- Distribution percentiles ------------------------------------------
+    lines.append("### Distribution (YP count per district)\n")
+    lines.append("| Percentile | YP Count |")
+    lines.append("|-----------|----------|")
+    for p in [10, 25, 50, 75, 90, 95, 99]:
+        val = out_df["yp_estimate"].quantile(p / 100)
+        lines.append(f"| {p}th | {val:,.0f} |")
+    lines.append("")
+
+    # -- Top 50 by density -------------------------------------------------
+    lines.append("## Top 50 Districts by YP Density (%)\n")
+    lines.append("| Rank | District | State | YP Estimate | YP Density (%) | Pop 25-34 |")
+    lines.append("|------|----------|-------|-------------|----------------|-----------|")
+    top_density = out_df.nlargest(50, "yp_density_pct")
+    for i, (_, row) in enumerate(top_density.iterrows(), 1):
+        lines.append(
+            f"| {i} | {row['district_code']} | {row['state']} | "
+            f"{row['yp_estimate']:,.0f} | {row['yp_density_pct']:.2f} | "
+            f"{row['pop_25_34']:,} |"
+        )
+    lines.append("")
+
+    # -- Top 50 by absolute count ------------------------------------------
+    lines.append("## Top 50 Districts by Absolute YP Count\n")
+    lines.append("| Rank | District | State | YP Estimate | YP Density (%) | Total Pop |")
+    lines.append("|------|----------|-------|-------------|----------------|-----------|")
+    top_count = out_df.nlargest(50, "yp_estimate")
+    for i, (_, row) in enumerate(top_count.iterrows(), 1):
+        lines.append(
+            f"| {i} | {row['district_code']} | {row['state']} | "
+            f"{row['yp_estimate']:,.0f} | {row['yp_density_pct']:.2f} | "
+            f"{row['total_population']:,} |"
+        )
+    lines.append("")
+
+    # -- State-level rollup ------------------------------------------------
+    lines.append("## State-Level Rollup\n")
+    state_agg = out_df.groupby("state").agg(
+        total_yp=("yp_estimate", "sum"),
+        total_pop=("total_population", "sum"),
+        districts=("district_code", "count"),
+    ).reset_index()
+    state_agg["yp_density_pct"] = (state_agg["total_yp"] / state_agg["total_pop"] * 100).round(2)
+    state_agg = state_agg.sort_values("total_yp", ascending=False)
+
+    lines.append("| State | Districts | Total YP | Total Pop | YP Density (%) |")
+    lines.append("|-------|-----------|----------|-----------|----------------|")
+    for _, row in state_agg.iterrows():
+        lines.append(
+            f"| {row['state']} | {row['districts']} | {row['total_yp']:,.0f} | "
+            f"{row['total_pop']:,} | {row['yp_density_pct']:.2f} |"
+        )
+    lines.append("")
+
+    # -- Swing state breakout ----------------------------------------------
+    lines.append("## Swing State Analysis (AZ, GA, MI, NC, NV, PA, WI)\n")
+    swing_df = out_df[out_df["swing_state"]].copy()
+    swing_total_yp = swing_df["yp_estimate"].sum()
+    swing_total_pop = swing_df["total_population"].sum()
+
+    lines.append(f"- **Total swing-state YPs**: {swing_total_yp:,.0f}")
+    lines.append(f"- **Swing-state YP density**: {swing_total_yp / swing_total_pop * 100:.2f}%")
+    lines.append(f"- **Districts in swing states**: {len(swing_df)}\n")
+
+    lines.append("| District | State | YP Estimate | YP Density (%) | Pop 25-34 |")
+    lines.append("|----------|-------|-------------|----------------|-----------|")
+    swing_ranked = swing_df.sort_values("yp_density_pct", ascending=False)
+    for _, row in swing_ranked.iterrows():
+        lines.append(
+            f"| {row['district_code']} | {row['state']} | "
+            f"{row['yp_estimate']:,.0f} | {row['yp_density_pct']:.2f} | "
+            f"{row['pop_25_34']:,} |"
+        )
+    lines.append("")
+
+    summary_path.write_text("\n".join(lines))
+    log.info(f"Summary written: {summary_path} ({len(lines)} lines)")
+
+
+# =========================================================================
+# Main Pipeline
+# =========================================================================
+
+def main() -> None:
+    """Execute the full YP density pipeline.
+
+    Steps:
+      1. Pull all ACS data (5 tables, merged)
+      2. Compute YP estimates per district
+      3. Build clean output table
+      4. Write CSV and XLSX exports
+      5. Write summary markdown report
+    """
+    log.info("=== YP Pipeline START ===")
+
+    # Step 1: Pull all ACS data
+    df = pull_all_acs_data()
+
+    # Step 2: Compute YP estimates
+    df = compute_yp_estimates(df)
+
+    # Step 3: Build output table
+    out_df = build_output_table(df)
+
+    # Step 4: Write CSV and XLSX
+    write_outputs(out_df)
+
+    # Step 5: Write summary markdown
+    write_summary(df, out_df)
+
+    log.info("=== YP Pipeline END ===")
+
+
+if __name__ == "__main__":
+    main()
