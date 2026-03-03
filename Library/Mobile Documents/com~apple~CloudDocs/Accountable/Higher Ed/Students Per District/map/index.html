@@ -950,8 +950,8 @@
       <span class="nav-brand-subtitle">Community College District Map</span>
     </div>
     <div class="nav-tabs">
-      <button class="nav-tab active" data-page="dashboard">Dashboard</button>
-      <button class="nav-tab" data-page="map">Map</button>
+      <button class="nav-tab" data-page="dashboard" style="display:none">Dashboard</button>
+      <button class="nav-tab active" data-page="map">Map</button>
       <button class="nav-tab" data-page="data">Data</button>
       <button class="nav-tab" data-page="methodology">Methodology</button>
     </div>
@@ -963,8 +963,8 @@
   </nav>
 
   <div class="nav-mobile-dropdown" id="nav-mobile-dropdown">
-    <button class="nav-tab active" data-page="dashboard">Dashboard</button>
-    <button class="nav-tab" data-page="map">Map</button>
+    <button class="nav-tab" data-page="dashboard" style="display:none">Dashboard</button>
+    <button class="nav-tab active" data-page="map">Map</button>
     <button class="nav-tab" data-page="data">Data</button>
     <button class="nav-tab" data-page="methodology">Methodology</button>
   </div>
@@ -1421,7 +1421,7 @@
     let circlesData = null;
     let map = null;
     let mapInitialized = false;
-    let currentPage = 'dashboard';
+    let currentPage = 'map';
 
     /* Data table state */
     let dataTableSortCol = 'enrollment';
@@ -1520,7 +1520,7 @@
     function getPageFromHash() {
       const hash = window.location.hash.replace('#', '');
       if (['dashboard', 'map', 'data', 'methodology'].includes(hash)) return hash;
-      return 'dashboard';
+      return 'map';
     }
 
     /* Nav tab clicks */
