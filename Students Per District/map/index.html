@@ -2498,6 +2498,17 @@
             },
           });
 
+          /* District hover highlight */
+          map.addLayer({
+            id: 'district-hover',
+            type: 'fill',
+            source: 'districts',
+            paint: {
+              'fill-color': '#4C6971',
+              'fill-opacity': 0,
+            },
+          });
+
           /* District highlight layers — shown when a campus is clicked */
           map.addLayer({
             id: 'district-highlight-fills',
@@ -2673,11 +2684,15 @@
           tooltip.style.display = 'block';
           tooltip.style.left = (e.originalEvent.clientX + 12) + 'px';
           tooltip.style.top = (e.originalEvent.clientY - 12) + 'px';
+          map.setPaintProperty('district-hover', 'fill-opacity', 0.08);
+          map.setFilter('district-hover', ['==', ['get', 'cd_code'], e.features[0].properties.cd_code]);
         }
       });
 
       map.on('mouseleave', 'district-fills', () => {
         tooltip.style.display = 'none';
+        map.setPaintProperty('district-hover', 'fill-opacity', 0);
+        map.setFilter('district-hover', ['==', ['get', 'cd_code'], '']);
       });
     }
 
