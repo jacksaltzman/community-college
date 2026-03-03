@@ -1,6 +1,6 @@
 {
   "framework": null,
-  "buildCommand": "",
   "installCommand": "",
-  "outputDirectory": "Students Per District/map"
+  "buildCommand": "cp -r 'Students Per District/map' dist",
+  "outputDirectory": "dist"
 }
