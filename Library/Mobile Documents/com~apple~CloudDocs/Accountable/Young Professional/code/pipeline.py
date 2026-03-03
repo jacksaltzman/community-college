@@ -113,3 +113,80 @@ ENROLL_VARS = {
     "B14004_027E": "enr_female_private_25_34",
     "B14004_032E": "enr_female_not_enrolled_25_34",
 }
+
+
+# =========================================================================
+# ACS API Client
+# =========================================================================
+
+def fetch_acs_table(variables: dict[str, str]) -> pd.DataFrame:
+    """Pull ACS variables for all congressional districts.
+
+    Parameters
+    ----------
+    variables : dict
+        Mapping of ACS variable codes (e.g. "B01001_011E") to friendly names.
+
+    Returns
+    -------
+    pd.DataFrame
+        One row per district with columns: state_fips, cd_fips, plus all
+        friendly-named variable columns (as int, with -1 for missing/negative).
+    """
+    var_codes = list(variables.keys())
+    var_str = ",".join(var_codes)
+
+    params = {
+        "get": f"NAME,{var_str}",
+        "for": "congressional district:*",
+        "in": "state:*",
+    }
+    if CENSUS_API_KEY:
+        params["key"] = CENSUS_API_KEY
+
+    log.info(f"Fetching ACS variables: {var_codes[0]}..{var_codes[-1]} ({len(var_codes)} vars)")
+    resp = requests.get(ACS_BASE_URL, params=params, timeout=120)
+    resp.raise_for_status()
+
+    data = resp.json()
+    headers = data[0]
+    rows = data[1:]
+
+    df = pd.DataFrame(rows, columns=headers)
+
+    # Rename variable columns to friendly names
+    df = df.rename(columns=variables)
+
+    # Rename geography columns
+    df = df.rename(columns={"state": "state_fips", "congressional district": "cd_fips"})
+
+    # Convert numeric columns to int (ACS returns strings; negatives = missing)
+    for col in variables.values():
+        df[col] = pd.to_numeric(df[col], errors="coerce").fillna(-1).astype(int)
+
+    log.info(f"  Fetched {len(df)} districts")
+    return df
+
+
+def build_district_codes(df: pd.DataFrame) -> pd.DataFrame:
+    """Add district_code, state, and district_number columns from FIPS codes.
+
+    Filters out rows where cd_fips is non-numeric (e.g. "ZZ" for
+    "not defined" redistricting placeholders).
+    """
+    # Drop rows with non-numeric cd_fips (e.g. "ZZ" = not defined)
+    before = len(df)
+    df = df[df["cd_fips"].str.isdigit()].copy()
+    dropped = before - len(df)
+    if dropped:
+        log.info(f"  Dropped {dropped} rows with non-numeric cd_fips (e.g. ZZ)")
+
+    df["state"] = df["state_fips"].map(FIPS_TO_STATE)
+    df["district_number"] = df["cd_fips"].astype(int)
+    df["district_code"] = df.apply(
+        lambda r: f"{r['state']}-AL" if r["district_number"] == 0
+        else f"{r['state']}-{r['district_number']}",
+        axis=1,
+    )
+    df["swing_state"] = df["state"].isin(SWING_STATES)
+    return df
