@@ -424,29 +424,43 @@
             <div class="legend-item">
               <span class="legend-dot" style="background:#FE4F40"></span>
               <div class="legend-text">
-                <span class="legend-name">Compact</span>
-                <span class="legend-desc">Dense urban core. 10-mile commute radius.</span>
+                <span class="legend-name">Large City</span>
+                <span class="legend-desc">Large cities and suburbs. 15-mile radius.</span>
               </div>
             </div>
             <div class="legend-item">
               <span class="legend-dot" style="background:#4C6971"></span>
               <div class="legend-text">
-                <span class="legend-name">Mid-Size</span>
-                <span class="legend-desc">City or inner suburb. 13-mile radius.</span>
+                <span class="legend-name">Midsize City</span>
+                <span class="legend-desc">Midsize cities (100K-250K). 19-mile radius.</span>
               </div>
             </div>
             <div class="legend-item">
               <span class="legend-dot" style="background:#D4F72A"></span>
               <div class="legend-text">
-                <span class="legend-name">Large Metro</span>
-                <span class="legend-desc">Outer suburb or exurb. 17-mile radius.</span>
+                <span class="legend-name">Suburban</span>
+                <span class="legend-desc">Midsize and small suburbs. 22-mile radius.</span>
+              </div>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#E8A838"></span>
+              <div class="legend-text">
+                <span class="legend-name">Small City</span>
+                <span class="legend-desc">Small cities (&lt;100K). 25-mile radius.</span>
+              </div>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#8B6F47"></span>
+              <div class="legend-text">
+                <span class="legend-name">Rural</span>
+                <span class="legend-desc">Rural fringe and distant. 27-37-mile radius.</span>
               </div>
             </div>
             <div class="legend-item">
               <span class="legend-dot" style="background:#9CA3AF"></span>
               <div class="legend-text">
-                <span class="legend-name">Sprawl-Fragmented</span>
-                <span class="legend-desc">Rural or small town. 22-mile radius.</span>
+                <span class="legend-name">Town / Remote</span>
+                <span class="legend-desc">Towns and remote areas. 39-58-mile radius.</span>
               </div>
             </div>
           </div>
@@ -531,10 +545,12 @@
     /* ── Campus type color expression ── */
     const campusTypeColors = [
       'match', ['get', 'campus_type'],
-      'Compact', '#FE4F40',
-      'Mid-Size', '#4C6971',
-      'Large Metro', '#D4F72A',
-      'Sprawl-Fragmented', '#9CA3AF',
+      'Large City', '#FE4F40',
+      'Midsize City', '#4C6971',
+      'Suburban', '#D4F72A',
+      'Small City', '#E8A838',
+      'Rural', '#8B6F47',
+      'Town / Remote', '#9CA3AF',
       '#9CA3AF'
     ];
 
