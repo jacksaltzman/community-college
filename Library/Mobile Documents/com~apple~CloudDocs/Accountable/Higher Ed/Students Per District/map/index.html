@@ -10,115 +10,224 @@
   <!-- Google Fonts: DM Sans + Oswald -->
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
   <style>
+    /* ================================================================
+       CSS CUSTOM PROPERTIES
+       ================================================================ */
+    :root {
+      --coral: #FE4F40;
+      --teal: #4C6971;
+      --lime: #D4F72A;
+      --black: #111111;
+      --paper: #FDFBF9;
+      --border-main: #C8C1B6;
+      --border-light: #EEEAE4;
+      --gray-muted: #78716C;
+      --gray-lighter: #9CA3AF;
+      --gray-body: #44403C;
+      --hover-bg: #F5F0EB;
+      --color-large-city: #FE4F40;
+      --color-midsize-city: #4C6971;
+      --color-suburban: #D4F72A;
+      --color-small-city: #E8A838;
+      --color-rural: #8B6F47;
+      --color-town-remote: #9CA3AF;
+      --font-body: 'DM Sans', sans-serif;
+      --font-heading: 'Oswald', sans-serif;
+      --nav-height: 56px;
+    }
+
+    /* ================================================================
+       RESET & BASE
+       ================================================================ */
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      font-family: 'DM Sans', sans-serif;
-      background: #FDFBF9;
+      font-family: var(--font-body);
+      background: var(--paper);
+      color: var(--black);
     }
 
-    #app {
-      display: flex;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* ── Token Warning Banner ── */
-    #token-warning {
-      display: none;
-      background: #FE4F40;
-      color: white;
-      text-align: center;
-      padding: 12px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
+    /* ================================================================
+       TOP NAVIGATION BAR
+       ================================================================ */
+    #top-nav {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      z-index: 9999;
-    }
-    #token-warning a { color: white; font-weight: 700; }
-
-    /* ── Sidebar ── */
-    #sidebar {
-      width: 320px;
-      min-width: 320px;
-      height: 100vh;
-      overflow-y: auto;
-      background: #FDFBF9;
-      border-right: 1px solid #C8C1B6;
+      height: var(--nav-height);
+      background: var(--black);
       display: flex;
-      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 1000;
     }
 
-    .sidebar-header {
-      background: #111111;
-      padding: 16px;
+    .nav-brand {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      flex-shrink: 0;
     }
-    .logo-text {
-      font-family: 'Oswald', sans-serif;
+    .nav-brand-name {
+      font-family: var(--font-heading);
       font-weight: 700;
       font-size: 18px;
       color: white;
       letter-spacing: 0.15em;
     }
-    .header-subtitle {
-      font-family: 'Oswald', sans-serif;
+    .nav-brand-subtitle {
+      font-family: var(--font-heading);
       font-weight: 700;
       font-size: 11px;
-      color: #78716C;
-      letter-spacing: 0.2em;
+      color: var(--gray-muted);
+      letter-spacing: 0.15em;
       text-transform: uppercase;
-      margin-top: 4px;
     }
 
-    .sidebar-section {
-      padding: 16px;
-      border-bottom: 1px solid #EEEAE4;
+    .nav-tabs {
+      display: flex;
+      gap: 0;
+      align-items: stretch;
+      height: 100%;
     }
-    .sidebar-section:last-child {
+    .nav-tab {
+      background: none;
+      border: none;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gray-muted);
+      cursor: pointer;
+      padding: 0 20px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 3px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .nav-tab:hover { color: white; }
+    .nav-tab.active {
+      color: white;
+      border-bottom-color: var(--coral);
+    }
+
+    .nav-hamburger {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: white;
+      margin: 5px 0;
+      transition: 0.3s;
+    }
+
+    .nav-mobile-dropdown {
+      display: none;
+      position: fixed;
+      top: var(--nav-height);
+      left: 0;
+      right: 0;
+      background: var(--black);
+      z-index: 999;
+      flex-direction: column;
+      border-top: 1px solid #333;
+    }
+    .nav-mobile-dropdown.open {
+      display: flex;
+    }
+    .nav-mobile-dropdown .nav-tab {
+      height: 48px;
+      padding: 0 24px;
       border-bottom: none;
+      border-left: 3px solid transparent;
+      justify-content: flex-start;
+    }
+    .nav-mobile-dropdown .nav-tab.active {
+      border-left-color: var(--coral);
+      border-bottom-color: transparent;
     }
 
+    @media (max-width: 768px) {
+      .nav-tabs { display: none; }
+      .nav-hamburger { display: block; }
+      .nav-brand-subtitle { display: none; }
+    }
+
+    /* ================================================================
+       PAGE CONTAINER
+       ================================================================ */
+    #app {
+      margin-top: var(--nav-height);
+      height: calc(100vh - var(--nav-height));
+      overflow: hidden;
+    }
+
+    .page {
+      display: none;
+      width: 100%;
+      height: 100%;
+    }
+    .page.active {
+      display: block;
+    }
+    .page-scroll {
+      overflow-y: auto;
+      height: 100%;
+    }
+
+    /* ================================================================
+       SHARED: SECTION LABELS
+       ================================================================ */
     .section-label {
-      font-family: 'Oswald', sans-serif;
+      font-family: var(--font-heading);
       text-transform: uppercase;
       letter-spacing: 0.15em;
       font-size: 11px;
-      color: #78716C;
+      color: var(--gray-muted);
       margin-bottom: 8px;
       font-weight: 700;
     }
 
-    /* ── Search ── */
+    /* ================================================================
+       SHARED: SEARCH INPUT
+       ================================================================ */
     .search-input {
       width: 100%;
       padding: 8px 12px;
-      border: 1px solid #C8C1B6;
+      border: 1px solid var(--border-main);
       border-radius: 6px;
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-body);
       font-size: 13px;
       background: white;
-      color: #111111;
+      color: var(--black);
       outline: none;
     }
-    .search-input::placeholder { color: #9CA3AF; }
-    .search-input:focus { border-color: #4C6971; }
+    .search-input::placeholder { color: var(--gray-lighter); }
+    .search-input:focus { border-color: var(--teal); }
 
-    /* ── State Dropdown ── */
-    .state-select {
+    /* ================================================================
+       SHARED: SELECT DROPDOWN
+       ================================================================ */
+    .styled-select {
       width: 100%;
       padding: 8px 12px;
-      border: 1px solid #C8C1B6;
+      border: 1px solid var(--border-main);
       border-radius: 6px;
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-body);
       font-size: 13px;
       background: white;
-      color: #111111;
+      color: var(--black);
       outline: none;
-      margin-top: 8px;
       cursor: pointer;
       -webkit-appearance: none;
       appearance: none;
@@ -126,9 +235,255 @@
       background-repeat: no-repeat;
       background-position: right 12px center;
     }
-    .state-select:focus { border-color: #4C6971; }
+    .styled-select:focus { border-color: var(--teal); }
 
-    /* ── Layer Toggles ── */
+    /* ================================================================
+       TAB 1: DASHBOARD
+       ================================================================ */
+    #page-dashboard .page-scroll {
+      background: var(--paper);
+    }
+
+    .dash-content {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    /* Hero */
+    .dash-hero {
+      background: var(--black);
+      padding: 48px 24px;
+    }
+    .dash-hero-stats {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .dash-hero-stat {
+      text-align: center;
+    }
+    .dash-hero-value {
+      font-family: var(--font-body);
+      font-size: 36px;
+      font-weight: 700;
+      color: white;
+      line-height: 1;
+    }
+    .dash-hero-label {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--gray-muted);
+      margin-top: 6px;
+    }
+    .dash-hero-tagline {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--gray-muted);
+      text-align: center;
+      margin-top: 24px;
+    }
+
+    /* Dashboard body */
+    .dash-body {
+      padding: 24px;
+    }
+
+    .dash-section-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--black);
+      margin-bottom: 16px;
+      margin-top: 32px;
+    }
+    .dash-section-title:first-child { margin-top: 0; }
+
+    /* Two-column cards */
+    .dash-card-row {
+      display: flex;
+      gap: 16px;
+    }
+    .dash-card {
+      flex: 1;
+      border: 1px solid var(--border-light);
+      border-radius: 6px;
+      background: white;
+      padding: 20px;
+    }
+    .dash-card-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--gray-muted);
+      margin-bottom: 12px;
+    }
+    .dash-card-row-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 4px 0;
+    }
+    .dash-card-metric {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--gray-body);
+    }
+    .dash-card-value {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--black);
+    }
+    .dash-card-note {
+      font-family: var(--font-body);
+      font-size: 11px;
+      color: var(--gray-lighter);
+      margin-top: 2px;
+    }
+
+    /* Bar chart rows */
+    .dash-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 3px 0;
+    }
+    .dash-bar-label {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--gray-body);
+      width: 100px;
+      flex-shrink: 0;
+    }
+    .dash-bar-track {
+      flex: 1;
+      height: 8px;
+      background: var(--border-light);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .dash-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+    }
+    .dash-bar-value {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--black);
+      font-weight: 500;
+      width: 40px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* Swing states callout */
+    .dash-swing {
+      border-left: 3px solid var(--coral);
+      padding-left: 16px;
+      margin-top: 16px;
+    }
+    .dash-swing-header {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 12px;
+    }
+    .dash-swing-stat {
+      display: flex;
+      flex-direction: column;
+    }
+    .dash-swing-value {
+      font-family: var(--font-body);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--black);
+    }
+    .dash-swing-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      color: var(--gray-muted);
+    }
+    .dash-swing-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+    }
+    .dash-swing-state {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--gray-body);
+    }
+    .dash-swing-detail {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--black);
+      font-weight: 500;
+    }
+
+    @media (max-width: 600px) {
+      .dash-card-row { flex-direction: column; }
+      .dash-hero-stats { gap: 20px; }
+      .dash-hero-value { font-size: 28px; }
+    }
+
+    /* ================================================================
+       TAB 2: MAP
+       ================================================================ */
+    #page-map {
+      position: relative;
+    }
+    #page-map.active {
+      display: flex;
+    }
+
+    #map-app {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Sidebar */
+    #sidebar {
+      width: 320px;
+      min-width: 320px;
+      height: 100%;
+      overflow-y: auto;
+      background: var(--paper);
+      border-right: 1px solid var(--border-main);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      display: none; /* Hidden at desktop — top nav handles branding */
+      background: var(--black);
+      padding: 0 16px;
+    }
+    .logo-text {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 14px;
+      color: white;
+      letter-spacing: 0.1em;
+    }
+    .header-subtitle {
+      display: none; /* Redundant with top nav */
+    }
+
+    .sidebar-section {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .sidebar-section:last-child { border-bottom: none; }
+
+    /* Layer Toggles */
     .toggle-group {
       display: flex;
       flex-direction: column;
@@ -138,19 +493,19 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-body);
       font-size: 13px;
-      color: #111111;
+      color: var(--black);
       cursor: pointer;
     }
     .toggle-label input[type="checkbox"] {
-      accent-color: #4C6971;
+      accent-color: var(--teal);
       width: 14px;
       height: 14px;
       cursor: pointer;
     }
 
-    /* ── Legend ── */
+    /* Legend */
     .legend-items {
       display: flex;
       flex-direction: column;
@@ -159,9 +514,9 @@
     .legend-item {
       display: flex;
       gap: 8px;
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-body);
       font-size: 13px;
-      color: #111111;
+      color: var(--black);
     }
     .legend-dot {
       width: 10px;
@@ -175,208 +530,82 @@
     .legend-name { font-weight: 500; }
     .legend-desc {
       font-size: 11px;
-      color: #78716C;
+      color: var(--gray-muted);
       line-height: 1.3;
       margin-top: 1px;
     }
 
-    /* ── Tab Bar ── */
-    .tab-bar {
-      display: flex;
-      border-bottom: 1px solid #EEEAE4;
-      background: #FDFBF9;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 10px 0;
-      font-family: 'Oswald', sans-serif;
-      font-weight: 700;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      text-align: center;
-      border: none;
-      background: none;
-      color: #9CA3AF;
-      cursor: pointer;
-      border-bottom: 2px solid transparent;
-      transition: color 0.15s, border-color 0.15s;
-    }
-    .tab-btn:hover { color: #4C6971; }
-    .tab-btn.active {
-      color: #111111;
-      border-bottom-color: #FE4F40;
-    }
-    .tab-content { display: none; }
-    .tab-content.active { display: block; }
-
-    /* ── Stats ── */
+    /* Stats */
     .stat-row {
       display: flex;
       justify-content: space-between;
       padding: 4px 0;
     }
     .stat-label {
-      font-family: 'Oswald', sans-serif;
+      font-family: var(--font-heading);
       text-transform: uppercase;
       letter-spacing: 0.15em;
       font-size: 10px;
-      color: #78716C;
+      color: var(--gray-muted);
       font-weight: 700;
     }
     .stat-value {
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-body);
       font-size: 13px;
-      color: #111111;
+      color: var(--black);
       font-weight: 500;
     }
 
-    /* ── Key Figures Tab ── */
-    .kf-section {
-      padding: 12px 16px;
-      border-bottom: 1px solid #EEEAE4;
-    }
-    .kf-section:last-child { border-bottom: none; }
-    .kf-section-title {
-      font-family: 'Oswald', sans-serif;
-      font-weight: 700;
-      font-size: 11px;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: #78716C;
-      margin-bottom: 8px;
-    }
-    .kf-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      padding: 3px 0;
-      gap: 8px;
-    }
-    .kf-metric {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
-      color: #44403C;
-      flex: 1;
-    }
-    .kf-value {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 12px;
-      color: #111111;
-      font-weight: 700;
-      text-align: right;
-      white-space: nowrap;
-    }
-    .kf-note {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 10px;
-      color: #9CA3AF;
-      line-height: 1.3;
-      margin-top: 1px;
-    }
-    .kf-big {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 28px;
-      font-weight: 700;
-      color: #111111;
-      line-height: 1;
-    }
-    .kf-big-label {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 11px;
-      color: #78716C;
-      margin-top: 2px;
-    }
-    .kf-hero {
-      display: flex;
-      gap: 24px;
-      margin-bottom: 4px;
-    }
-    .kf-hero-item { flex: 1; }
-    .kf-bar-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 2px 0;
-    }
-    .kf-bar-label {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 11px;
-      color: #44403C;
-      width: 90px;
-      flex-shrink: 0;
-    }
-    .kf-bar-track {
-      flex: 1;
-      height: 6px;
-      background: #EEEAE4;
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .kf-bar-fill {
-      height: 100%;
-      border-radius: 3px;
-    }
-    .kf-bar-value {
-      font-family: 'DM Sans', sans-serif;
-      font-size: 11px;
-      color: #111111;
-      font-weight: 500;
-      width: 32px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-
-    /* ── Map ── */
+    /* Map container */
     #map {
       flex: 1;
-      height: 100vh;
+      height: 100%;
     }
 
-    /* ── District Tooltip ── */
+    /* District Tooltip */
     #district-tooltip {
       display: none;
       position: fixed;
       pointer-events: none;
-      background: #111111;
+      background: var(--black);
       color: white;
       padding: 6px 10px;
       border-radius: 4px;
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-body);
       font-size: 12px;
       z-index: 100;
       white-space: nowrap;
     }
 
-    /* ── Popup Styles ── */
+    /* Popup Styles */
     .campus-popup { min-width: 220px; max-width: 300px; }
     .popup-title {
-      font-family: 'Oswald', sans-serif;
+      font-family: var(--font-heading);
       font-weight: 700;
       font-size: 16px;
-      color: #111111;
+      color: var(--black);
       text-transform: uppercase;
       margin: 0;
       letter-spacing: 0.05em;
     }
     .popup-subtitle {
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-body);
       font-size: 13px;
-      color: #78716C;
+      color: var(--gray-muted);
       margin: 2px 0 8px;
     }
     .popup-label {
-      font-family: 'Oswald', sans-serif;
+      font-family: var(--font-heading);
       text-transform: uppercase;
       letter-spacing: 0.15em;
       font-size: 10px;
-      color: #78716C;
+      color: var(--gray-muted);
       font-weight: 700;
     }
     .popup-value {
-      font-family: 'DM Sans', sans-serif;
+      font-family: var(--font-body);
       font-size: 13px;
-      color: #111111;
+      color: var(--black);
       font-weight: 500;
       text-align: right;
       word-break: break-word;
@@ -386,7 +615,7 @@
       display: flex;
       justify-content: space-between;
       padding: 3px 0;
-      border-bottom: 1px solid #EEEAE4;
+      border-bottom: 1px solid var(--border-light);
       gap: 12px;
     }
     .popup-row:last-child { border-bottom: none; }
@@ -401,15 +630,15 @@
     }
     .mapboxgl-popup-close-button {
       font-size: 18px;
-      color: #78716C;
+      color: var(--gray-muted);
       padding: 4px 8px;
     }
 
-    /* ── Search Results Highlight ── */
+    /* Search Results */
     .search-results {
       max-height: 200px;
       overflow-y: auto;
-      border: 1px solid #C8C1B6;
+      border: 1px solid var(--border-main);
       border-radius: 6px;
       background: white;
       margin-top: 4px;
@@ -419,21 +648,20 @@
       padding: 6px 12px;
       font-size: 13px;
       cursor: pointer;
-      border-bottom: 1px solid #EEEAE4;
+      border-bottom: 1px solid var(--border-light);
     }
     .search-result-item:last-child { border-bottom: none; }
-    .search-result-item:hover { background: #F5F0EB; }
-    .search-result-name { color: #111111; font-weight: 500; }
-    .search-result-loc { color: #78716C; font-size: 11px; }
-    .search-no-results { padding: 10px 12px; font-size: 13px; color: #78716C; }
+    .search-result-item:hover { background: var(--hover-bg); }
+    .search-result-name { color: var(--black); font-weight: 500; }
+    .search-result-loc { color: var(--gray-muted); font-size: 11px; }
+    .search-no-results { padding: 10px 12px; font-size: 13px; color: var(--gray-muted); }
 
-    /* ── Hamburger Button ── */
-    .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
-    .hamburger span { display: block; width: 20px; height: 2px; background: white; margin: 4px 0; transition: 0.3s; }
+    /* Map sidebar hamburger */
+    .map-hamburger { display: none; background: none; border: none; cursor: pointer; padding: 4px; }
+    .map-hamburger span { display: block; width: 20px; height: 2px; background: white; margin: 4px 0; transition: 0.3s; }
 
-    /* ── Mobile Responsive ── */
     @media (max-width: 768px) {
-      .hamburger { display: block; }
+      .map-hamburger { display: block; }
 
       #sidebar {
         position: absolute;
@@ -445,12 +673,12 @@
         z-index: 10;
         overflow: hidden;
         border-right: none;
-        border-bottom: 1px solid #C8C1B6;
+        border-bottom: 1px solid var(--border-main);
         transition: height 0.3s ease;
       }
 
       #sidebar.open {
-        height: 100vh;
+        height: 100%;
         overflow-y: auto;
         z-index: 20;
       }
@@ -465,12 +693,12 @@
 
       .sidebar-header-left {
         display: flex;
-        flex-direction: column;
-        justify-content: center;
+        align-items: center;
       }
 
-      .header-subtitle {
-        margin-top: 0;
+      .sidebar-header .logo-text {
+        font-size: 12px;
+        letter-spacing: 0.12em;
       }
 
       #map {
@@ -481,372 +709,685 @@
         height: 100%;
       }
 
-      #app {
-        position: relative;
-      }
+      #map-app { position: relative; }
 
       .sidebar-controls {
         overflow-y: auto;
         -webkit-overflow-scrolling: touch;
-        max-height: calc(100vh - 48px);
+        max-height: calc(100% - 48px);
       }
+    }
+
+    /* ================================================================
+       TAB 3: DATA TABLE
+       ================================================================ */
+    #page-data.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .data-filter-bar {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      background: var(--paper);
+      flex-shrink: 0;
+    }
+    .data-filter-bar .search-input {
+      width: 240px;
+      flex-shrink: 0;
+    }
+    .data-filter-bar .styled-select {
+      width: 180px;
+      flex-shrink: 0;
+    }
+    .data-row-count {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--gray-muted);
+      margin-left: auto;
+      white-space: nowrap;
+    }
+
+    .data-table-wrap {
+      flex: 1;
+      overflow: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1100px;
+    }
+    .data-table thead {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    .data-table th {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--gray-muted);
+      background: var(--paper);
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 2px solid var(--border-main);
+      cursor: pointer;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .data-table th:hover { color: var(--black); }
+    .data-table th.sort-asc::after { content: ' \u25B2'; font-size: 8px; }
+    .data-table th.sort-desc::after { content: ' \u25BC'; font-size: 8px; }
+    .data-table th.num { text-align: right; }
+
+    .data-table td {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--black);
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-light);
+      vertical-align: top;
+    }
+    .data-table td.num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    .data-table tbody tr:hover {
+      background: var(--hover-bg);
+    }
+
+    .data-table .campus-link {
+      color: var(--teal);
+      text-decoration: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .data-table .campus-link:hover {
+      text-decoration: underline;
+    }
+
+    .data-table .type-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .data-table .districts-cell {
+      font-size: 11px;
+      color: var(--gray-body);
+      max-width: 200px;
+    }
+
+    @media (max-width: 768px) {
+      .data-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .data-filter-bar .search-input,
+      .data-filter-bar .styled-select {
+        width: 100%;
+      }
+      .data-row-count { margin-left: 0; }
+    }
+
+    /* ================================================================
+       TAB 4: METHODOLOGY
+       ================================================================ */
+    .methodology-content {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+    }
+
+    .methodology-content h1 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 28px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--black);
+      margin-bottom: 16px;
+    }
+
+    .methodology-content h2 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 18px;
+      text-transform: uppercase;
+      color: var(--teal);
+      border-bottom: 2px solid var(--coral);
+      padding-bottom: 6px;
+      margin-top: 40px;
+      margin-bottom: 16px;
+    }
+
+    .methodology-content h3 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      color: var(--gray-muted);
+      margin-top: 24px;
+      margin-bottom: 12px;
+    }
+
+    .methodology-content p {
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--black);
+      margin-bottom: 12px;
+    }
+
+    .methodology-content strong { font-weight: 700; }
+
+    .methodology-content code {
+      background: var(--hover-bg);
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: var(--font-body);
+      font-size: 13px;
+    }
+
+    .methodology-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+    }
+    .methodology-content th {
+      background: var(--black);
+      color: white;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 8px 12px;
+      text-align: left;
+    }
+    .methodology-content td {
+      font-family: var(--font-body);
+      font-size: 13px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--border-light);
+      color: var(--black);
+    }
+    .methodology-content tr:nth-child(even) td {
+      background: var(--hover-bg);
+    }
+
+    .methodology-content ol,
+    .methodology-content ul {
+      padding-left: 24px;
+      margin-bottom: 16px;
+    }
+    .methodology-content li {
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 12px;
     }
   </style>
 </head>
 <body>
-  <div id="token-warning">
-    Add your Mapbox token to use this map. Get a free token at
-    <a href="https://account.mapbox.com/auth/signup/" target="_blank">mapbox.com</a>
-  </div>
 
-  <div id="app">
-    <div id="sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-header-left">
-          <span class="logo-text">ACCOUNTABLE</span>
-          <div class="header-subtitle">Community College District Map</div>
-        </div>
-        <button class="hamburger" id="hamburger-btn" aria-label="Toggle menu">
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-      </div>
-
-      <div class="tab-bar">
-        <button class="tab-btn active" data-tab="map-tab">Map</button>
-        <button class="tab-btn" data-tab="kf-tab">Key Figures</button>
-      </div>
-
-      <div class="sidebar-controls">
-
-      <!-- ═══ MAP TAB ═══ -->
-      <div id="map-tab" class="tab-content active">
-
-        <!-- Search & Filter -->
-        <div class="sidebar-section">
-          <div class="section-label">Search</div>
-          <input type="text" id="search-input" class="search-input" placeholder="Search colleges...">
-          <div id="search-results" class="search-results"></div>
-          <select id="state-select" class="state-select">
-            <option value="">All States</option>
-          </select>
-        </div>
-
-        <!-- Layer Toggles -->
-        <div class="sidebar-section">
-          <div class="section-label">Layers</div>
-          <div class="toggle-group">
-            <label class="toggle-label">
-              <input type="checkbox" id="toggle-campuses" checked>
-              Campus Points
-            </label>
-            <label class="toggle-label">
-              <input type="checkbox" id="toggle-circles" checked>
-              Commute Circles
-            </label>
-            <label class="toggle-label">
-              <input type="checkbox" id="toggle-districts" checked>
-              District Boundaries
-            </label>
-          </div>
-        </div>
-
-        <!-- Legend -->
-        <div class="sidebar-section">
-          <div class="section-label">Campus Type</div>
-          <div class="legend-items">
-            <div class="legend-item">
-              <span class="legend-dot" style="background:#FE4F40"></span>
-              <div class="legend-text">
-                <span class="legend-name">Large City</span>
-                <span class="legend-desc">Large cities and suburbs. 15-mile radius.</span>
-              </div>
-            </div>
-            <div class="legend-item">
-              <span class="legend-dot" style="background:#4C6971"></span>
-              <div class="legend-text">
-                <span class="legend-name">Midsize City</span>
-                <span class="legend-desc">Midsize cities (100K-250K). 19-mile radius.</span>
-              </div>
-            </div>
-            <div class="legend-item">
-              <span class="legend-dot" style="background:#D4F72A"></span>
-              <div class="legend-text">
-                <span class="legend-name">Suburban</span>
-                <span class="legend-desc">Midsize and small suburbs. 22-mile radius.</span>
-              </div>
-            </div>
-            <div class="legend-item">
-              <span class="legend-dot" style="background:#E8A838"></span>
-              <div class="legend-text">
-                <span class="legend-name">Small City</span>
-                <span class="legend-desc">Small cities (&lt;100K). 25-mile radius.</span>
-              </div>
-            </div>
-            <div class="legend-item">
-              <span class="legend-dot" style="background:#8B6F47"></span>
-              <div class="legend-text">
-                <span class="legend-name">Rural</span>
-                <span class="legend-desc">Rural fringe and distant. 27-37-mile radius.</span>
-              </div>
-            </div>
-            <div class="legend-item">
-              <span class="legend-dot" style="background:#9CA3AF"></span>
-              <div class="legend-text">
-                <span class="legend-name">Town / Remote</span>
-                <span class="legend-desc">Towns and remote areas. 39-58-mile radius.</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="sidebar-section">
-          <div class="section-label">Summary</div>
-          <div id="stats">
-            <div class="stat-row">
-              <span class="stat-label">TOTAL CAMPUSES</span>
-              <span class="stat-value">--</span>
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">AVG DISTRICTS REACHED</span>
-              <span class="stat-value">--</span>
-            </div>
-          </div>
-        </div>
-
-      </div><!-- end #map-tab -->
-
-      <!-- ═══ KEY FIGURES TAB ═══ -->
-      <div id="kf-tab" class="tab-content">
-        <div id="key-figures-content">
-          <div class="kf-section" style="text-align:center; color:#9CA3AF; padding:32px 16px;">
-            Loading...
-          </div>
-        </div>
-      </div>
-
-      </div><!-- end .sidebar-controls -->
+  <!-- ================================================================
+       TOP NAVIGATION
+       ================================================================ -->
+  <nav id="top-nav">
+    <div class="nav-brand">
+      <span class="nav-brand-name">ACCOUNTABLE</span>
+      <span class="nav-brand-subtitle">Community College District Map</span>
     </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-page="dashboard">Dashboard</button>
+      <button class="nav-tab" data-page="map">Map</button>
+      <button class="nav-tab" data-page="data">Data</button>
+      <button class="nav-tab" data-page="methodology">Methodology</button>
+    </div>
+    <button class="nav-hamburger" id="nav-hamburger-btn" aria-label="Toggle navigation">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
 
-    <div id="map"></div>
+  <div class="nav-mobile-dropdown" id="nav-mobile-dropdown">
+    <button class="nav-tab active" data-page="dashboard">Dashboard</button>
+    <button class="nav-tab" data-page="map">Map</button>
+    <button class="nav-tab" data-page="data">Data</button>
+    <button class="nav-tab" data-page="methodology">Methodology</button>
   </div>
 
-  <div id="district-tooltip"></div>
+  <!-- ================================================================
+       APP CONTAINER
+       ================================================================ -->
+  <div id="app">
 
+    <!-- ════════════════════════════════════════════════════════════════
+         TAB 1: DASHBOARD
+         ════════════════════════════════════════════════════════════════ -->
+    <section id="page-dashboard" class="page active">
+      <div class="page-scroll">
+        <div class="dash-content">
+          <div class="dash-hero">
+            <div class="dash-hero-stats" id="dash-hero-stats">
+              <div class="dash-hero-stat">
+                <div class="dash-hero-value" id="dash-campuses">--</div>
+                <div class="dash-hero-label">Campuses</div>
+              </div>
+              <div class="dash-hero-stat">
+                <div class="dash-hero-value" id="dash-students">--</div>
+                <div class="dash-hero-label">Students</div>
+              </div>
+              <div class="dash-hero-stat">
+                <div class="dash-hero-value" id="dash-districts">--</div>
+                <div class="dash-hero-label">Districts</div>
+              </div>
+              <div class="dash-hero-stat">
+                <div class="dash-hero-value" id="dash-concentrated">--</div>
+                <div class="dash-hero-label">Reach &le;3 Districts</div>
+              </div>
+            </div>
+            <div class="dash-hero-tagline">Community college reach into congressional districts</div>
+          </div>
+
+          <div class="dash-body">
+            <!-- Concentration -->
+            <div class="dash-section-title">Concentration</div>
+            <div class="dash-card-row">
+              <div class="dash-card" id="dash-card-reach"></div>
+              <div class="dash-card" id="dash-card-coverage"></div>
+            </div>
+
+            <!-- Campus Types -->
+            <div class="dash-section-title">Campus Types</div>
+            <div id="dash-campus-types"></div>
+
+            <!-- Top States -->
+            <div class="dash-section-title">Top States by Enrollment</div>
+            <div id="dash-top-states"></div>
+
+            <!-- Swing States -->
+            <div class="dash-section-title">2024 Swing States</div>
+            <div id="dash-swing-states"></div>
+
+            <!-- Enrollment -->
+            <div class="dash-section-title">Enrollment</div>
+            <div id="dash-enrollment"></div>
+
+            <div style="height:40px"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         TAB 2: MAP
+         ════════════════════════════════════════════════════════════════ -->
+    <section id="page-map" class="page">
+      <div id="map-app">
+        <div id="sidebar">
+          <div class="sidebar-header">
+            <div class="sidebar-header-left">
+              <span class="logo-text">MAP CONTROLS</span>
+            </div>
+            <button class="map-hamburger" id="map-hamburger-btn" aria-label="Toggle sidebar">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+          </div>
+
+          <div class="sidebar-controls">
+            <!-- Search & Filter -->
+            <div class="sidebar-section">
+              <div class="section-label">Search</div>
+              <input type="text" id="map-search-input" class="search-input" placeholder="Search colleges...">
+              <div id="map-search-results" class="search-results"></div>
+              <select id="map-state-select" class="styled-select" style="margin-top:8px">
+                <option value="">All States</option>
+              </select>
+            </div>
+
+            <!-- Layer Toggles -->
+            <div class="sidebar-section">
+              <div class="section-label">Layers</div>
+              <div class="toggle-group">
+                <label class="toggle-label">
+                  <input type="checkbox" id="toggle-campuses" checked>
+                  Campus Points
+                </label>
+                <label class="toggle-label">
+                  <input type="checkbox" id="toggle-circles" checked>
+                  Commute Circles
+                </label>
+                <label class="toggle-label">
+                  <input type="checkbox" id="toggle-districts" checked>
+                  District Boundaries
+                </label>
+              </div>
+            </div>
+
+            <!-- Legend -->
+            <div class="sidebar-section">
+              <div class="section-label">Campus Type</div>
+              <div class="legend-items">
+                <div class="legend-item">
+                  <span class="legend-dot" style="background:var(--color-large-city)"></span>
+                  <div class="legend-text">
+                    <span class="legend-name">Large City</span>
+                    <span class="legend-desc">Large cities and suburbs. 15-mile radius.</span>
+                  </div>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background:var(--color-midsize-city)"></span>
+                  <div class="legend-text">
+                    <span class="legend-name">Midsize City</span>
+                    <span class="legend-desc">Midsize cities (100K-250K). 19-mile radius.</span>
+                  </div>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background:var(--color-suburban)"></span>
+                  <div class="legend-text">
+                    <span class="legend-name">Suburban</span>
+                    <span class="legend-desc">Midsize and small suburbs. 22-mile radius.</span>
+                  </div>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background:var(--color-small-city)"></span>
+                  <div class="legend-text">
+                    <span class="legend-name">Small City</span>
+                    <span class="legend-desc">Small cities (&lt;100K). 25-mile radius.</span>
+                  </div>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background:var(--color-rural)"></span>
+                  <div class="legend-text">
+                    <span class="legend-name">Rural</span>
+                    <span class="legend-desc">Rural fringe and distant. 27-37-mile radius.</span>
+                  </div>
+                </div>
+                <div class="legend-item">
+                  <span class="legend-dot" style="background:var(--color-town-remote)"></span>
+                  <div class="legend-text">
+                    <span class="legend-name">Town / Remote</span>
+                    <span class="legend-desc">Towns and remote areas. 39-58-mile radius.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="sidebar-section">
+              <div class="section-label">Summary</div>
+              <div id="map-stats">
+                <div class="stat-row">
+                  <span class="stat-label">TOTAL CAMPUSES</span>
+                  <span class="stat-value">--</span>
+                </div>
+                <div class="stat-row">
+                  <span class="stat-label">AVG DISTRICTS REACHED</span>
+                  <span class="stat-value">--</span>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- end .sidebar-controls -->
+        </div><!-- end #sidebar -->
+
+        <div id="map"></div>
+      </div><!-- end #map-app -->
+
+      <div id="district-tooltip"></div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         TAB 3: DATA TABLE
+         ════════════════════════════════════════════════════════════════ -->
+    <section id="page-data" class="page">
+      <div class="data-filter-bar">
+        <input type="text" id="data-search" class="search-input" placeholder="Search by name, city, state, or district...">
+        <select id="data-state-filter" class="styled-select">
+          <option value="">All States</option>
+        </select>
+        <select id="data-type-filter" class="styled-select">
+          <option value="">All Campus Types</option>
+          <option value="Large City">Large City</option>
+          <option value="Midsize City">Midsize City</option>
+          <option value="Suburban">Suburban</option>
+          <option value="Small City">Small City</option>
+          <option value="Rural">Rural</option>
+          <option value="Town / Remote">Town / Remote</option>
+        </select>
+        <span class="data-row-count" id="data-row-count">Loading...</span>
+      </div>
+      <div class="data-table-wrap">
+        <table class="data-table" id="data-table">
+          <thead>
+            <tr>
+              <th data-col="name">Name</th>
+              <th data-col="city">City</th>
+              <th data-col="state">State</th>
+              <th data-col="enrollment" class="num">Enrollment</th>
+              <th data-col="campus_type">Campus Type</th>
+              <th data-col="radius_miles" class="num">Radius (mi)</th>
+              <th data-col="districts_reached" class="num">Districts</th>
+              <th data-col="primary_district">Primary District</th>
+              <th data-col="primary_district_coverage" class="num">Coverage</th>
+              <th data-col="all_districts">All Districts</th>
+            </tr>
+          </thead>
+          <tbody id="data-tbody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         TAB 4: METHODOLOGY
+         ════════════════════════════════════════════════════════════════ -->
+    <section id="page-methodology" class="page">
+      <div class="page-scroll">
+        <div class="methodology-content">
+
+          <h1>Methodology: Community College District Intersections</h1>
+          <p>This document explains how the <code>cc_district_intersections.xlsx</code> workbook is produced &mdash; from raw data sources through final output.</p>
+
+          <h2>Data Sources</h2>
+          <table>
+            <thead>
+              <tr><th>Source</th><th>Description</th><th>Provider</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>HD2023</strong></td><td>Institutional characteristics (name, location, sector, highest level of offering)</td><td>IPEDS / NCES</td></tr>
+              <tr><td><strong>EFFY2023</strong></td><td>12-month unduplicated headcount enrollment</td><td>IPEDS / NCES</td></tr>
+              <tr><td><strong>CB 2023 CD118 500k</strong></td><td>118th Congress congressional district boundaries (cartographic, coast-clipped)</td><td>U.S. Census Bureau</td></tr>
+              <tr><td><strong>NPSAS:20</strong></td><td>75th-percentile student-to-campus distance by NCES locale code (retrieval code: swopse)</td><td>NCES PowerStats</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Step 1: Identify Community Colleges</h2>
+          <p>Campuses are selected from HD2023 using three inclusion groups:</p>
+          <table>
+            <thead>
+              <tr><th>Group</th><th>Filter</th><th>Count</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1</td><td><code>SECTOR = 4</code></td><td>~880</td><td>Traditional public two-year colleges</td></tr>
+              <tr><td>2</td><td><code>SECTOR = 5</code></td><td>~135</td><td>Private not-for-profit two-year colleges</td></tr>
+              <tr><td>3</td><td><code>SECTOR = 1</code> and <code>HLOFFER = 5</code></td><td>~245</td><td>Public institutions whose highest offering is a bachelor&rsquo;s degree &mdash; these are community colleges that were reclassified after their states authorized them to grant bachelor&rsquo;s degrees (e.g., Florida, Colorado, Arizona, Washington)</td></tr>
+            </tbody>
+          </table>
+          <p>Campuses with missing or zero coordinates are dropped. A post-processing step removes 37 additional institutions that were reclassified between HD2023 and HD2024 or whose IPEDS IDs became defunct due to mergers (primarily 11 Connecticut community colleges that consolidated into CT State Community College).</p>
+          <p><strong>Final campus count: 1,219.</strong></p>
+
+          <h2>Step 2: Join Enrollment Data</h2>
+          <p>Total 12-month unduplicated headcount enrollment is joined from EFFY2023, filtered to <code>EFFYLEV = 1</code> (all students) and <code>LSTUDY = 999</code> (total across all levels of study). This is a left join &mdash; campuses without enrollment data retain null values rather than being dropped.</p>
+
+          <h2>Step 3: Classify Campus by Locale and Assign Commute Radius</h2>
+          <p>Each campus is assigned a commute-shed radius based on its NCES locale code (the <code>LOCALE</code> field in HD2023). Radii come from the 75th-percentile (P75) student-to-campus crow-flies distance computed from the 2020 National Postsecondary Student Aid Study (NPSAS:20) via NCES PowerStats (retrieval code: swopse). The P75 was chosen over the median because it captures the commuting range of ~75% of students, reflecting the broader service area relevant to legislative outreach.</p>
+
+          <h3>Per-Locale Radius Lookup</h3>
+          <table>
+            <thead>
+              <tr><th>Locale Code</th><th>Description</th><th>P75 Radius</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>11</td><td>City Large</td><td>15 mi</td></tr>
+              <tr><td>12</td><td>City Midsize</td><td>19 mi</td></tr>
+              <tr><td>13</td><td>City Small</td><td>25 mi</td></tr>
+              <tr><td>21</td><td>Suburb Large</td><td>15 mi</td></tr>
+              <tr><td>22</td><td>Suburb Midsize</td><td>22 mi</td></tr>
+              <tr><td>23</td><td>Suburb Small</td><td>22 mi</td></tr>
+              <tr><td>31</td><td>Town Fringe</td><td>39 mi</td></tr>
+              <tr><td>32</td><td>Town Distant</td><td>44 mi</td></tr>
+              <tr><td>33</td><td>Town Remote</td><td>58 mi</td></tr>
+              <tr><td>41</td><td>Rural Fringe</td><td>27 mi</td></tr>
+              <tr><td>42</td><td>Rural Distant</td><td>37 mi</td></tr>
+              <tr><td>43</td><td>Rural Remote</td><td>55 mi</td></tr>
+            </tbody>
+          </table>
+          <p>Note: City Small (locale 13) uses a conservative 25-mile radius; the raw P75 of 35 miles was unstable due to small sample size.</p>
+
+          <h3>Display Groupings</h3>
+          <p>For the map legend and Excel labels, the 12 locale codes are grouped into 6 display categories:</p>
+          <table>
+            <thead>
+              <tr><th>Label</th><th>Locale Codes</th><th>Radius Range</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Large City</td><td>11, 21</td><td>15 mi</td></tr>
+              <tr><td>Midsize City</td><td>12</td><td>19 mi</td></tr>
+              <tr><td>Suburban</td><td>22, 23</td><td>22 mi</td></tr>
+              <tr><td>Small City</td><td>13</td><td>25 mi</td></tr>
+              <tr><td>Rural</td><td>41, 42</td><td>27&ndash;37 mi</td></tr>
+              <tr><td>Town / Remote</td><td>31, 32, 33, 43</td><td>39&ndash;58 mi</td></tr>
+            </tbody>
+          </table>
+          <p><strong>Fallback rule:</strong> Campuses with a missing or invalid locale code (null or -3) are assigned a 22-mile radius and the &ldquo;Suburban&rdquo; label. This affects approximately 3 campuses, primarily in U.S. territories.</p>
+
+          <h2>Step 4: Build Commute-Shed Circles</h2>
+          <p>A circular buffer is drawn around each campus point using its assigned radius. To ensure accurate area calculations, campuses are grouped by region and projected into an appropriate equal-area coordinate reference system before buffering:</p>
+          <table>
+            <thead>
+              <tr><th>Region</th><th>CRS</th><th>EPSG</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Continental U.S.</td><td>Albers Equal-Area Conic</td><td>5070</td></tr>
+              <tr><td>Alaska</td><td>Alaska Albers</td><td>3338</td></tr>
+              <tr><td>Hawaii</td><td>Hawaii Albers Equal-Area Conic</td><td>102007</td></tr>
+            </tbody>
+          </table>
+          <p>The resulting circles represent the estimated geographic area from which a campus draws commuting students.</p>
+
+          <h2>Step 5: Intersect Circles with Congressional Districts</h2>
+          <p>Each commute-shed circle is intersected with the 118th Congress congressional district boundaries. For every circle-district pair that overlaps:</p>
+          <ol>
+            <li>The <strong>exact geometric intersection</strong> is computed (not a bounding-box approximation)</li>
+            <li>The <strong>overlap area</strong> is measured in square miles</li>
+            <li>The <strong>fractional overlap</strong> is calculated as: <code>overlap area / total district area</code></li>
+          </ol>
+          <p>Pairs with fractional overlap below 1% are dropped, except that every campus retains at least its single best-overlapping district (this handles campuses in large at-large districts like Alaska, Montana, and Wyoming).</p>
+          <p>The district boundary files are cartographic (coast-clipped), so circles over water produce no overlap &mdash; this is expected and correct for coastal campuses.</p>
+
+          <h2>Step 6: Identify the Primary District</h2>
+          <p>For each campus, the district with the highest fractional overlap is flagged as the <strong>primary district</strong>. This is the district whose geographic area is most covered by the campus&rsquo;s commute shed &mdash; not necessarily the district where the campus is physically located (though it usually is).</p>
+
+          <h2>Output: Excel Workbook</h2>
+
+          <h3>Detail Sheet</h3>
+          <p>One row per campus-district pair. Each row describes a single overlap between one campus&rsquo;s commute circle and one congressional district.</p>
+          <table>
+            <thead>
+              <tr><th>Column</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>IPEDS ID</td><td>Unique institution identifier from IPEDS</td></tr>
+              <tr><td>Institution</td><td>Campus name</td></tr>
+              <tr><td>City, State</td><td>Campus location</td></tr>
+              <tr><td>Latitude, Longitude</td><td>Campus coordinates</td></tr>
+              <tr><td>Enrollment</td><td>12-month unduplicated headcount (EFFY2023)</td></tr>
+              <tr><td>Locale Code</td><td>NCES locale code (11&ndash;43) from HD2023</td></tr>
+              <tr><td>Campus Type</td><td>Locale-based classification (Large City / Midsize City / Suburban / Small City / Rural / Town / Remote)</td></tr>
+              <tr><td>Commute Radius (mi)</td><td>Radius of the commute-shed circle</td></tr>
+              <tr><td>District</td><td>Congressional district code (e.g., &ldquo;CA-12&rdquo;, &ldquo;TX-AL&rdquo;)</td></tr>
+              <tr><td>District State</td><td>State abbreviation of the district</td></tr>
+              <tr><td>District Number</td><td>Numeric district number (0 = at-large)</td></tr>
+              <tr><td>District Area (sq mi)</td><td>Total area of the congressional district</td></tr>
+              <tr><td>Overlap Area (sq mi)</td><td>Area where the commute circle overlaps this district</td></tr>
+              <tr><td>% of District Covered</td><td>Overlap area as a fraction of total district area</td></tr>
+              <tr><td>Primary District?</td><td>TRUE if this is the campus&rsquo;s highest-overlap district</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Summary Sheet</h3>
+          <p>One row per campus. Aggregates the detail rows into a single record per institution.</p>
+          <table>
+            <thead>
+              <tr><th>Column</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>IPEDS ID</td><td>Unique institution identifier</td></tr>
+              <tr><td>Institution</td><td>Campus name</td></tr>
+              <tr><td>City, State, Latitude, Longitude</td><td>Campus location</td></tr>
+              <tr><td>Enrollment</td><td>12-month unduplicated headcount</td></tr>
+              <tr><td>Locale Code</td><td>NCES locale code (11&ndash;43)</td></tr>
+              <tr><td>Campus Type</td><td>Locale-based classification</td></tr>
+              <tr><td>Commute Radius (mi)</td><td>Assigned commute radius</td></tr>
+              <tr><td>Districts Reached</td><td>Count of congressional districts the commute circle overlaps</td></tr>
+              <tr><td>Primary District</td><td>District code with the highest fractional overlap</td></tr>
+              <tr><td>Primary District Coverage</td><td>Fractional overlap of the primary district</td></tr>
+              <tr><td>All Districts</td><td>Pipe-delimited list of all overlapping districts, ordered by overlap descending</td></tr>
+            </tbody>
+          </table>
+
+          <h3>Validation Sheet</h3>
+          <p>Flags for data quality issues and records of removed institutions.</p>
+          <table>
+            <thead>
+              <tr><th>Flag Type</th><th>Meaning</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>zero_districts</code></td><td>Campus has no overlapping congressional districts (Pacific island territories)</td></tr>
+              <tr><td><code>missing_locale</code></td><td>Locale code is missing or -3; campus was classified using the fallback radius (22 mi)</td></tr>
+              <tr><td><code>removed</code></td><td>Institution was removed during data quality cleanup &mdash; either wrong sector per HD2024 or closed/merged</td></tr>
+            </tbody>
+          </table>
+
+          <h2>Key Assumptions</h2>
+          <ol>
+            <li><strong>Commute sheds are circular.</strong> In practice, commuting patterns follow road networks and natural geography. Circles are a simplification that works well for nationwide analysis but overestimates reach in areas with barriers (mountains, rivers, limited road access).</li>
+            <li><strong>NPSAS:20 P75 distance determines radius.</strong> Each campus&rsquo;s commute radius is set to the 75th-percentile student-to-campus distance for its NCES locale code, as computed from NPSAS:20. Urban campuses get smaller circles because students commute shorter distances in dense areas. The 12 locale-specific radii range from 15 miles (large cities) to 58 miles (remote towns).</li>
+            <li><strong>Fractional overlap is the right metric.</strong> A campus&rsquo;s influence on a district is measured by what fraction of the district&rsquo;s land area falls within the commute shed. This means a campus in a small urban district may &ldquo;cover&rdquo; 30% of it, while the same campus covers only 0.5% of an adjacent rural district &mdash; reflecting the reality that community college students represent a larger share of the electorate in compact districts.</li>
+            <li><strong>Coast-clipped boundaries are correct.</strong> The cartographic boundary files exclude water, so a campus on the coast will have a commute circle that partially covers ocean. This water area produces no district overlap, which is the correct behavior &mdash; students don&rsquo;t commute across water.</li>
+          </ol>
+
+        </div>
+      </div>
+    </section>
+
+  </div><!-- end #app -->
+
+  <!-- ================================================================
+       JAVASCRIPT
+       ================================================================ -->
   <script>
-    /* ── Hamburger toggle ── */
-    document.getElementById('hamburger-btn').addEventListener('click', () => {
-      const sidebar = document.getElementById('sidebar');
-      sidebar.classList.toggle('open');
-    });
-
-    /* ── Tab switching ── */
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        document.getElementById(btn.dataset.tab).classList.add('active');
-      });
-    });
-
-    /* ── Key Figures builder ── */
-    function buildKeyFigures(features) {
-      const n = features.length;
-      if (!n) return;
-
-      const totalEnrollment = features.reduce((s, f) => s + (f.properties.enrollment || 0), 0);
-      const avgDistricts = (features.reduce((s, f) => s + (f.properties.districts_reached || 0), 0) / n).toFixed(1);
-      const medianDistricts = (() => {
-        const sorted = features.map(f => f.properties.districts_reached || 0).sort((a, b) => a - b);
-        const mid = Math.floor(sorted.length / 2);
-        return sorted.length % 2 ? sorted[mid] : ((sorted[mid - 1] + sorted[mid]) / 2);
-      })();
-
-      // Concentration
-      const lte3 = features.filter(f => (f.properties.districts_reached || 0) <= 3);
-      const lte3Pct = ((lte3.length / n) * 100).toFixed(0);
-      const lte3Students = lte3.reduce((s, f) => s + (f.properties.enrollment || 0), 0);
-
-      // Primary district coverage
-      const coverages = features.map(f => f.properties.primary_district_coverage || 0);
-      const avgCoverage = ((coverages.reduce((s, v) => s + v, 0) / n) * 100).toFixed(1);
-      const over50 = coverages.filter(c => c >= 0.5).length;
-      const over50Pct = ((over50 / n) * 100).toFixed(0);
-
-      // Campus type distribution
-      const typeColors = {
-        'Large City': '#FE4F40', 'Midsize City': '#4C6971', 'Suburban': '#D4F72A',
-        'Small City': '#E8A838', 'Rural': '#8B6F47', 'Town / Remote': '#9CA3AF'
-      };
-      const typeCounts = {};
-      features.forEach(f => {
-        const t = f.properties.campus_type || 'Unknown';
-        typeCounts[t] = (typeCounts[t] || 0) + 1;
-      });
-      const maxTypeCount = Math.max(...Object.values(typeCounts));
-
-      // Top states
-      const stateCounts = {};
-      const stateEnroll = {};
-      features.forEach(f => {
-        const st = f.properties.state || '?';
-        stateCounts[st] = (stateCounts[st] || 0) + 1;
-        stateEnroll[st] = (stateEnroll[st] || 0) + (f.properties.enrollment || 0);
-      });
-      const topStates = Object.entries(stateEnroll)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 8);
-      const maxStateEnroll = topStates.length ? topStates[0][1] : 1;
-
-      // Swing states
-      const swingSet = new Set(['AZ','GA','MI','NV','NC','PA','WI']);
-      const swingFeatures = features.filter(f => swingSet.has(f.properties.state));
-      const swingEnroll = swingFeatures.reduce((s, f) => s + (f.properties.enrollment || 0), 0);
-
-      // All districts
-      const allDistricts = new Set();
-      features.forEach(f => {
-        if (f.properties.all_districts) {
-          f.properties.all_districts.split('|').forEach(d => allDistricts.add(d));
-        }
-      });
-
-      const el = document.getElementById('key-figures-content');
-      el.innerHTML = `
-        <div class="kf-section">
-          <div class="kf-hero">
-            <div class="kf-hero-item">
-              <div class="kf-big">${n.toLocaleString()}</div>
-              <div class="kf-big-label">Campuses</div>
-            </div>
-            <div class="kf-hero-item">
-              <div class="kf-big">${(totalEnrollment / 1000000).toFixed(1)}M</div>
-              <div class="kf-big-label">Students</div>
-            </div>
-            <div class="kf-hero-item">
-              <div class="kf-big">${allDistricts.size}</div>
-              <div class="kf-big-label">Districts</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="kf-section">
-          <div class="kf-section-title">Concentration</div>
-          <div class="kf-row">
-            <span class="kf-metric">Avg districts reached</span>
-            <span class="kf-value">${avgDistricts}</span>
-          </div>
-          <div class="kf-row">
-            <span class="kf-metric">Median districts reached</span>
-            <span class="kf-value">${medianDistricts}</span>
-          </div>
-          <div class="kf-row">
-            <span class="kf-metric">Campuses reaching &le; 3 districts</span>
-            <span class="kf-value">${lte3.length.toLocaleString()} (${lte3Pct}%)</span>
-          </div>
-          <div class="kf-note" style="margin-left:0;">${lte3Students.toLocaleString()} students</div>
-          <div class="kf-row" style="margin-top:4px;">
-            <span class="kf-metric">Covering &gt; 50% of primary district</span>
-            <span class="kf-value">${over50.toLocaleString()} (${over50Pct}%)</span>
-          </div>
-          <div class="kf-row">
-            <span class="kf-metric">Avg primary district coverage</span>
-            <span class="kf-value">${avgCoverage}%</span>
-          </div>
-        </div>
-
-        <div class="kf-section">
-          <div class="kf-section-title">Campus Types</div>
-          ${['Large City','Midsize City','Suburban','Small City','Rural','Town / Remote'].map(t => {
-            const count = typeCounts[t] || 0;
-            const pct = ((count / n) * 100).toFixed(0);
-            const barW = ((count / maxTypeCount) * 100).toFixed(1);
-            return `<div class="kf-bar-row">
-              <span class="kf-bar-label">${t}</span>
-              <div class="kf-bar-track"><div class="kf-bar-fill" style="width:${barW}%;background:${typeColors[t]}"></div></div>
-              <span class="kf-bar-value">${count}</span>
-            </div>`;
-          }).join('')}
-        </div>
-
-        <div class="kf-section">
-          <div class="kf-section-title">Top States by Enrollment</div>
-          ${topStates.map(([st, enroll]) => {
-            const barW = ((enroll / maxStateEnroll) * 100).toFixed(1);
-            const label = enroll >= 1000000 ? (enroll / 1000000).toFixed(1) + 'M' : (enroll / 1000).toFixed(0) + 'K';
-            return `<div class="kf-bar-row">
-              <span class="kf-bar-label">${st} (${stateCounts[st]})</span>
-              <div class="kf-bar-track"><div class="kf-bar-fill" style="width:${barW}%;background:#4C6971"></div></div>
-              <span class="kf-bar-value">${label}</span>
-            </div>`;
-          }).join('')}
-        </div>
-
-        <div class="kf-section">
-          <div class="kf-section-title">2024 Swing States</div>
-          <div class="kf-row">
-            <span class="kf-metric">Campuses</span>
-            <span class="kf-value">${swingFeatures.length.toLocaleString()}</span>
-          </div>
-          <div class="kf-row">
-            <span class="kf-metric">Students</span>
-            <span class="kf-value">${swingEnroll >= 1000000 ? (swingEnroll/1000000).toFixed(1)+'M' : (swingEnroll/1000).toFixed(0)+'K'}</span>
-          </div>
-          ${['NC','AZ','MI','GA','PA','WI','NV'].filter(st => stateEnroll[st]).map(st => {
-            const enr = stateEnroll[st] || 0;
-            const cnt = stateCounts[st] || 0;
-            const label = enr >= 1000000 ? (enr / 1000000).toFixed(1) + 'M' : (enr / 1000).toFixed(0) + 'K';
-            return `<div class="kf-row">
-              <span class="kf-metric" style="padding-left:8px;">${st}</span>
-              <span class="kf-value">${label} &middot; ${cnt} campuses</span>
-            </div>`;
-          }).join('')}
-        </div>
-
-        <div class="kf-section">
-          <div class="kf-section-title">Enrollment</div>
-          <div class="kf-row">
-            <span class="kf-metric">Total enrollment</span>
-            <span class="kf-value">${totalEnrollment.toLocaleString()}</span>
-          </div>
-          <div class="kf-row">
-            <span class="kf-metric">Median campus enrollment</span>
-            <span class="kf-value">${(() => {
-              const sorted = features.map(f => f.properties.enrollment || 0).sort((a, b) => a - b);
-              const mid = Math.floor(sorted.length / 2);
-              return (sorted.length % 2 ? sorted[mid] : Math.round((sorted[mid-1] + sorted[mid]) / 2)).toLocaleString();
-            })()}</span>
-          </div>
-          <div class="kf-row">
-            <span class="kf-metric">Campuses &ge; 5K enrollment</span>
-            <span class="kf-value">${features.filter(f => (f.properties.enrollment || 0) >= 5000).length}</span>
-          </div>
-          <div class="kf-note">85% of total enrollment</div>
-        </div>
-      `;
-    }
-
-    /* ── Helper: determine popup maxWidth based on viewport ── */
-    function getPopupMaxWidth() {
-      return window.innerWidth <= 768 ? '280px' : '320px';
-    }
-
     /* ================================================================
-       Mapbox Token — replace with your own
+       CONSTANTS
        ================================================================ */
     const MAPBOX_TOKEN = 'pk.eyJ1IjoiamFja3NhbHR6bWFuIiwiYSI6ImNtbTltbmVuZTA0aWEycG9pNWJuZDR6dzYifQ.UT_hl5vyNQnGVDIq1GYkTw';
-
-    // Show warning banner if token not set
-    if (MAPBOX_TOKEN === 'YOUR_MAPBOX_TOKEN_HERE') {
-      document.getElementById('token-warning').style.display = 'block';
-    }
-
     mapboxgl.accessToken = MAPBOX_TOKEN;
 
-    /* ── State name lookup for dropdown ── */
     const STATE_NAMES = {
       AL:'Alabama',AK:'Alaska',AS:'American Samoa',AZ:'Arizona',AR:'Arkansas',
       CA:'California',CO:'Colorado',CT:'Connecticut',DE:'Delaware',DC:'District of Columbia',
@@ -862,21 +1403,358 @@
       WI:'Wisconsin',WY:'Wyoming'
     };
 
-    /* ── Global references ── */
+    const CAMPUS_TYPE_COLORS = {
+      'Large City': '#FE4F40',
+      'Midsize City': '#4C6971',
+      'Suburban': '#D4F72A',
+      'Small City': '#E8A838',
+      'Rural': '#8B6F47',
+      'Town / Remote': '#9CA3AF'
+    };
+
+    const CAMPUS_TYPE_ORDER = ['Large City', 'Midsize City', 'Suburban', 'Small City', 'Rural', 'Town / Remote'];
+
+    /* ================================================================
+       GLOBAL STATE
+       ================================================================ */
     let campusesData = null;
     let circlesData = null;
+    let map = null;
+    let mapInitialized = false;
+    let currentPage = 'dashboard';
 
-    /* ── Initialize Map ── */
-    const map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/light-v11',
-      center: [-98.5, 39.8],
-      zoom: 4,
+    /* Data table state */
+    let dataTableSortCol = 'enrollment';
+    let dataTableSortDir = 'desc';
+
+    /* ================================================================
+       UTILITY FUNCTIONS
+       ================================================================ */
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function fmtNum(n) {
+      return n != null ? Number(n).toLocaleString() : 'N/A';
+    }
+
+    function fmtEnrollShort(n) {
+      if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+      if (n >= 1000) return (n / 1000).toFixed(0) + 'K';
+      return String(n);
+    }
+
+    function getPopupMaxWidth() {
+      return window.innerWidth <= 768 ? '280px' : '320px';
+    }
+
+    /* Shared popup builder */
+    function buildPopupHtml(props) {
+      const enrollment = props.enrollment ? Number(props.enrollment).toLocaleString() : 'N/A';
+      const coverage = props.primary_district_coverage
+        ? (Number(props.primary_district_coverage) * 100).toFixed(1) + '%'
+        : 'N/A';
+      const allDistricts = props.all_districts
+        ? String(props.all_districts).replace(/\|/g, ', ')
+        : 'N/A';
+
+      return `
+        <div class="campus-popup">
+          <div class="popup-title">${escapeHtml(props.name)}</div>
+          <div class="popup-subtitle">${escapeHtml(props.city)}, ${escapeHtml(props.state)}</div>
+          <div class="popup-stats">
+            <div class="popup-row"><span class="popup-label">ENROLLMENT</span><span class="popup-value">${enrollment}</span></div>
+            <div class="popup-row"><span class="popup-label">CAMPUS TYPE</span><span class="popup-value">${escapeHtml(props.campus_type)}</span></div>
+            <div class="popup-row"><span class="popup-label">COMMUTE RADIUS</span><span class="popup-value">${props.radius_miles} mi</span></div>
+            <div class="popup-row"><span class="popup-label">DISTRICTS REACHED</span><span class="popup-value">${props.districts_reached}</span></div>
+            <div class="popup-row"><span class="popup-label">PRIMARY DISTRICT</span><span class="popup-value">${escapeHtml(props.primary_district)} (${coverage})</span></div>
+            <div class="popup-row"><span class="popup-label">ALL DISTRICTS</span><span class="popup-value">${escapeHtml(allDistricts)}</span></div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* ================================================================
+       TAB / HASH ROUTER
+       ================================================================ */
+    function navigateTo(page) {
+      currentPage = page;
+      window.location.hash = '#' + page;
+
+      /* Update nav tabs */
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.page === page);
+      });
+
+      /* Update pages */
+      document.querySelectorAll('.page').forEach(p => {
+        p.classList.remove('active');
+      });
+      const target = document.getElementById('page-' + page);
+      if (target) target.classList.add('active');
+
+      /* Close mobile dropdown */
+      document.getElementById('nav-mobile-dropdown').classList.remove('open');
+
+      /* Map-specific handling */
+      if (page === 'map') {
+        if (!mapInitialized) {
+          initMap();
+          mapInitialized = true;
+        } else if (map) {
+          setTimeout(() => map.resize(), 50);
+        }
+      }
+
+      /* Data table: populate on first view */
+      if (page === 'data' && campusesData) {
+        renderDataTable();
+      }
+    }
+
+    function getPageFromHash() {
+      const hash = window.location.hash.replace('#', '');
+      if (['dashboard', 'map', 'data', 'methodology'].includes(hash)) return hash;
+      return 'dashboard';
+    }
+
+    /* Nav tab clicks */
+    document.querySelectorAll('.nav-tab').forEach(btn => {
+      btn.addEventListener('click', () => navigateTo(btn.dataset.page));
     });
 
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    /* Nav hamburger */
+    document.getElementById('nav-hamburger-btn').addEventListener('click', () => {
+      document.getElementById('nav-mobile-dropdown').classList.toggle('open');
+    });
 
-    /* ── Campus type color expression ── */
+    /* Hash change */
+    window.addEventListener('hashchange', () => {
+      navigateTo(getPageFromHash());
+    });
+
+    /* ================================================================
+       DATA LOADING (campuses.geojson at startup)
+       ================================================================ */
+    async function loadCampusData() {
+      try {
+        const res = await fetch('data/campuses.geojson');
+        campusesData = await res.json();
+
+        /* Build dashboard */
+        buildDashboard(campusesData.features);
+
+        /* Populate state dropdowns */
+        populateStateDropdowns();
+
+        /* If currently on data tab, render table */
+        if (currentPage === 'data') renderDataTable();
+
+      } catch (err) {
+        console.error('Failed to load campus data:', err);
+      }
+    }
+
+    function populateStateDropdowns() {
+      const stateSet = new Set();
+      campusesData.features.forEach(f => stateSet.add(f.properties.state));
+      const states = Array.from(stateSet).sort();
+
+      [document.getElementById('map-state-select'),
+       document.getElementById('data-state-filter')].forEach(sel => {
+        states.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s;
+          opt.textContent = STATE_NAMES[s] ? STATE_NAMES[s] + ' (' + s + ')' : s;
+          sel.appendChild(opt);
+        });
+      });
+    }
+
+    /* ================================================================
+       TAB 1: DASHBOARD BUILDER
+       ================================================================ */
+    function buildDashboard(features) {
+      const n = features.length;
+      if (!n) return;
+
+      const totalEnrollment = features.reduce((s, f) => s + (f.properties.enrollment || 0), 0);
+
+      /* All districts */
+      const allDistrictSet = new Set();
+      features.forEach(f => {
+        if (f.properties.all_districts) {
+          f.properties.all_districts.split('|').forEach(d => allDistrictSet.add(d));
+        }
+      });
+
+      /* Concentration metrics */
+      const districtCounts = features.map(f => f.properties.districts_reached || 0);
+      const avgDistricts = (districtCounts.reduce((s, v) => s + v, 0) / n).toFixed(1);
+      const sortedDistricts = districtCounts.slice().sort((a, b) => a - b);
+      const mid = Math.floor(sortedDistricts.length / 2);
+      const medianDistricts = sortedDistricts.length % 2 ? sortedDistricts[mid] : ((sortedDistricts[mid - 1] + sortedDistricts[mid]) / 2);
+
+      const lte3 = features.filter(f => (f.properties.districts_reached || 0) <= 3);
+      const lte3Pct = ((lte3.length / n) * 100).toFixed(0);
+      const lte3Students = lte3.reduce((s, f) => s + (f.properties.enrollment || 0), 0);
+
+      /* Primary district coverage */
+      const coverages = features.map(f => f.properties.primary_district_coverage || 0);
+      const avgCoverage = ((coverages.reduce((s, v) => s + v, 0) / n) * 100).toFixed(1);
+      const over50 = coverages.filter(c => c >= 0.5).length;
+      const near100 = coverages.filter(c => c >= 0.95).length;
+
+      /* Campus type distribution */
+      const typeCounts = {};
+      features.forEach(f => {
+        const t = f.properties.campus_type || 'Unknown';
+        typeCounts[t] = (typeCounts[t] || 0) + 1;
+      });
+      const maxTypeCount = Math.max(...Object.values(typeCounts));
+
+      /* State stats */
+      const stateCounts = {};
+      const stateEnroll = {};
+      features.forEach(f => {
+        const st = f.properties.state || '?';
+        stateCounts[st] = (stateCounts[st] || 0) + 1;
+        stateEnroll[st] = (stateEnroll[st] || 0) + (f.properties.enrollment || 0);
+      });
+      const topStates = Object.entries(stateEnroll)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+      const maxStateEnroll = topStates.length ? topStates[0][1] : 1;
+
+      /* Swing states */
+      const swingOrder = ['NC', 'AZ', 'MI', 'GA', 'PA', 'WI', 'NV'];
+      const swingSet = new Set(swingOrder);
+      const swingFeatures = features.filter(f => swingSet.has(f.properties.state));
+      const swingEnroll = swingFeatures.reduce((s, f) => s + (f.properties.enrollment || 0), 0);
+
+      /* Enrollment */
+      const enrollments = features.map(f => f.properties.enrollment || 0).sort((a, b) => a - b);
+      const eMid = Math.floor(enrollments.length / 2);
+      const medianEnrollment = enrollments.length % 2 ? enrollments[eMid] : Math.round((enrollments[eMid - 1] + enrollments[eMid]) / 2);
+      const gte5k = features.filter(f => (f.properties.enrollment || 0) >= 5000);
+      const gte5kEnroll = gte5k.reduce((s, f) => s + (f.properties.enrollment || 0), 0);
+      const gte5kPct = totalEnrollment > 0 ? ((gte5kEnroll / totalEnrollment) * 100).toFixed(0) : '0';
+
+      /* ── Hero ── */
+      document.getElementById('dash-campuses').textContent = fmtNum(n);
+      document.getElementById('dash-students').textContent = (totalEnrollment / 1000000).toFixed(1) + 'M';
+      document.getElementById('dash-districts').textContent = fmtNum(allDistrictSet.size);
+      document.getElementById('dash-concentrated').textContent = lte3Pct + '%';
+
+      /* ── Concentration cards ── */
+      document.getElementById('dash-card-reach').innerHTML = `
+        <div class="dash-card-title">District Reach</div>
+        <div class="dash-card-row-item">
+          <span class="dash-card-metric">Avg districts reached</span>
+          <span class="dash-card-value">${avgDistricts}</span>
+        </div>
+        <div class="dash-card-row-item">
+          <span class="dash-card-metric">Median districts reached</span>
+          <span class="dash-card-value">${medianDistricts}</span>
+        </div>
+        <div class="dash-card-row-item">
+          <span class="dash-card-metric">Campuses &le;3 districts</span>
+          <span class="dash-card-value">${fmtNum(lte3.length)} (${lte3Pct}%)</span>
+        </div>
+        <div class="dash-card-note">${fmtNum(lte3Students)} students</div>
+      `;
+
+      document.getElementById('dash-card-coverage').innerHTML = `
+        <div class="dash-card-title">Primary Coverage</div>
+        <div class="dash-card-row-item">
+          <span class="dash-card-metric">Avg primary district coverage</span>
+          <span class="dash-card-value">${avgCoverage}%</span>
+        </div>
+        <div class="dash-card-row-item">
+          <span class="dash-card-metric">&gt;50% primary coverage</span>
+          <span class="dash-card-value">${fmtNum(over50)} (${((over50 / n) * 100).toFixed(0)}%)</span>
+        </div>
+        <div class="dash-card-row-item">
+          <span class="dash-card-metric">~100% primary coverage</span>
+          <span class="dash-card-value">${fmtNum(near100)}</span>
+        </div>
+      `;
+
+      /* ── Campus types bar chart ── */
+      document.getElementById('dash-campus-types').innerHTML = CAMPUS_TYPE_ORDER.map(t => {
+        const count = typeCounts[t] || 0;
+        const barW = ((count / maxTypeCount) * 100).toFixed(1);
+        return `<div class="dash-bar-row">
+          <span class="dash-bar-label">${t}</span>
+          <div class="dash-bar-track"><div class="dash-bar-fill" style="width:${barW}%;background:${CAMPUS_TYPE_COLORS[t]}"></div></div>
+          <span class="dash-bar-value">${count}</span>
+        </div>`;
+      }).join('');
+
+      /* ── Top states bar chart ── */
+      document.getElementById('dash-top-states').innerHTML = topStates.map(([st, enroll]) => {
+        const barW = ((enroll / maxStateEnroll) * 100).toFixed(1);
+        return `<div class="dash-bar-row">
+          <span class="dash-bar-label">${st} (${stateCounts[st]})</span>
+          <div class="dash-bar-track"><div class="dash-bar-fill" style="width:${barW}%;background:var(--teal)"></div></div>
+          <span class="dash-bar-value">${fmtEnrollShort(enroll)}</span>
+        </div>`;
+      }).join('');
+
+      /* ── Swing states ── */
+      document.getElementById('dash-swing-states').innerHTML = `
+        <div class="dash-swing">
+          <div class="dash-swing-header">
+            <div class="dash-swing-stat">
+              <span class="dash-swing-value">${fmtNum(swingFeatures.length)}</span>
+              <span class="dash-swing-label">Campuses</span>
+            </div>
+            <div class="dash-swing-stat">
+              <span class="dash-swing-value">${fmtEnrollShort(swingEnroll)}</span>
+              <span class="dash-swing-label">Students</span>
+            </div>
+          </div>
+          ${swingOrder.filter(st => stateEnroll[st]).map(st => {
+            const enr = stateEnroll[st] || 0;
+            const cnt = stateCounts[st] || 0;
+            return `<div class="dash-swing-row">
+              <span class="dash-swing-state">${st}</span>
+              <span class="dash-swing-detail">${fmtEnrollShort(enr)} &middot; ${cnt} campuses</span>
+            </div>`;
+          }).join('')}
+        </div>
+      `;
+
+      /* ── Enrollment ── */
+      document.getElementById('dash-enrollment').innerHTML = `
+        <div class="dash-card" style="max-width:480px">
+          <div class="dash-card-row-item">
+            <span class="dash-card-metric">Total enrollment</span>
+            <span class="dash-card-value">${fmtNum(totalEnrollment)}</span>
+          </div>
+          <div class="dash-card-row-item">
+            <span class="dash-card-metric">Median campus enrollment</span>
+            <span class="dash-card-value">${fmtNum(medianEnrollment)}</span>
+          </div>
+          <div class="dash-card-row-item">
+            <span class="dash-card-metric">Campuses &ge;5K enrollment</span>
+            <span class="dash-card-value">${fmtNum(gte5k.length)}</span>
+          </div>
+          <div class="dash-card-note">${gte5kPct}% of total enrollment</div>
+        </div>
+      `;
+    }
+
+    /* ================================================================
+       TAB 2: MAP — LAZY INITIALIZATION
+       ================================================================ */
+
+    /* Campus type color expression for Mapbox */
     const campusTypeColors = [
       'match', ['get', 'campus_type'],
       'Large City', '#FE4F40',
@@ -888,7 +1766,7 @@
       '#9CA3AF'
     ];
 
-    /* ── Generate a circle polygon for commute sheds ── */
+    /* Generate a circle polygon for commute sheds */
     function createCirclePolygon(center, radiusMiles, properties) {
       const radiusKm = radiusMiles * 1.60934;
       const points = 64;
@@ -908,119 +1786,113 @@
       };
     }
 
-    /* ── Map load handler ── */
-    map.on('load', async () => {
-      try {
-        const [campusesRes, districtsRes] = await Promise.all([
-          fetch('data/campuses.geojson'),
-          fetch('data/districts.geojson'),
-        ]);
-        campusesData = await campusesRes.json();
-        const districtsData = await districtsRes.json();
+    function initMap() {
+      map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/light-v11',
+        center: [-98.5, 39.8],
+        zoom: 4,
+      });
 
-        /* ── Build commute circle features ── */
-        const circleFeatures = campusesData.features.map(f => {
-          const [lon, lat] = f.geometry.coordinates;
-          return createCirclePolygon([lon, lat], f.properties.radius_miles, f.properties);
-        });
-        circlesData = { type: 'FeatureCollection', features: circleFeatures };
+      map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-        /* ── Add sources ── */
-        map.addSource('districts', { type: 'geojson', data: districtsData });
-        map.addSource('commute-circles', { type: 'geojson', data: circlesData });
-        map.addSource('campuses', { type: 'geojson', data: campusesData });
+      map.on('load', async () => {
+        try {
+          /* Build commute circle features from already-loaded campuses */
+          const circleFeatures = campusesData.features.map(f => {
+            const [lon, lat] = f.geometry.coordinates;
+            return createCirclePolygon([lon, lat], f.properties.radius_miles, f.properties);
+          });
+          circlesData = { type: 'FeatureCollection', features: circleFeatures };
 
-        /* ── Layer order: district fills -> district borders -> circle fills -> circle borders -> campus points ── */
+          /* Lazy-load districts */
+          const districtsRes = await fetch('data/districts.geojson');
+          const districtsData = await districtsRes.json();
 
-        map.addLayer({
-          id: 'district-fills',
-          type: 'fill',
-          source: 'districts',
-          paint: {
-            'fill-color': '#F5F0EB',
-            'fill-opacity': 0.3,
-          },
-        });
+          /* Add sources */
+          map.addSource('districts', { type: 'geojson', data: districtsData });
+          map.addSource('commute-circles', { type: 'geojson', data: circlesData });
+          map.addSource('campuses', { type: 'geojson', data: campusesData });
 
-        map.addLayer({
-          id: 'district-borders',
-          type: 'line',
-          source: 'districts',
-          paint: {
-            'line-color': '#111111',
-            'line-width': ['interpolate', ['linear'], ['zoom'], 3, 0.3, 10, 1.5],
-            'line-opacity': 0.5,
-          },
-        });
+          /* Layer order: district fills -> district borders -> circle fills -> circle borders -> campus points */
 
-        map.addLayer({
-          id: 'circle-fills',
-          type: 'fill',
-          source: 'commute-circles',
-          paint: {
-            'fill-color': campusTypeColors,
-            'fill-opacity': 0.12,
-          },
-        });
+          map.addLayer({
+            id: 'district-fills',
+            type: 'fill',
+            source: 'districts',
+            paint: {
+              'fill-color': '#F5F0EB',
+              'fill-opacity': 0.3,
+            },
+          });
 
-        map.addLayer({
-          id: 'circle-borders',
-          type: 'line',
-          source: 'commute-circles',
-          paint: {
-            'line-color': campusTypeColors,
-            'line-width': 1,
-            'line-opacity': 0.4,
-          },
-        });
+          map.addLayer({
+            id: 'district-borders',
+            type: 'line',
+            source: 'districts',
+            paint: {
+              'line-color': '#111111',
+              'line-width': ['interpolate', ['linear'], ['zoom'], 3, 0.3, 10, 1.5],
+              'line-opacity': 0.5,
+            },
+          });
 
-        map.addLayer({
-          id: 'campus-points',
-          type: 'circle',
-          source: 'campuses',
-          paint: {
-            'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 10, 8],
-            'circle-color': campusTypeColors,
-            'circle-stroke-width': 1,
-            'circle-stroke-color': '#111111',
-          },
-        });
+          map.addLayer({
+            id: 'circle-fills',
+            type: 'fill',
+            source: 'commute-circles',
+            paint: {
+              'fill-color': campusTypeColors,
+              'fill-opacity': 0.12,
+            },
+          });
 
-        /* ── Populate state dropdown ── */
-        const stateSet = new Set();
-        campusesData.features.forEach(f => stateSet.add(f.properties.state));
-        const states = Array.from(stateSet).sort();
-        const stateSelect = document.getElementById('state-select');
-        states.forEach(s => {
-          const opt = document.createElement('option');
-          opt.value = s;
-          opt.textContent = STATE_NAMES[s] ? `${STATE_NAMES[s]} (${s})` : s;
-          stateSelect.appendChild(opt);
-        });
+          map.addLayer({
+            id: 'circle-borders',
+            type: 'line',
+            source: 'commute-circles',
+            paint: {
+              'line-color': campusTypeColors,
+              'line-width': 1,
+              'line-opacity': 0.4,
+            },
+          });
 
-        /* ── Compute and display stats ── */
-        updateStats(campusesData.features);
-        buildKeyFigures(campusesData.features);
+          map.addLayer({
+            id: 'campus-points',
+            type: 'circle',
+            source: 'campuses',
+            paint: {
+              'circle-radius': ['interpolate', ['linear'], ['zoom'], 3, 3, 10, 8],
+              'circle-color': campusTypeColors,
+              'circle-stroke-width': 1,
+              'circle-stroke-color': '#111111',
+            },
+          });
 
-        /* ── Set up interactions ── */
-        setupDistrictHover();
-        setupCampusClick();
-        setupLayerToggles();
-        setupSearch();
-        setupStateFilter();
+          /* Update sidebar stats */
+          updateMapStats(campusesData.features);
 
-      } catch (err) {
-        console.error('Failed to load map data:', err);
-      }
-    });
+          /* Set up interactions */
+          setupDistrictHover();
+          setupCampusClick();
+          setupLayerToggles();
+          setupMapSearch();
+          setupMapStateFilter();
 
-    /* ── Update stats display ── */
-    function updateStats(features) {
+        } catch (err) {
+          console.error('Failed to load map data:', err);
+        }
+      });
+    }
+
+    /* ── Map sidebar stats ── */
+    function updateMapStats(features) {
       const total = features.length;
       const avgDistricts = total > 0
         ? (features.reduce((sum, f) => sum + (f.properties.districts_reached || 0), 0) / total).toFixed(1)
         : '0';
-      document.getElementById('stats').innerHTML = `
+      document.getElementById('map-stats').innerHTML = `
         <div class="stat-row">
           <span class="stat-label">TOTAL CAMPUSES</span>
           <span class="stat-value">${total.toLocaleString()}</span>
@@ -1039,7 +1911,7 @@
       map.on('mousemove', 'district-fills', (e) => {
         if (e.features && e.features.length > 0) {
           const props = e.features[0].properties;
-          tooltip.textContent = props.cd_code + (props.name ? ' — ' + props.name : '');
+          tooltip.textContent = props.cd_code + (props.name ? ' \u2014 ' + props.name : '');
           tooltip.style.display = 'block';
           tooltip.style.left = (e.originalEvent.clientX + 12) + 'px';
           tooltip.style.top = (e.originalEvent.clientY - 12) + 'px';
@@ -1059,37 +1931,13 @@
         const props = e.features[0].properties;
         const coords = e.features[0].geometry.coordinates.slice();
 
-        // Ensure popup appears at clicked feature when map is zoomed
         while (Math.abs(e.lngLat.lng - coords[0]) > 180) {
           coords[0] += e.lngLat.lng > coords[0] ? 360 : -360;
         }
 
-        const enrollment = props.enrollment ? Number(props.enrollment).toLocaleString() : 'N/A';
-        const coverage = props.primary_district_coverage
-          ? (Number(props.primary_district_coverage) * 100).toFixed(1) + '%'
-          : 'N/A';
-        const allDistricts = props.all_districts
-          ? String(props.all_districts).replace(/\|/g, ', ')
-          : 'N/A';
-
-        const html = `
-          <div class="campus-popup">
-            <div class="popup-title">${escapeHtml(props.name)}</div>
-            <div class="popup-subtitle">${escapeHtml(props.city)}, ${escapeHtml(props.state)}</div>
-            <div class="popup-stats">
-              <div class="popup-row"><span class="popup-label">ENROLLMENT</span><span class="popup-value">${enrollment}</span></div>
-              <div class="popup-row"><span class="popup-label">CAMPUS TYPE</span><span class="popup-value">${escapeHtml(props.campus_type)}</span></div>
-              <div class="popup-row"><span class="popup-label">COMMUTE RADIUS</span><span class="popup-value">${props.radius_miles} mi</span></div>
-              <div class="popup-row"><span class="popup-label">DISTRICTS REACHED</span><span class="popup-value">${props.districts_reached}</span></div>
-              <div class="popup-row"><span class="popup-label">PRIMARY DISTRICT</span><span class="popup-value">${escapeHtml(props.primary_district)} (${coverage})</span></div>
-              <div class="popup-row"><span class="popup-label">ALL DISTRICTS</span><span class="popup-value">${escapeHtml(allDistricts)}</span></div>
-            </div>
-          </div>
-        `;
-
         new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
           .setLngLat(coords)
-          .setHTML(html)
+          .setHTML(buildPopupHtml(props))
           .addTo(map);
       });
 
@@ -1099,16 +1947,6 @@
       map.on('mouseleave', 'campus-points', () => {
         map.getCanvas().style.cursor = '';
       });
-    }
-
-    /* ── Escape HTML helper ── */
-    function escapeHtml(str) {
-      if (!str) return '';
-      return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
     }
 
     /* ── Layer toggle controls ── */
@@ -1131,10 +1969,10 @@
       });
     }
 
-    /* ── Search functionality ── */
-    function setupSearch() {
-      const input = document.getElementById('search-input');
-      const resultsDiv = document.getElementById('search-results');
+    /* ── Map search functionality ── */
+    function setupMapSearch() {
+      const input = document.getElementById('map-search-input');
+      const resultsDiv = document.getElementById('map-search-results');
 
       input.addEventListener('input', () => {
         const query = input.value.trim().toLowerCase();
@@ -1144,7 +1982,6 @@
           return;
         }
 
-        // Split query into words for flexible matching
         const queryWords = query.split(/\s+/).filter(w => w.length > 0);
 
         const matches = campusesData.features
@@ -1153,7 +1990,6 @@
             const city = (f.properties.city || '').toLowerCase();
             const state = (f.properties.state || '').toLowerCase();
             const searchable = name + ' ' + city + ' ' + state;
-            // Every query word must appear somewhere
             return queryWords.every(w => searchable.includes(w));
           })
           .slice(0, 20);
@@ -1180,87 +2016,55 @@
             resultsDiv.style.display = 'none';
             input.value = feat.properties.name;
 
-            // On mobile, collapse sidebar so the map is visible
+            /* On mobile, collapse sidebar */
             if (window.innerWidth <= 768) {
               document.getElementById('sidebar').classList.remove('open');
             }
 
-            // Trigger a popup for the selected campus
+            /* Show popup */
             setTimeout(() => {
-              const props = feat.properties;
-              const enrollment = props.enrollment ? Number(props.enrollment).toLocaleString() : 'N/A';
-              const coverage = props.primary_district_coverage
-                ? (Number(props.primary_district_coverage) * 100).toFixed(1) + '%'
-                : 'N/A';
-              const allDistricts = props.all_districts
-                ? String(props.all_districts).replace(/\|/g, ', ')
-                : 'N/A';
-
-              const html = `
-                <div class="campus-popup">
-                  <div class="popup-title">${escapeHtml(props.name)}</div>
-                  <div class="popup-subtitle">${escapeHtml(props.city)}, ${escapeHtml(props.state)}</div>
-                  <div class="popup-stats">
-                    <div class="popup-row"><span class="popup-label">ENROLLMENT</span><span class="popup-value">${enrollment}</span></div>
-                    <div class="popup-row"><span class="popup-label">CAMPUS TYPE</span><span class="popup-value">${escapeHtml(props.campus_type)}</span></div>
-                    <div class="popup-row"><span class="popup-label">COMMUTE RADIUS</span><span class="popup-value">${props.radius_miles} mi</span></div>
-                    <div class="popup-row"><span class="popup-label">DISTRICTS REACHED</span><span class="popup-value">${props.districts_reached}</span></div>
-                    <div class="popup-row"><span class="popup-label">PRIMARY DISTRICT</span><span class="popup-value">${escapeHtml(props.primary_district)} (${coverage})</span></div>
-                    <div class="popup-row"><span class="popup-label">ALL DISTRICTS</span><span class="popup-value">${escapeHtml(allDistricts)}</span></div>
-                  </div>
-                </div>
-              `;
-
               new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
                 .setLngLat([lon, lat])
-                .setHTML(html)
+                .setHTML(buildPopupHtml(feat.properties))
                 .addTo(map);
             }, 1000);
           });
         });
       });
 
-      // Close results when clicking outside
+      /* Close results when clicking outside */
       document.addEventListener('click', (e) => {
-        if (!e.target.closest('#search-input') && !e.target.closest('#search-results')) {
+        if (!e.target.closest('#map-search-input') && !e.target.closest('#map-search-results')) {
           resultsDiv.style.display = 'none';
         }
       });
     }
 
-    /* ── State filter ── */
-    function setupStateFilter() {
-      const stateSelect = document.getElementById('state-select');
+    /* ── Map state filter ── */
+    function setupMapStateFilter() {
+      const stateSelect = document.getElementById('map-state-select');
 
       stateSelect.addEventListener('change', () => {
         const selected = stateSelect.value;
 
         if (!selected) {
-          // Reset — show all
           map.setFilter('campus-points', null);
           map.setFilter('circle-fills', null);
           map.setFilter('circle-borders', null);
-          if (campusesData) {
-            updateStats(campusesData.features);
-            buildKeyFigures(campusesData.features);
-          }
+          if (campusesData) updateMapStats(campusesData.features);
           map.flyTo({ center: [-98.5, 39.8], zoom: 4 });
           return;
         }
 
-        // Filter layers to selected state
         const stateFilter = ['==', ['get', 'state'], selected];
         map.setFilter('campus-points', stateFilter);
         map.setFilter('circle-fills', stateFilter);
         map.setFilter('circle-borders', stateFilter);
 
-        // Update stats for filtered set
         if (campusesData) {
           const filtered = campusesData.features.filter(f => f.properties.state === selected);
-          updateStats(filtered);
-          buildKeyFigures(filtered);
+          updateMapStats(filtered);
 
-          // Fly to state bounds
           if (filtered.length > 0) {
             const bounds = new mapboxgl.LngLatBounds();
             filtered.forEach(f => bounds.extend(f.geometry.coordinates));
@@ -1269,6 +2073,190 @@
         }
       });
     }
+
+    /* ── Map sidebar hamburger ── */
+    document.getElementById('map-hamburger-btn').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.toggle('open');
+    });
+
+    /* ================================================================
+       TAB 3: DATA TABLE
+       ================================================================ */
+    let dataTableRendered = false;
+
+    function getFilteredSortedData() {
+      if (!campusesData) return [];
+
+      const searchVal = document.getElementById('data-search').value.trim().toLowerCase();
+      const stateVal = document.getElementById('data-state-filter').value;
+      const typeVal = document.getElementById('data-type-filter').value;
+
+      const searchWords = searchVal.split(/\s+/).filter(w => w.length > 0);
+
+      let filtered = campusesData.features.filter(f => {
+        const p = f.properties;
+
+        /* State filter */
+        if (stateVal && p.state !== stateVal) return false;
+
+        /* Type filter */
+        if (typeVal && p.campus_type !== typeVal) return false;
+
+        /* Search filter */
+        if (searchWords.length > 0) {
+          const searchable = [
+            (p.name || ''),
+            (p.city || ''),
+            (p.state || ''),
+            (p.primary_district || '')
+          ].join(' ').toLowerCase();
+          if (!searchWords.every(w => searchable.includes(w))) return false;
+        }
+
+        return true;
+      });
+
+      /* Sort */
+      const col = dataTableSortCol;
+      const dir = dataTableSortDir === 'asc' ? 1 : -1;
+
+      filtered.sort((a, b) => {
+        let va = a.properties[col];
+        let vb = b.properties[col];
+
+        /* Numeric columns */
+        if (['enrollment', 'radius_miles', 'districts_reached', 'primary_district_coverage'].includes(col)) {
+          va = Number(va) || 0;
+          vb = Number(vb) || 0;
+          return (va - vb) * dir;
+        }
+
+        /* String columns */
+        va = String(va || '').toLowerCase();
+        vb = String(vb || '').toLowerCase();
+        if (va < vb) return -1 * dir;
+        if (va > vb) return 1 * dir;
+        return 0;
+      });
+
+      return filtered;
+    }
+
+    function renderDataTable() {
+      const filtered = getFilteredSortedData();
+      const tbody = document.getElementById('data-tbody');
+      const totalCount = campusesData ? campusesData.features.length : 0;
+
+      document.getElementById('data-row-count').textContent =
+        'Showing ' + filtered.length + ' of ' + fmtNum(totalCount) + ' campuses';
+
+      /* Update sort indicators on headers */
+      document.querySelectorAll('#data-table th').forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+        if (th.dataset.col === dataTableSortCol) {
+          th.classList.add(dataTableSortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+        }
+      });
+
+      /* Build rows */
+      const rowsHtml = filtered.map((f, idx) => {
+        const p = f.properties;
+        const coverage = p.primary_district_coverage
+          ? (Number(p.primary_district_coverage) * 100).toFixed(1) + '%'
+          : 'N/A';
+        const allDist = p.all_districts
+          ? String(p.all_districts).replace(/\|/g, ', ')
+          : '';
+        const typeColor = CAMPUS_TYPE_COLORS[p.campus_type] || '#9CA3AF';
+
+        return `<tr>
+          <td><a class="campus-link" data-feature-idx="${idx}" href="javascript:void(0)">${escapeHtml(p.name)}</a></td>
+          <td>${escapeHtml(p.city)}</td>
+          <td>${escapeHtml(p.state)}</td>
+          <td class="num">${p.enrollment ? fmtNum(p.enrollment) : 'N/A'}</td>
+          <td><span class="type-dot" style="background:${typeColor}"></span>${escapeHtml(p.campus_type)}</td>
+          <td class="num">${p.radius_miles}</td>
+          <td class="num">${p.districts_reached}</td>
+          <td>${escapeHtml(p.primary_district)}</td>
+          <td class="num">${coverage}</td>
+          <td class="districts-cell">${escapeHtml(allDist)}</td>
+        </tr>`;
+      }).join('');
+
+      tbody.innerHTML = rowsHtml;
+
+      /* Attach click handlers for campus links */
+      tbody.querySelectorAll('.campus-link').forEach(link => {
+        link.addEventListener('click', () => {
+          const idx = parseInt(link.dataset.featureIdx, 10);
+          const feat = filtered[idx];
+          if (!feat) return;
+
+          /* Switch to map tab */
+          navigateTo('map');
+
+          /* Wait for map to be ready, then fly to campus */
+          const flyAndPopup = () => {
+            const [lon, lat] = feat.geometry.coordinates;
+            map.flyTo({ center: [lon, lat], zoom: 10 });
+            setTimeout(() => {
+              new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
+                .setLngLat([lon, lat])
+                .setHTML(buildPopupHtml(feat.properties))
+                .addTo(map);
+            }, 1000);
+          };
+
+          if (map && map.loaded()) {
+            flyAndPopup();
+          } else if (map) {
+            map.once('load', flyAndPopup);
+          } else {
+            /* Map not yet initialized — wait for it */
+            const checkInterval = setInterval(() => {
+              if (map && map.loaded()) {
+                clearInterval(checkInterval);
+                flyAndPopup();
+              }
+            }, 200);
+          }
+        });
+      });
+
+      dataTableRendered = true;
+    }
+
+    /* Sort header clicks */
+    document.querySelectorAll('#data-table th').forEach(th => {
+      th.addEventListener('click', () => {
+        const col = th.dataset.col;
+        if (!col) return;
+        if (dataTableSortCol === col) {
+          dataTableSortDir = dataTableSortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          dataTableSortCol = col;
+          dataTableSortDir = ['enrollment', 'radius_miles', 'districts_reached', 'primary_district_coverage'].includes(col) ? 'desc' : 'asc';
+        }
+        renderDataTable();
+      });
+    });
+
+    /* Filter event listeners */
+    document.getElementById('data-search').addEventListener('input', () => {
+      if (dataTableRendered) renderDataTable();
+    });
+    document.getElementById('data-state-filter').addEventListener('change', () => {
+      if (dataTableRendered) renderDataTable();
+    });
+    document.getElementById('data-type-filter').addEventListener('change', () => {
+      if (dataTableRendered) renderDataTable();
+    });
+
+    /* ================================================================
+       STARTUP
+       ================================================================ */
+    loadCampusData();
+    navigateTo(getPageFromHash());
   </script>
 </body>
 </html>
