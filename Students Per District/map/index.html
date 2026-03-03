@@ -638,25 +638,30 @@
 
     .map-reset-btn {
       width: 100%;
-      padding: 7px 12px;
+      padding: 8px 12px;
       border: 1px solid var(--border-main);
       border-radius: 6px;
       font-family: var(--font-body);
       font-size: 12px;
-      font-weight: 500;
-      background: white;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      background: var(--hover-bg);
       color: var(--gray-body);
       cursor: pointer;
       margin-top: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      transition: border-color 0.15s, color 0.15s;
+      gap: 7px;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
     }
     .map-reset-btn:hover {
+      background: white;
       border-color: var(--teal);
-      color: var(--black);
+      color: var(--teal);
+    }
+    .map-reset-btn svg {
+      flex-shrink: 0;
     }
 
     /* Map container */
@@ -1479,7 +1484,7 @@
                 <option value="">All States</option>
               </select>
               <button class="map-reset-btn" id="map-reset-view-btn">
-                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 00-5.47 11.35l-.88.88A.5.5 0 002 14h4a.5.5 0 00.5-.5v-4a.5.5 0 00-.85-.35l-1.03 1.03A5.5 5.5 0 1113.5 8a.75.75 0 001.5 0A7 7 0 008 1z"/></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
                 Reset View
               </button>
             </div>
