@@ -4,6 +4,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Community College District Map | Accountable</title>
+  <!-- Open Graph -->
+  <meta property="og:title" content="Community College District Map | Accountable">
+  <meta property="og:description" content="Interactive map showing how 1,219 community college campuses reach into 435+ congressional districts through student commute sheds.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="og-image.png">
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Community College District Map | Accountable">
+  <meta name="twitter:description" content="Interactive map showing how 1,219 community college campuses reach into 435+ congressional districts through student commute sheds.">
+  <meta name="twitter:image" content="og-image.png">
   <!-- Mapbox GL JS v3 -->
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet">
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
@@ -27,7 +37,7 @@
       --hover-bg: #F5F0EB;
       --color-large-city: #FE4F40;
       --color-midsize-city: #4C6971;
-      --color-suburban: #D4F72A;
+      --color-suburban: #7CB518;
       --color-small-city: #E8A838;
       --color-rural: #8B6F47;
       --color-town-remote: #9CA3AF;
@@ -752,6 +762,24 @@
       white-space: nowrap;
     }
 
+    .data-export-btn {
+      background: white;
+      border: 1px solid var(--border-main);
+      border-radius: 6px;
+      padding: 6px 14px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--teal);
+      cursor: pointer;
+      font-weight: 500;
+      white-space: nowrap;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .data-export-btn:hover {
+      background: var(--hover-bg);
+      border-color: var(--teal);
+    }
+
     .data-table-wrap {
       flex: 1;
       overflow: auto;
@@ -783,8 +811,8 @@
       user-select: none;
     }
     .data-table th:hover { color: var(--black); }
-    .data-table th.sort-asc::after { content: ' \u25B2'; font-size: 8px; }
-    .data-table th.sort-desc::after { content: ' \u25BC'; font-size: 8px; }
+    .data-table th.sort-asc::after { content: ' \25B2'; font-size: 8px; }
+    .data-table th.sort-desc::after { content: ' \25BC'; font-size: 8px; }
     .data-table th.num { text-align: right; }
 
     .data-table td {
@@ -828,6 +856,41 @@
       max-width: 200px;
     }
 
+    /* Pagination */
+    .data-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 12px 24px;
+      border-top: 1px solid var(--border-light);
+      background: var(--paper);
+      flex-shrink: 0;
+    }
+    .data-pagination button {
+      background: white;
+      border: 1px solid var(--border-main);
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--black);
+      transition: background 0.15s;
+    }
+    .data-pagination button:hover:not(:disabled) {
+      background: var(--hover-bg);
+    }
+    .data-pagination button:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+    .data-pagination .page-info {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--gray-muted);
+    }
+
     @media (max-width: 768px) {
       .data-filter-bar {
         flex-direction: column;
@@ -838,6 +901,56 @@
         width: 100%;
       }
       .data-row-count { margin-left: 0; }
+
+      /* Card layout for data table */
+      .data-table { min-width: 0; }
+      .data-table thead { display: none; }
+      .data-table tbody tr {
+        display: block;
+        background: white;
+        border: 1px solid var(--border-light);
+        border-radius: 8px;
+        padding: 14px 16px;
+        margin: 8px 16px;
+      }
+      .data-table tbody tr:hover {
+        background: white;
+        border-color: var(--teal);
+      }
+      .data-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        padding: 3px 0;
+        border-bottom: none;
+        font-size: 13px;
+      }
+      .data-table td::before {
+        content: attr(data-label);
+        font-family: var(--font-heading);
+        font-weight: 700;
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--gray-muted);
+        flex-shrink: 0;
+        margin-right: 12px;
+      }
+      .data-table td.num { text-align: right; }
+      .data-table td:first-child {
+        border-bottom: 1px solid var(--border-light);
+        padding-bottom: 8px;
+        margin-bottom: 4px;
+      }
+      .data-table td:first-child::before { display: none; }
+      .data-table td:first-child .campus-link {
+        font-size: 15px;
+        font-weight: 700;
+      }
+      .data-table .districts-cell {
+        max-width: none;
+        font-size: 11px;
+      }
     }
 
     /* ================================================================
@@ -1171,6 +1284,7 @@
           <option value="Town / Remote">Town / Remote</option>
         </select>
         <span class="data-row-count" id="data-row-count">Loading...</span>
+        <button class="data-export-btn" id="data-export-btn" title="Download CSV">&#x2913; Export CSV</button>
       </div>
       <div class="data-table-wrap">
         <table class="data-table" id="data-table">
@@ -1190,6 +1304,11 @@
           </thead>
           <tbody id="data-tbody"></tbody>
         </table>
+      </div>
+      <div class="data-pagination" id="data-pagination">
+        <button id="data-prev-btn" disabled>&larr; Previous</button>
+        <span class="page-info" id="data-page-info">Page 1 of 1</span>
+        <button id="data-next-btn" disabled>Next &rarr;</button>
       </div>
     </section>
 
@@ -1406,7 +1525,7 @@
     const CAMPUS_TYPE_COLORS = {
       'Large City': '#FE4F40',
       'Midsize City': '#4C6971',
-      'Suburban': '#D4F72A',
+      'Suburban': '#7CB518',
       'Small City': '#E8A838',
       'Rural': '#8B6F47',
       'Town / Remote': '#9CA3AF'
@@ -1426,6 +1545,8 @@
     /* Data table state */
     let dataTableSortCol = 'enrollment';
     let dataTableSortDir = 'desc';
+    let dataTablePage = 1;
+    const DATA_TABLE_PAGE_SIZE = 50;
 
     /* ================================================================
        UTILITY FUNCTIONS
@@ -1482,9 +1603,15 @@
     /* ================================================================
        TAB / HASH ROUTER
        ================================================================ */
-    function navigateTo(page) {
+    function navigateTo(page, params) {
+      params = params || {};
       currentPage = page;
-      window.location.hash = '#' + page;
+
+      /* Build hash with params */
+      let hash = '#' + page;
+      const paramParts = Object.entries(params).map(([k, v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v));
+      if (paramParts.length > 0) hash += '?' + paramParts.join('&');
+      if (window.location.hash !== hash) window.location.hash = hash;
 
       /* Update nav tabs */
       document.querySelectorAll('.nav-tab').forEach(btn => {
@@ -1509,18 +1636,72 @@
         } else if (map) {
           setTimeout(() => map.resize(), 50);
         }
+        applyMapParams(params);
       }
 
       /* Data table: populate on first view */
-      if (page === 'data' && campusesData) {
-        renderDataTable();
+      if (page === 'data') {
+        applyDataParams(params);
+        if (campusesData) renderDataTable();
       }
     }
 
     function getPageFromHash() {
       const hash = window.location.hash.replace('#', '');
-      if (['dashboard', 'map', 'data', 'methodology'].includes(hash)) return hash;
-      return 'map';
+      const [page, queryStr] = hash.split('?');
+      const validPages = ['dashboard', 'map', 'data', 'methodology'];
+      const params = {};
+      if (queryStr) {
+        queryStr.split('&').forEach(pair => {
+          const [key, val] = pair.split('=');
+          if (key && val) params[decodeURIComponent(key)] = decodeURIComponent(val);
+        });
+      }
+      return { page: validPages.includes(page) ? page : 'map', params };
+    }
+
+    /* Apply deep-link params on the map page */
+    function applyMapParams(params) {
+      if (!params || Object.keys(params).length === 0) return;
+      const apply = () => {
+        if (params.state) {
+          const sel = document.getElementById('map-state-select');
+          sel.value = params.state;
+          sel.dispatchEvent(new Event('change'));
+        }
+        if (params.campus && campusesData) {
+          const campusName = params.campus;
+          const feat = campusesData.features.find(f => f.properties.name === campusName);
+          if (feat) {
+            const [lon, lat] = feat.geometry.coordinates;
+            map.flyTo({ center: [lon, lat], zoom: 10 });
+            setTimeout(() => {
+              highlightCampusDistricts(feat.properties.all_districts, feat.properties.primary_district);
+              const popup = new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
+                .setLngLat([lon, lat])
+                .setHTML(buildPopupHtml(feat.properties))
+                .addTo(map);
+              popup.on('close', () => clearDistrictHighlights());
+            }, 1000);
+          }
+        }
+      };
+      if (map && map.loaded()) { apply(); }
+      else if (map) { map.once('load', apply); }
+      else {
+        const iv = setInterval(() => {
+          if (map && map.loaded()) { clearInterval(iv); apply(); }
+        }, 200);
+      }
+    }
+
+    /* Apply deep-link params on the data page */
+    function applyDataParams(params) {
+      if (!params || Object.keys(params).length === 0) return;
+      if (params.state) document.getElementById('data-state-filter').value = params.state;
+      if (params.type) document.getElementById('data-type-filter').value = params.type;
+      if (params.search) document.getElementById('data-search').value = params.search;
+      dataTablePage = 1;
     }
 
     /* Nav tab clicks */
@@ -1535,7 +1716,8 @@
 
     /* Hash change */
     window.addEventListener('hashchange', () => {
-      navigateTo(getPageFromHash());
+      const { page, params } = getPageFromHash();
+      navigateTo(page, params);
     });
 
     /* ================================================================
@@ -1759,7 +1941,7 @@
       'match', ['get', 'campus_type'],
       'Large City', '#FE4F40',
       'Midsize City', '#4C6971',
-      'Suburban', '#D4F72A',
+      'Suburban', '#7CB518',
       'Small City', '#E8A838',
       'Rural', '#8B6F47',
       'Town / Remote', '#9CA3AF',
@@ -1814,7 +1996,7 @@
           map.addSource('commute-circles', { type: 'geojson', data: circlesData });
           map.addSource('campuses', { type: 'geojson', data: campusesData });
 
-          /* Layer order: district fills -> district borders -> circle fills -> circle borders -> campus points */
+          /* Layer order: district fills -> district borders -> state borders -> circle fills -> circle borders -> campus points */
 
           map.addLayer({
             id: 'district-fills',
@@ -1831,9 +2013,52 @@
             type: 'line',
             source: 'districts',
             paint: {
+              'line-color': '#9CA3AF',
+              'line-width': ['interpolate', ['linear'], ['zoom'], 3, 0.2, 10, 1],
+              'line-opacity': 0.6,
+            },
+          });
+
+          /* District highlight layers — shown when a campus is clicked */
+          map.addLayer({
+            id: 'district-highlight-fills',
+            type: 'fill',
+            source: 'districts',
+            paint: {
+              'fill-color': '#FE4F40',
+              'fill-opacity': 0.2,
+            },
+            filter: ['in', 'cd_code', ''],
+          });
+
+          map.addLayer({
+            id: 'district-highlight-borders',
+            type: 'line',
+            source: 'districts',
+            paint: {
+              'line-color': '#FE4F40',
+              'line-width': 2.5,
+              'line-opacity': 0.8,
+            },
+            filter: ['in', 'cd_code', ''],
+          });
+
+          /* State boundaries — Mapbox Streets v8 admin line boundaries */
+          map.addSource('state-boundaries', {
+            type: 'vector',
+            url: 'mapbox://mapbox.mapbox-streets-v8',
+          });
+
+          map.addLayer({
+            id: 'state-borders',
+            type: 'line',
+            source: 'state-boundaries',
+            'source-layer': 'admin',
+            filter: ['==', ['get', 'admin_level'], 1],
+            paint: {
               'line-color': '#111111',
-              'line-width': ['interpolate', ['linear'], ['zoom'], 3, 0.3, 10, 1.5],
-              'line-opacity': 0.5,
+              'line-width': ['interpolate', ['linear'], ['zoom'], 3, 1.2, 10, 2.5],
+              'line-opacity': 0.85,
             },
           });
 
@@ -1843,7 +2068,7 @@
             source: 'commute-circles',
             paint: {
               'fill-color': campusTypeColors,
-              'fill-opacity': 0.12,
+              'fill-opacity': ['interpolate', ['linear'], ['zoom'], 3, 0, 5, 0, 6, 0.12],
             },
           });
 
@@ -1854,7 +2079,7 @@
             paint: {
               'line-color': campusTypeColors,
               'line-width': 1,
-              'line-opacity': 0.4,
+              'line-opacity': ['interpolate', ['linear'], ['zoom'], 3, 0, 5, 0, 6, 0.4],
             },
           });
 
@@ -1935,10 +2160,20 @@
           coords[0] += e.lngLat.lng > coords[0] ? 360 : -360;
         }
 
-        new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
+        highlightCampusDistricts(props.all_districts, props.primary_district);
+
+        const popup = new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
           .setLngLat(coords)
           .setHTML(buildPopupHtml(props))
           .addTo(map);
+
+        popup.on('close', () => clearDistrictHighlights());
+      });
+
+      /* Clear highlights when clicking empty map area */
+      map.on('click', (e) => {
+        const features = map.queryRenderedFeatures(e.point, { layers: ['campus-points'] });
+        if (!features || features.length === 0) clearDistrictHighlights();
       });
 
       map.on('mouseenter', 'campus-points', () => {
@@ -1967,6 +2202,28 @@
         map.setLayoutProperty('district-fills', 'visibility', vis);
         map.setLayoutProperty('district-borders', 'visibility', vis);
       });
+    }
+
+    /* ── District highlight helpers ── */
+    function highlightCampusDistricts(allDistrictsStr, primaryDistrict) {
+      if (!map || !allDistrictsStr) { clearDistrictHighlights(); return; }
+      const codes = allDistrictsStr.split('|').map(s => s.trim()).filter(Boolean);
+      if (codes.length === 0) { clearDistrictHighlights(); return; }
+      const filter = ['in', 'cd_code', ...codes];
+      map.setFilter('district-highlight-fills', filter);
+      map.setFilter('district-highlight-borders', filter);
+      /* Primary district gets stronger fill */
+      map.setPaintProperty('district-highlight-fills', 'fill-opacity', [
+        'case', ['==', ['get', 'cd_code'], primaryDistrict || ''], 0.35, 0.2
+      ]);
+    }
+
+    function clearDistrictHighlights() {
+      if (!map) return;
+      try {
+        map.setFilter('district-highlight-fills', ['in', 'cd_code', '']);
+        map.setFilter('district-highlight-borders', ['in', 'cd_code', '']);
+      } catch (_) { /* layers may not exist yet */ }
     }
 
     /* ── Map search functionality ── */
@@ -2021,12 +2278,14 @@
               document.getElementById('sidebar').classList.remove('open');
             }
 
-            /* Show popup */
+            /* Show popup + highlight districts */
             setTimeout(() => {
-              new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
+              highlightCampusDistricts(feat.properties.all_districts, feat.properties.primary_district);
+              const popup = new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
                 .setLngLat([lon, lat])
                 .setHTML(buildPopupHtml(feat.properties))
                 .addTo(map);
+              popup.on('close', () => clearDistrictHighlights());
             }, 1000);
           });
         });
@@ -2146,9 +2405,20 @@
       const filtered = getFilteredSortedData();
       const tbody = document.getElementById('data-tbody');
       const totalCount = campusesData ? campusesData.features.length : 0;
+      const totalPages = Math.max(1, Math.ceil(filtered.length / DATA_TABLE_PAGE_SIZE));
+
+      /* Clamp current page */
+      if (dataTablePage > totalPages) dataTablePage = totalPages;
+      if (dataTablePage < 1) dataTablePage = 1;
+
+      const startIdx = (dataTablePage - 1) * DATA_TABLE_PAGE_SIZE;
+      const endIdx = Math.min(startIdx + DATA_TABLE_PAGE_SIZE, filtered.length);
+      const pageData = filtered.slice(startIdx, endIdx);
 
       document.getElementById('data-row-count').textContent =
-        'Showing ' + filtered.length + ' of ' + fmtNum(totalCount) + ' campuses';
+        filtered.length > 0
+          ? 'Showing ' + (startIdx + 1) + '–' + endIdx + ' of ' + fmtNum(filtered.length) + ' campuses'
+          : 'No campuses found';
 
       /* Update sort indicators on headers */
       document.querySelectorAll('#data-table th').forEach(th => {
@@ -2158,8 +2428,9 @@
         }
       });
 
-      /* Build rows */
-      const rowsHtml = filtered.map((f, idx) => {
+      /* Build rows (paginated) with data-label for mobile cards */
+      const rowsHtml = pageData.map((f, idx) => {
+        const globalIdx = startIdx + idx;
         const p = f.properties;
         const coverage = p.primary_district_coverage
           ? (Number(p.primary_district_coverage) * 100).toFixed(1) + '%'
@@ -2170,20 +2441,25 @@
         const typeColor = CAMPUS_TYPE_COLORS[p.campus_type] || '#9CA3AF';
 
         return `<tr>
-          <td><a class="campus-link" data-feature-idx="${idx}" href="javascript:void(0)">${escapeHtml(p.name)}</a></td>
-          <td>${escapeHtml(p.city)}</td>
-          <td>${escapeHtml(p.state)}</td>
-          <td class="num">${p.enrollment ? fmtNum(p.enrollment) : 'N/A'}</td>
-          <td><span class="type-dot" style="background:${typeColor}"></span>${escapeHtml(p.campus_type)}</td>
-          <td class="num">${p.radius_miles}</td>
-          <td class="num">${p.districts_reached}</td>
-          <td>${escapeHtml(p.primary_district)}</td>
-          <td class="num">${coverage}</td>
-          <td class="districts-cell">${escapeHtml(allDist)}</td>
+          <td data-label="Name"><a class="campus-link" data-feature-idx="${globalIdx}" href="javascript:void(0)">${escapeHtml(p.name)}</a></td>
+          <td data-label="City">${escapeHtml(p.city)}</td>
+          <td data-label="State">${escapeHtml(p.state)}</td>
+          <td class="num" data-label="Enrollment">${p.enrollment ? fmtNum(p.enrollment) : 'N/A'}</td>
+          <td data-label="Campus Type"><span class="type-dot" style="background:${typeColor}"></span>${escapeHtml(p.campus_type)}</td>
+          <td class="num" data-label="Radius (mi)">${p.radius_miles}</td>
+          <td class="num" data-label="Districts">${p.districts_reached}</td>
+          <td data-label="Primary District">${escapeHtml(p.primary_district)}</td>
+          <td class="num" data-label="Coverage">${coverage}</td>
+          <td class="districts-cell" data-label="All Districts">${escapeHtml(allDist)}</td>
         </tr>`;
       }).join('');
 
       tbody.innerHTML = rowsHtml;
+
+      /* Update pagination controls */
+      document.getElementById('data-prev-btn').disabled = dataTablePage <= 1;
+      document.getElementById('data-next-btn').disabled = dataTablePage >= totalPages;
+      document.getElementById('data-page-info').textContent = 'Page ' + dataTablePage + ' of ' + totalPages;
 
       /* Attach click handlers for campus links */
       tbody.querySelectorAll('.campus-link').forEach(link => {
@@ -2200,10 +2476,12 @@
             const [lon, lat] = feat.geometry.coordinates;
             map.flyTo({ center: [lon, lat], zoom: 10 });
             setTimeout(() => {
-              new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
+              highlightCampusDistricts(feat.properties.all_districts, feat.properties.primary_district);
+              const popup = new mapboxgl.Popup({ maxWidth: getPopupMaxWidth() })
                 .setLngLat([lon, lat])
                 .setHTML(buildPopupHtml(feat.properties))
                 .addTo(map);
+              popup.on('close', () => clearDistrictHighlights());
             }, 1000);
           };
 
@@ -2212,7 +2490,6 @@
           } else if (map) {
             map.once('load', flyAndPopup);
           } else {
-            /* Map not yet initialized — wait for it */
             const checkInterval = setInterval(() => {
               if (map && map.loaded()) {
                 clearInterval(checkInterval);
@@ -2237,26 +2514,89 @@
           dataTableSortCol = col;
           dataTableSortDir = ['enrollment', 'radius_miles', 'districts_reached', 'primary_district_coverage'].includes(col) ? 'desc' : 'asc';
         }
+        dataTablePage = 1;
         renderDataTable();
       });
     });
 
-    /* Filter event listeners */
+    /* Filter event listeners — reset to page 1 */
     document.getElementById('data-search').addEventListener('input', () => {
+      dataTablePage = 1;
       if (dataTableRendered) renderDataTable();
     });
     document.getElementById('data-state-filter').addEventListener('change', () => {
+      dataTablePage = 1;
       if (dataTableRendered) renderDataTable();
     });
     document.getElementById('data-type-filter').addEventListener('change', () => {
+      dataTablePage = 1;
       if (dataTableRendered) renderDataTable();
+    });
+
+    /* Pagination buttons */
+    document.getElementById('data-prev-btn').addEventListener('click', () => {
+      if (dataTablePage > 1) {
+        dataTablePage--;
+        renderDataTable();
+        document.querySelector('.data-table-wrap').scrollTop = 0;
+      }
+    });
+    document.getElementById('data-next-btn').addEventListener('click', () => {
+      dataTablePage++;
+      renderDataTable();
+      document.querySelector('.data-table-wrap').scrollTop = 0;
+    });
+
+    /* CSV Export */
+    document.getElementById('data-export-btn').addEventListener('click', () => {
+      const filtered = getFilteredSortedData();
+      if (filtered.length === 0) return;
+
+      const columns = [
+        { key: 'name', header: 'Name' },
+        { key: 'city', header: 'City' },
+        { key: 'state', header: 'State' },
+        { key: 'enrollment', header: 'Enrollment' },
+        { key: 'campus_type', header: 'Campus Type' },
+        { key: 'radius_miles', header: 'Radius (mi)' },
+        { key: 'districts_reached', header: 'Districts Reached' },
+        { key: 'primary_district', header: 'Primary District' },
+        { key: 'primary_district_coverage', header: 'Primary District Coverage' },
+        { key: 'all_districts', header: 'All Districts' },
+      ];
+
+      const csvRows = [columns.map(c => c.header).join(',')];
+      filtered.forEach(f => {
+        const p = f.properties;
+        const row = columns.map(c => {
+          let val = p[c.key];
+          if (val == null) val = '';
+          if (c.key === 'all_districts') val = String(val).replace(/\|/g, ', ');
+          if (c.key === 'primary_district_coverage') val = val ? (Number(val) * 100).toFixed(1) + '%' : '';
+          val = String(val);
+          if (val.includes(',') || val.includes('"') || val.includes('\n')) {
+            val = '"' + val.replace(/"/g, '""') + '"';
+          }
+          return val;
+        });
+        csvRows.push(row.join(','));
+      });
+
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'community_college_districts.csv';
+      a.click();
+      URL.revokeObjectURL(url);
     });
 
     /* ================================================================
        STARTUP
        ================================================================ */
     loadCampusData();
-    navigateTo(getPageFromHash());
+    const { page: startPage, params: startParams } = getPageFromHash();
+    navigateTo(startPage, startParams);
   </script>
 </body>
 </html>
