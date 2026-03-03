@@ -10,14 +10,12 @@ Persona filters (applied as stepwise proportional estimation):
   - Not currently enrolled in college/graduate school
 """
 
-import json
 import logging
-import math
+import time
 from pathlib import Path
 
 import pandas as pd
 import requests
-from openpyxl import Workbook
 
 # -- Logging ---------------------------------------------------------------
 logging.basicConfig(
@@ -40,6 +38,9 @@ if _env_path.exists():
     for line in _env_path.read_text().strip().splitlines():
         if line.startswith("CENSUS_API_KEY="):
             CENSUS_API_KEY = line.split("=", 1)[1].strip()
+
+if not CENSUS_API_KEY:
+    log.warning("No Census API key found -- requests will be unauthenticated (lower rate limits)")
 
 ACS_BASE_URL = "https://api.census.gov/data/2022/acs/acs5"
 
@@ -116,7 +117,7 @@ ENROLL_VARS = {
 
 
 # =========================================================================
-# Task 2: ACS API Client
+# ACS API Client
 # =========================================================================
 
 def fetch_acs_table(variables: dict[str, str]) -> pd.DataFrame:
@@ -131,7 +132,7 @@ def fetch_acs_table(variables: dict[str, str]) -> pd.DataFrame:
     -------
     pd.DataFrame
         One row per district with columns: state_fips, cd_fips, plus all
-        friendly-named variable columns (as int, with -1 for missing/negative).
+        friendly-named variable columns (as int, with 0 for missing/negative).
     """
     var_codes = list(variables.keys())
     var_str = ",".join(var_codes)
@@ -145,8 +146,16 @@ def fetch_acs_table(variables: dict[str, str]) -> pd.DataFrame:
         params["key"] = CENSUS_API_KEY
 
     log.info(f"Fetching ACS variables: {var_codes[0]}..{var_codes[-1]} ({len(var_codes)} vars)")
-    resp = requests.get(ACS_BASE_URL, params=params, timeout=120)
-    resp.raise_for_status()
+    for attempt in range(3):
+        try:
+            resp = requests.get(ACS_BASE_URL, params=params, timeout=120)
+            resp.raise_for_status()
+            break
+        except requests.RequestException:
+            if attempt == 2:
+                raise
+            log.warning(f"  Attempt {attempt + 1} failed, retrying in {5 * (attempt + 1)}s...")
+            time.sleep(5 * (attempt + 1))
 
     data = resp.json()
     headers = data[0]
@@ -160,9 +169,9 @@ def fetch_acs_table(variables: dict[str, str]) -> pd.DataFrame:
     # Rename geography columns
     df = df.rename(columns={"state": "state_fips", "congressional district": "cd_fips"})
 
-    # Convert numeric columns to int (ACS returns strings; negatives = missing)
+    # Convert numeric columns to int (ACS returns strings; negatives/missing → 0)
     for col in variables.values():
-        df[col] = pd.to_numeric(df[col], errors="coerce").fillna(-1).astype(int)
+        df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0).clip(lower=0).astype(int)
 
     log.info(f"  Fetched {len(df)} districts")
     return df
@@ -193,7 +202,7 @@ def build_district_codes(df: pd.DataFrame) -> pd.DataFrame:
 
 
 # =========================================================================
-# Task 3: Pull All ACS Tables and Compute Proportions
+# Data Pull & YP Estimation
 # =========================================================================
 
 def pull_all_acs_data() -> pd.DataFrame:
@@ -209,9 +218,8 @@ def pull_all_acs_data() -> pd.DataFrame:
 
     # Merge all on state_fips + cd_fips
     merge_keys = ["state_fips", "cd_fips"]
-    # Start with age_df which has NAME and total_pop
-    df = age_df[merge_keys + ["NAME", "total_pop", "male_25_29", "male_30_34",
-                               "female_25_29", "female_30_34"]]
+    # Start with age_df which has NAME and all age variables
+    df = age_df[merge_keys + ["NAME"] + list(AGE_VARS.values())]
 
     for other in [edu_df, emp_df, inc_df, enr_df]:
         # Drop NAME if present to avoid duplication
@@ -235,6 +243,8 @@ def compute_yp_estimates(df: pd.DataFrame) -> pd.DataFrame:
     Applies stepwise proportional estimation:
       yp_estimate = pop_25_34 x pct_bachelors x pct_employed x pct_income x pct_not_enrolled
     """
+    df = df.copy()
+
     # -- Step 1: Total 25-34 population ------------------------------------
     df["pop_25_34"] = (
         df["male_25_29"] + df["male_30_34"]
