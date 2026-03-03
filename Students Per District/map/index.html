@@ -735,21 +735,21 @@
     }
 
     .data-filter-bar {
-      padding: 16px 24px;
+      padding: 14px 24px;
       border-bottom: 1px solid var(--border-light);
       display: flex;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
       flex-wrap: wrap;
       background: var(--paper);
       flex-shrink: 0;
     }
     .data-filter-bar .search-input {
-      width: 240px;
+      width: 280px;
       flex-shrink: 0;
     }
     .data-filter-bar .styled-select {
-      width: 180px;
+      width: 160px;
       flex-shrink: 0;
     }
     .data-row-count {
@@ -925,6 +925,47 @@
       font-size: 11px;
       color: var(--gray-body);
       max-width: 200px;
+    }
+
+    /* Group By header rows */
+    .group-header-row td {
+      background: #EDE9E3;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--black);
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--border-main);
+      border-top: 1px solid var(--border-light);
+      cursor: pointer;
+      user-select: none;
+    }
+    .group-header-row:first-child td { border-top: none; }
+    .group-header-row td:hover { background: #E5E0D9; }
+    .group-header-row .group-toggle {
+      display: inline-block;
+      width: 16px;
+      font-size: 9px;
+      color: var(--gray-muted);
+      margin-right: 8px;
+      transition: transform 0.15s;
+    }
+    .group-header-row .group-toggle.collapsed { transform: rotate(-90deg); }
+    .group-header-row .group-name { margin-right: 4px; }
+    .group-header-row .group-count {
+      font-weight: 500;
+      color: var(--gray-muted);
+      font-size: 12px;
+    }
+    .group-header-row .group-stats {
+      font-weight: 400;
+      color: var(--gray-muted);
+      font-size: 11px;
+      margin-left: 16px;
+      letter-spacing: 0.01em;
+    }
+    .group-header-row .group-stats .stat-sep {
+      margin: 0 6px;
+      color: var(--border-main);
     }
 
     /* Pagination */
@@ -1342,17 +1383,12 @@
     <section id="page-data" class="page">
       <div class="data-filter-bar">
         <input type="text" id="data-search" class="search-input" placeholder="Search by name, city, state, or district...">
-        <select id="data-state-filter" class="styled-select">
-          <option value="">All States</option>
-        </select>
-        <select id="data-type-filter" class="styled-select">
-          <option value="">All Campus Types</option>
-          <option value="Large City">Large City</option>
-          <option value="Midsize City">Midsize City</option>
-          <option value="Suburban">Suburban</option>
-          <option value="Small City">Small City</option>
-          <option value="Rural">Rural</option>
-          <option value="Town / Remote">Town / Remote</option>
+        <select id="data-group-by" class="styled-select">
+          <option value="">Group by...</option>
+          <option value="state">State</option>
+          <option value="campus_type">Campus Type</option>
+          <option value="city">City</option>
+          <option value="primary_district">Primary District</option>
         </select>
         <span class="data-row-count" id="data-row-count">Loading...</span>
         <button class="data-export-btn" id="data-export-btn" title="Download CSV">&#x2913; Export CSV</button>
@@ -1618,6 +1654,8 @@
     let dataTableSortDir = 'desc';
     let dataTablePage = 1;
     const DATA_TABLE_PAGE_SIZE = 50;
+    let dataTableGroupBy = '';
+    let collapsedGroups = new Set();
 
     /* ================================================================
        UTILITY FUNCTIONS
@@ -1769,9 +1807,11 @@
     /* Apply deep-link params on the data page */
     function applyDataParams(params) {
       if (!params || Object.keys(params).length === 0) return;
-      if (params.state) document.getElementById('data-state-filter').value = params.state;
-      if (params.type) document.getElementById('data-type-filter').value = params.type;
       if (params.search) document.getElementById('data-search').value = params.search;
+      if (params.state) {
+        const stateInput = document.getElementById('col-filter-state');
+        if (stateInput) stateInput.value = params.state;
+      }
       dataTablePage = 1;
     }
 
@@ -1818,14 +1858,12 @@
       campusesData.features.forEach(f => stateSet.add(f.properties.state));
       const states = Array.from(stateSet).sort();
 
-      [document.getElementById('map-state-select'),
-       document.getElementById('data-state-filter')].forEach(sel => {
-        states.forEach(s => {
-          const opt = document.createElement('option');
-          opt.value = s;
-          opt.textContent = STATE_NAMES[s] ? STATE_NAMES[s] + ' (' + s + ')' : s;
-          sel.appendChild(opt);
-        });
+      const sel = document.getElementById('map-state-select');
+      states.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = STATE_NAMES[s] ? STATE_NAMES[s] + ' (' + s + ')' : s;
+        sel.appendChild(opt);
       });
     }
 
@@ -2418,9 +2456,6 @@
       if (!campusesData) return [];
 
       const searchVal = document.getElementById('data-search').value.trim().toLowerCase();
-      const stateVal = document.getElementById('data-state-filter').value;
-      const typeVal = document.getElementById('data-type-filter').value;
-
       const searchWords = searchVal.split(/\s+/).filter(w => w.length > 0);
 
       /* Column filters */
@@ -2442,10 +2477,6 @@
 
       let filtered = campusesData.features.filter(f => {
         const p = f.properties;
-
-        /* Dropdown filters */
-        if (stateVal && p.state !== stateVal) return false;
-        if (typeVal && p.campus_type !== typeVal) return false;
 
         /* Global search */
         if (searchWords.length > 0) {
@@ -2512,24 +2543,35 @@
       return filtered;
     }
 
+    function buildCampusRow(f, globalIdx) {
+      const p = f.properties;
+      const coverage = p.primary_district_coverage
+        ? (Number(p.primary_district_coverage) * 100).toFixed(1) + '%'
+        : 'N/A';
+      const allDist = p.all_districts
+        ? String(p.all_districts).replace(/\|/g, ', ')
+        : '';
+      const typeColor = CAMPUS_TYPE_COLORS[p.campus_type] || '#9CA3AF';
+
+      return `<tr>
+        <td data-label="Name"><a class="campus-link" data-feature-idx="${globalIdx}" href="javascript:void(0)">${escapeHtml(p.name)}</a></td>
+        <td data-label="City">${escapeHtml(p.city)}</td>
+        <td data-label="State">${escapeHtml(p.state)}</td>
+        <td class="num" data-label="Enrollment">${p.enrollment ? fmtNum(p.enrollment) : 'N/A'}</td>
+        <td data-label="Campus Type"><span class="type-dot" style="background:${typeColor}"></span>${escapeHtml(p.campus_type)}</td>
+        <td class="num" data-label="Radius (mi)">${p.radius_miles}</td>
+        <td class="num" data-label="Districts">${p.districts_reached}</td>
+        <td data-label="Primary District">${escapeHtml(p.primary_district)}</td>
+        <td class="num" data-label="Coverage">${coverage}</td>
+        <td class="districts-cell" data-label="All Districts">${escapeHtml(allDist)}</td>
+      </tr>`;
+    }
+
     function renderDataTable() {
       const filtered = getFilteredSortedData();
       const tbody = document.getElementById('data-tbody');
-      const totalCount = campusesData ? campusesData.features.length : 0;
-      const totalPages = Math.max(1, Math.ceil(filtered.length / DATA_TABLE_PAGE_SIZE));
-
-      /* Clamp current page */
-      if (dataTablePage > totalPages) dataTablePage = totalPages;
-      if (dataTablePage < 1) dataTablePage = 1;
-
-      const startIdx = (dataTablePage - 1) * DATA_TABLE_PAGE_SIZE;
-      const endIdx = Math.min(startIdx + DATA_TABLE_PAGE_SIZE, filtered.length);
-      const pageData = filtered.slice(startIdx, endIdx);
-
-      document.getElementById('data-row-count').textContent =
-        filtered.length > 0
-          ? 'Showing ' + (startIdx + 1) + '–' + endIdx + ' of ' + fmtNum(filtered.length) + ' campuses'
-          : 'No campuses found';
+      const groupBy = dataTableGroupBy;
+      const isGrouped = !!groupBy;
 
       /* Update sort indicators on headers */
       document.querySelectorAll('#data-table th').forEach(th => {
@@ -2547,38 +2589,92 @@
         }
       });
 
-      /* Build rows (paginated) with data-label for mobile cards */
-      const rowsHtml = pageData.map((f, idx) => {
-        const globalIdx = startIdx + idx;
-        const p = f.properties;
-        const coverage = p.primary_district_coverage
-          ? (Number(p.primary_district_coverage) * 100).toFixed(1) + '%'
-          : 'N/A';
-        const allDist = p.all_districts
-          ? String(p.all_districts).replace(/\|/g, ', ')
-          : '';
-        const typeColor = CAMPUS_TYPE_COLORS[p.campus_type] || '#9CA3AF';
+      if (isGrouped) {
+        /* ── Grouped rendering (no pagination) ── */
+        document.getElementById('data-row-count').textContent =
+          fmtNum(filtered.length) + ' campuses in groups';
+        document.getElementById('data-pagination').style.display = 'none';
 
-        return `<tr>
-          <td data-label="Name"><a class="campus-link" data-feature-idx="${globalIdx}" href="javascript:void(0)">${escapeHtml(p.name)}</a></td>
-          <td data-label="City">${escapeHtml(p.city)}</td>
-          <td data-label="State">${escapeHtml(p.state)}</td>
-          <td class="num" data-label="Enrollment">${p.enrollment ? fmtNum(p.enrollment) : 'N/A'}</td>
-          <td data-label="Campus Type"><span class="type-dot" style="background:${typeColor}"></span>${escapeHtml(p.campus_type)}</td>
-          <td class="num" data-label="Radius (mi)">${p.radius_miles}</td>
-          <td class="num" data-label="Districts">${p.districts_reached}</td>
-          <td data-label="Primary District">${escapeHtml(p.primary_district)}</td>
-          <td class="num" data-label="Coverage">${coverage}</td>
-          <td class="districts-cell" data-label="All Districts">${escapeHtml(allDist)}</td>
-        </tr>`;
-      }).join('');
+        /* Build groups */
+        const groups = new Map();
+        filtered.forEach((f, idx) => {
+          const key = String(f.properties[groupBy] || 'Unknown');
+          if (!groups.has(key)) groups.set(key, []);
+          groups.get(key).push({ feature: f, idx });
+        });
 
-      tbody.innerHTML = rowsHtml;
+        /* Sort groups alphabetically */
+        const sortedKeys = [...groups.keys()].sort((a, b) => a.localeCompare(b));
 
-      /* Update pagination controls */
-      document.getElementById('data-prev-btn').disabled = dataTablePage <= 1;
-      document.getElementById('data-next-btn').disabled = dataTablePage >= totalPages;
-      document.getElementById('data-page-info').textContent = 'Page ' + dataTablePage + ' of ' + totalPages;
+        let html = '';
+        for (const key of sortedKeys) {
+          const items = groups.get(key);
+          const isCollapsed = collapsedGroups.has(key);
+
+          /* Compute aggregates */
+          let totalEnrollment = 0;
+          let totalDistricts = 0;
+          for (const item of items) {
+            totalEnrollment += Number(item.feature.properties.enrollment) || 0;
+            totalDistricts += Number(item.feature.properties.districts_reached) || 0;
+          }
+          const avgDistricts = (totalDistricts / items.length).toFixed(1);
+
+          html += `<tr class="group-header-row" data-group-key="${escapeHtml(key)}">
+            <td colspan="10">
+              <span class="group-toggle ${isCollapsed ? 'collapsed' : ''}">\u25BC</span>
+              <span class="group-name">${escapeHtml(key)}</span>
+              <span class="group-count">(${items.length})</span>
+              <span class="group-stats">Total Enrollment: ${fmtNum(totalEnrollment)}<span class="stat-sep">·</span>Avg Districts: ${avgDistricts}</span>
+            </td>
+          </tr>`;
+
+          if (!isCollapsed) {
+            for (const item of items) {
+              html += buildCampusRow(item.feature, item.idx);
+            }
+          }
+        }
+
+        tbody.innerHTML = html;
+
+        /* Attach group toggle handlers */
+        tbody.querySelectorAll('.group-header-row').forEach(row => {
+          row.addEventListener('click', () => {
+            const key = row.dataset.groupKey;
+            if (collapsedGroups.has(key)) {
+              collapsedGroups.delete(key);
+            } else {
+              collapsedGroups.add(key);
+            }
+            renderDataTable();
+          });
+        });
+
+      } else {
+        /* ── Normal paginated rendering ── */
+        document.getElementById('data-pagination').style.display = '';
+        const totalPages = Math.max(1, Math.ceil(filtered.length / DATA_TABLE_PAGE_SIZE));
+
+        if (dataTablePage > totalPages) dataTablePage = totalPages;
+        if (dataTablePage < 1) dataTablePage = 1;
+
+        const startIdx = (dataTablePage - 1) * DATA_TABLE_PAGE_SIZE;
+        const endIdx = Math.min(startIdx + DATA_TABLE_PAGE_SIZE, filtered.length);
+        const pageData = filtered.slice(startIdx, endIdx);
+
+        document.getElementById('data-row-count').textContent =
+          filtered.length > 0
+            ? 'Showing ' + (startIdx + 1) + '\u2013' + endIdx + ' of ' + fmtNum(filtered.length) + ' campuses'
+            : 'No campuses found';
+
+        const rowsHtml = pageData.map((f, idx) => buildCampusRow(f, startIdx + idx)).join('');
+        tbody.innerHTML = rowsHtml;
+
+        document.getElementById('data-prev-btn').disabled = dataTablePage <= 1;
+        document.getElementById('data-next-btn').disabled = dataTablePage >= totalPages;
+        document.getElementById('data-page-info').textContent = 'Page ' + dataTablePage + ' of ' + totalPages;
+      }
 
       /* Attach click handlers for campus links */
       tbody.querySelectorAll('.campus-link').forEach(link => {
@@ -2640,16 +2736,16 @@
       });
     });
 
+    /* Group By listener */
+    document.getElementById('data-group-by').addEventListener('change', () => {
+      dataTableGroupBy = document.getElementById('data-group-by').value;
+      collapsedGroups.clear();
+      dataTablePage = 1;
+      if (dataTableRendered) renderDataTable();
+    });
+
     /* Filter event listeners — reset to page 1 */
     document.getElementById('data-search').addEventListener('input', () => {
-      dataTablePage = 1;
-      if (dataTableRendered) renderDataTable();
-    });
-    document.getElementById('data-state-filter').addEventListener('change', () => {
-      dataTablePage = 1;
-      if (dataTableRendered) renderDataTable();
-    });
-    document.getElementById('data-type-filter').addEventListener('change', () => {
       dataTablePage = 1;
       if (dataTableRendered) renderDataTable();
     });
