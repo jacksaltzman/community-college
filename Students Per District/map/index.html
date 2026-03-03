@@ -686,7 +686,12 @@
     }
 
     /* Popup Styles */
-    .campus-popup { min-width: 220px; max-width: 300px; }
+    .campus-popup {
+      min-width: 220px;
+      max-width: 300px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--coral);
+    }
     .popup-title {
       font-family: var(--font-heading);
       font-weight: 700;
@@ -731,10 +736,11 @@
 
     /* Override Mapbox popup defaults */
     .mapboxgl-popup-content {
-      border-radius: 6px;
-      border: 1px solid rgba(200,193,182,0.5);
-      padding: 12px;
-      box-shadow: none;
+      border-radius: 10px;
+      border: 1px solid rgba(200,193,182,0.4);
+      padding: 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      overflow: hidden;
     }
     .mapboxgl-popup-close-button {
       font-size: 18px;
@@ -2027,6 +2033,18 @@
       return window.innerWidth <= 768 ? '280px' : '320px';
     }
 
+    function getCampusTypeColor(type) {
+      const colors = {
+        'Large City': '#FE4F40',
+        'Midsize City': '#4C6971',
+        'Suburban': '#7CB518',
+        'Small City': '#E8A838',
+        'Rural': '#8B6F47',
+        'Town / Remote': '#9CA3AF',
+      };
+      return colors[type] || '#9CA3AF';
+    }
+
     /* Shared popup builder */
     function buildPopupHtml(props) {
       const enrollment = props.enrollment ? Number(props.enrollment).toLocaleString() : 'N/A';
@@ -2038,7 +2056,7 @@
         : 'N/A';
 
       return `
-        <div class="campus-popup">
+        <div class="campus-popup" style="border-left-color: ${getCampusTypeColor(props.campus_type)}">
           <div class="popup-title">${escapeHtml(props.name)}</div>
           <div class="popup-subtitle">${escapeHtml(props.city)}, ${escapeHtml(props.state)}</div>
           <div class="popup-stats">
