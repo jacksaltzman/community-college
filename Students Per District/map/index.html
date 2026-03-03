@@ -564,6 +564,101 @@
       font-weight: 500;
     }
 
+    /* ── Map sidebar filter additions ── */
+    .map-filter-group {
+      margin-bottom: 10px;
+    }
+    .map-filter-group:last-child {
+      margin-bottom: 0;
+    }
+    .map-filter-label {
+      display: block;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-body);
+      margin-bottom: 4px;
+    }
+    .map-filter-range {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .map-filter-input {
+      flex: 1;
+      padding: 6px 8px;
+      border: 1px solid var(--border-main);
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      background: white;
+      color: var(--black);
+      outline: none;
+      min-width: 0;
+    }
+    .map-filter-input::placeholder { color: var(--gray-lighter); }
+    .map-filter-input:focus { border-color: var(--teal); }
+    .map-filter-dash {
+      color: var(--gray-muted);
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+
+    .map-filter-clear-btn {
+      border: none;
+      background: none;
+      color: var(--gray-muted);
+      font-family: var(--font-body);
+      font-size: 11px;
+      cursor: pointer;
+      padding: 0;
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 400;
+    }
+    .map-filter-clear-btn:hover { color: var(--coral); }
+
+    .map-filter-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--coral);
+      color: white;
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 700;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 8px;
+      padding: 0 4px;
+      margin-left: 6px;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+
+    .map-reset-btn {
+      width: 100%;
+      padding: 7px 12px;
+      border: 1px solid var(--border-main);
+      border-radius: 6px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      background: white;
+      color: var(--gray-body);
+      cursor: pointer;
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .map-reset-btn:hover {
+      border-color: var(--teal);
+      color: var(--black);
+    }
+
     /* Map container */
     #map {
       flex: 1;
@@ -1174,6 +1269,92 @@
       line-height: 1.7;
       margin-bottom: 12px;
     }
+
+    /* ================================================================
+       SUMMARY TAB
+       ================================================================ */
+    .summary-content {
+      max-width: 680px;
+    }
+    .summary-date {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--gray-muted);
+      margin-bottom: 24px;
+    }
+    .summary-callout {
+      background: var(--hover-bg);
+      border-left: 3px solid var(--teal);
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      border-radius: 0 6px 6px 0;
+    }
+    .summary-callout p {
+      margin-bottom: 0;
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--gray-body);
+    }
+    .summary-callout p strong {
+      color: var(--black);
+    }
+    .summary-gtm-box {
+      border: 1px solid var(--border-main);
+      border-left: 3px solid var(--coral);
+      border-radius: 0 6px 6px 0;
+      padding: 16px 20px;
+      margin: 16px 0 24px;
+    }
+    .summary-gtm-box ol {
+      padding-left: 20px;
+      margin-bottom: 0;
+    }
+    .summary-gtm-box li {
+      margin-bottom: 8px;
+    }
+    .summary-gtm-box li:last-child {
+      margin-bottom: 0;
+    }
+    .summary-link {
+      color: var(--coral);
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font: inherit;
+      padding: 0;
+    }
+    .summary-link:hover {
+      color: var(--teal);
+    }
+    .summary-content details {
+      margin-top: 40px;
+      border-top: 1px solid var(--border-light);
+      padding-top: 16px;
+    }
+    .summary-content summary {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      color: var(--gray-muted);
+      cursor: pointer;
+      letter-spacing: 0.1em;
+    }
+    .summary-content summary:hover {
+      color: var(--black);
+    }
+    .summary-footnotes {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-light);
+      font-size: 12px;
+      color: var(--gray-muted);
+      line-height: 1.6;
+    }
+    .summary-footnotes a {
+      color: var(--teal);
+    }
   </style>
 </head>
 <body>
@@ -1188,7 +1369,8 @@
     </div>
     <div class="nav-tabs">
       <button class="nav-tab" data-page="dashboard" style="display:none">Dashboard</button>
-      <button class="nav-tab active" data-page="map">Map</button>
+      <button class="nav-tab active" data-page="summary">Summary</button>
+      <button class="nav-tab" data-page="map">Map</button>
       <button class="nav-tab" data-page="data">Data</button>
       <button class="nav-tab" data-page="methodology">Methodology</button>
     </div>
@@ -1201,7 +1383,8 @@
 
   <div class="nav-mobile-dropdown" id="nav-mobile-dropdown">
     <button class="nav-tab" data-page="dashboard" style="display:none">Dashboard</button>
-    <button class="nav-tab active" data-page="map">Map</button>
+    <button class="nav-tab active" data-page="summary">Summary</button>
+    <button class="nav-tab" data-page="map">Map</button>
     <button class="nav-tab" data-page="data">Data</button>
     <button class="nav-tab" data-page="methodology">Methodology</button>
   </div>
@@ -1295,6 +1478,10 @@
               <select id="map-state-select" class="styled-select" style="margin-top:8px">
                 <option value="">All States</option>
               </select>
+              <button class="map-reset-btn" id="map-reset-view-btn">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a7 7 0 00-5.47 11.35l-.88.88A.5.5 0 002 14h4a.5.5 0 00.5-.5v-4a.5.5 0 00-.85-.35l-1.03 1.03A5.5 5.5 0 1113.5 8a.75.75 0 001.5 0A7 7 0 008 1z"/></svg>
+                Reset View
+              </button>
             </div>
 
             <!-- Layer Toggles -->
@@ -1365,9 +1552,33 @@
               </div>
             </div>
 
+            <!-- Numeric Filters -->
+            <div class="sidebar-section">
+              <div class="section-label" style="display:flex; justify-content:space-between; align-items:center;">
+                Filters
+                <button id="map-clear-filters" class="map-filter-clear-btn" style="display:none;">Clear All</button>
+              </div>
+              <div class="map-filter-group">
+                <label class="map-filter-label">Enrollment</label>
+                <div class="map-filter-range">
+                  <input type="number" id="map-filter-enroll-min" class="map-filter-input" placeholder="Min">
+                  <span class="map-filter-dash">&ndash;</span>
+                  <input type="number" id="map-filter-enroll-max" class="map-filter-input" placeholder="Max">
+                </div>
+              </div>
+              <div class="map-filter-group">
+                <label class="map-filter-label">Districts Reached</label>
+                <div class="map-filter-range">
+                  <input type="number" id="map-filter-districts-min" class="map-filter-input" placeholder="Min">
+                  <span class="map-filter-dash">&ndash;</span>
+                  <input type="number" id="map-filter-districts-max" class="map-filter-input" placeholder="Max">
+                </div>
+              </div>
+            </div>
+
             <!-- Stats -->
             <div class="sidebar-section">
-              <div class="section-label">Summary</div>
+              <div class="section-label">Summary <span id="map-filter-count" class="map-filter-count" style="display:none;"></span></div>
               <div id="map-stats">
                 <div class="stat-row">
                   <span class="stat-label">TOTAL CAMPUSES</span>
@@ -1428,6 +1639,114 @@
         <button id="data-prev-btn" disabled>&larr; Previous</button>
         <span class="page-info" id="data-page-info">Page 1 of 1</span>
         <button id="data-next-btn" disabled>Next &rarr;</button>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════
+         TAB: SUMMARY
+         ════════════════════════════════════════════════════════════════ -->
+    <section id="page-summary" class="page">
+      <div class="page-scroll">
+        <div class="methodology-content summary-content">
+
+          <h1>Community College Commuting Analysis</h1>
+          <div class="summary-date">March 2026</div>
+
+          <p>This analysis maps the commuting patterns of 9M community college students across <strong>1,219 campuses</strong> and all <strong>435 congressional districts</strong>. It answers three questions: 1) How far do CC students actually travel? 2) How many congressional districts does a single campus&rsquo; commute zone touch? 3) And what does that mean for how we build coalitions at Accountable?</p>
+
+          <div class="summary-callout">
+            <p><strong>TL;DR:</strong> CC students are local, but &ldquo;local&rdquo; and &ldquo;concentrated in one district&rdquo; are not the same thing. In dense urban areas, a 15-mile commute radius can split across 5+ districts. In rural areas, a much wider commute radius often sits neatly inside a single district. Neither extreme gives us everything we need. The opportunity lives somewhere in the middle.</p>
+          </div>
+
+          <h2>1. CC Students Are Local, And That&rsquo;s The Point</h2>
+
+          <p>Community college students don&rsquo;t travel far to get to school. That&rsquo;s by design. The question for us isn&rsquo;t <em>whether</em> CC students are local, but how that locality translates to political geography.</p>
+
+          <p>Here&rsquo;s the commuting data, broken out by the type of area a campus sits in.</p>
+
+          <h3>Table 1: Commuting Distance by Campus Locale (miles)</h3>
+          <table>
+            <thead>
+              <tr><th>Campus Locale</th><th>P10</th><th>P25</th><th>P50</th><th>P75</th><th>P90</th><th>N (weighted)</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Large City</strong></td><td>2</td><td>4</td><td>8</td><td>15</td><td>61</td><td>2.9M</td></tr>
+              <tr><td><strong>Midsize City</strong></td><td>2</td><td>4</td><td>8</td><td>19</td><td>54</td><td>0.6M</td></tr>
+              <tr><td><strong>Suburb (Large)</strong></td><td>2</td><td>4</td><td>8</td><td>15</td><td>27</td><td>0.3M</td></tr>
+              <tr><td><strong>Town (Distant)</strong></td><td>3</td><td>13</td><td>27</td><td>44</td><td>102</td><td>0.5M</td></tr>
+              <tr><td><strong>Rural (Fringe)</strong></td><td>3</td><td>7</td><td>13</td><td>27</td><td>81</td><td>0.6M</td></tr>
+              <tr><td><strong>National (all CCs)</strong></td><td>2</td><td>5</td><td>10</td><td>22</td><td>69</td><td>5.5M</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:12px; color:var(--gray-muted); margin-top:-8px;"><em>Source: NCES PowerStats, NPSAS:20 (NPSAS:UG), DISTANCE variable filtered to Public 2-year, cross-tabulated by LOCALE. All estimates survey-weighted.</em></p>
+
+          <p>The headline: the median CC student lives 10 miles from campus. At the 75th percentile, it&rsquo;s 22 miles. Even in rural areas, where students commute furthest, half are still within 27 miles. These students are, by any reasonable definition, local.</p>
+
+          <p>But a 15-mile radius around a campus creates a circle of 707 square miles. In dense urban areas, 73% of congressional districts are smaller than that circle. The students are local; the district boundaries do not contain them.</p>
+
+          <h2>2. The District Geography Problem</h2>
+
+          <p>Congressional districts are drawn to contain equal populations (~760,000 people). This means dense areas get geographically tiny districts, while rural areas get enormous ones. A 15-mile commute radius captures a fundamentally different share of a district depending on where you draw the circle. The data confirms this pattern across all 1,219 campuses in the dataset:</p>
+
+          <h3>Table 2: The Concentration&ndash;Density Tradeoff</h3>
+          <table>
+            <thead>
+              <tr><th>Campus Type</th><th>Count</th><th>Avg Enroll</th><th>Avg Districts</th><th>% of Students</th><th>P75 Radius</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Large City</strong></td><td>369</td><td>12,283</td><td>5.1</td><td>53%</td><td>15 mi</td></tr>
+              <tr><td><strong>Midsize City</strong></td><td>107</td><td>11,845</td><td>3.8</td><td>14%</td><td>19 mi</td></tr>
+              <tr><td><strong>Suburban</strong></td><td>57</td><td>5,965</td><td>3.4</td><td>4%</td><td>15 mi</td></tr>
+              <tr><td><strong>Small City</strong></td><td>157</td><td>6,683</td><td>2.9</td><td>12%</td><td>25 mi</td></tr>
+              <tr><td><strong>Rural</strong></td><td>207</td><td>3,952</td><td>2.1</td><td>10%</td><td>27&ndash;37 mi</td></tr>
+              <tr><td><strong>Town / Remote</strong></td><td>322</td><td>3,159</td><td>1.7</td><td>9%</td><td>39&ndash;58 mi</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:12px; color:var(--gray-muted); margin-top:-8px;"><em>Source: Accountable analysis of 1,219 CCs using IPEDS Fall Enrollment (EFFY2023), NCES EDGE geocode files, and Census Bureau 119th Congress CD shapefiles. Radii from NPSAS:20 P75 by locale.</em></p>
+
+          <p>Read this table left to right: as you move from urban to rural, enrollment drops, the number of districts touched drops, and commute radius grows. Both ends of this spectrum are problematic for Accountable.</p>
+
+          <h2>3. The Sweet Spot</h2>
+
+          <p>The right targeting question isn&rsquo;t &ldquo;which CCs are biggest?&rdquo; It&rsquo;s <strong>&ldquo;which districts accumulate the most CC students from campuses that don&rsquo;t bleed everywhere?&rdquo;</strong></p>
+
+          <p>Reframing the unit of analysis from campus to district surfaces a middle ground where enrollment, concentration, and district boundaries align. 130 campuses have both 10,000+ enrollment and reach 3 or fewer districts. Together, they account for 2.3M students, 25% of CC enrollment nationwide. <button class="summary-link" id="summary-sweet-spot-link">See them on the Data tab</button> by filtering enrollment and districts reached.</p>
+
+          <p>These campuses are enough to generate coalition-scale enrollment, but sit in geographies where commute zones don&rsquo;t fragment across a dozen districts. Many are midsize city campuses or large city campuses that happen to sit in districts with favorable geography.</p>
+
+          <h2>4. What This Means for Accountable</h2>
+
+          <p>This analysis has three direct implications for how we think about GTM.</p>
+
+          <div class="summary-gtm-box">
+            <ol>
+              <li><strong><em>The unit of targeting should be the district, not the campus.</em></strong></li>
+              <li><strong><em>Urban mega-campuses are awareness plays, not coalition plays.</em></strong></li>
+              <li><strong><em>The sweet spot is a real, quantifiable segment.</em></strong></li>
+            </ol>
+          </div>
+
+          <p>The full dataset covers 9M students across all congressional districts. 281 districts have 10k+ students. 7 swing states represent 1.35M students across 216 campuses. The community college population is large and ubiquitous.</p>
+
+          <h2>5. But Concentration Alone Isn&rsquo;t a Strategy</h2>
+
+          <p>Everything above is a spatial analysis. It does not tell us whether CC students are the <em>right population</em> for Accountable to build around. A 30-year longitudinal study using Monitoring the Future data found that high schoolers planning to attend CCs had half the odds of engaging in conventional civic activities compared to four-year-bound peers<sup>1</sup>. Separately, four-year students reported higher volunteering, voter registration, and news consumption than two-year attendees<sup>2</sup>. Community colleges also have a 55% first-year retention rate, meaning nearly half the user base disappears annually before we account for product churn<sup>3</sup>.</p>
+
+          <p>Of course, these aren&rsquo;t disqualifying facts. They&rsquo;re open questions. We don&rsquo;t know whether CC students would engage with a civic engagement product like ours because nobody has offered them one. It&rsquo;s our job to find out while simultaneously evaluating other high-density personas.</p>
+
+          <details>
+            <summary>Methodology Note</summary>
+            <p style="margin-top:12px;">This analysis combines three sources: 1) NCES PowerStats for student-level commuting distances by locale type, 2) IPEDS for campus-level enrollment, and 3) Census Bureau 119th Congress congressional district shapefiles intersected with NCES EDGE campus geocodes to compute district overlaps.</p>
+            <p>Commute zones are modeled as circular buffers around each campus at the 75th percentile commuting distance from that campus&rsquo;s NCES locale code. This is a simplification but it captures the relevant scale.</p>
+          </details>
+
+          <div class="summary-footnotes">
+            <p><sup>1</sup> <a href="https://doi.org/10.1177/0044118X211058085" target="_blank" rel="noopener">Thirty Year Trends in U.S. Adolescents&rsquo; Civic Engagement: A Story of Changing Participation and Educational Differences</a></p>
+            <p><sup>2</sup> <a href="https://doi.org/10.1007/s11162-020-09598-7" target="_blank" rel="noopener">Civic Engagement among 2-Year and 4-Year College Students</a></p>
+            <p><sup>3</sup> <a href="https://nscresearchcenter.org/" target="_blank" rel="noopener">National Student Clearinghouse Research Center</a></p>
+          </div>
+
+        </div>
       </div>
     </section>
 
@@ -1659,7 +1978,7 @@
     let circlesData = null;
     let map = null;
     let mapInitialized = false;
-    let currentPage = 'map';
+    let currentPage = 'summary';
 
     /* Data table state */
     let dataTableSortCol = 'enrollment';
@@ -1672,6 +1991,14 @@
     /* ================================================================
        UTILITY FUNCTIONS
        ================================================================ */
+    function debounce(fn, delay) {
+      let timer;
+      return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+      };
+    }
+
     function escapeHtml(str) {
       if (!str) return '';
       return String(str)
@@ -1770,7 +2097,7 @@
     function getPageFromHash() {
       const hash = window.location.hash.replace('#', '');
       const [page, queryStr] = hash.split('?');
-      const validPages = ['dashboard', 'map', 'data', 'methodology'];
+      const validPages = ['dashboard', 'map', 'data', 'summary', 'methodology'];
       const params = {};
       if (queryStr) {
         queryStr.split('&').forEach(pair => {
@@ -1778,7 +2105,7 @@
           if (key && val) params[decodeURIComponent(key)] = decodeURIComponent(val);
         });
       }
-      return { page: validPages.includes(page) ? page : 'map', params };
+      return { page: validPages.includes(page) ? page : 'summary', params };
     }
 
     /* Apply deep-link params on the map page */
@@ -2224,7 +2551,7 @@
           setupCampusClick();
           setupLayerToggles();
           setupMapSearch();
-          setupMapStateFilter();
+          setupMapFilters();
 
         } catch (err) {
           console.error('Failed to load map data:', err);
@@ -2420,38 +2747,132 @@
       });
     }
 
-    /* ── Map state filter ── */
-    function setupMapStateFilter() {
+    /* ── Map filters (combined) ── */
+    function applyMapFilters() {
+      if (!map || !campusesData) return;
+
+      const conditions = [];   // Mapbox GL expression sub-filters
+      const jsFilters = [];    // Parallel JS filter functions for stats
+
+      // 1. State filter
+      const selectedState = document.getElementById('map-state-select').value;
+      if (selectedState) {
+        conditions.push(['==', ['get', 'state'], selectedState]);
+        jsFilters.push(f => f.properties.state === selectedState);
+      }
+
+      // 2. Enrollment range
+      const enrollMinVal = document.getElementById('map-filter-enroll-min').value;
+      const enrollMaxVal = document.getElementById('map-filter-enroll-max').value;
+      const enrollMin = enrollMinVal !== '' ? parseFloat(enrollMinVal) : null;
+      const enrollMax = enrollMaxVal !== '' ? parseFloat(enrollMaxVal) : null;
+      if (enrollMin !== null && !isNaN(enrollMin)) {
+        conditions.push(['>=', ['get', 'enrollment'], enrollMin]);
+        jsFilters.push(f => (f.properties.enrollment || 0) >= enrollMin);
+      }
+      if (enrollMax !== null && !isNaN(enrollMax)) {
+        conditions.push(['<=', ['get', 'enrollment'], enrollMax]);
+        jsFilters.push(f => (f.properties.enrollment || 0) <= enrollMax);
+      }
+
+      // 3. Districts reached range
+      const distMinVal = document.getElementById('map-filter-districts-min').value;
+      const distMaxVal = document.getElementById('map-filter-districts-max').value;
+      const distMin = distMinVal !== '' ? parseFloat(distMinVal) : null;
+      const distMax = distMaxVal !== '' ? parseFloat(distMaxVal) : null;
+      if (distMin !== null && !isNaN(distMin)) {
+        conditions.push(['>=', ['get', 'districts_reached'], distMin]);
+        jsFilters.push(f => (f.properties.districts_reached || 0) >= distMin);
+      }
+      if (distMax !== null && !isNaN(distMax)) {
+        conditions.push(['<=', ['get', 'districts_reached'], distMax]);
+        jsFilters.push(f => (f.properties.districts_reached || 0) <= distMax);
+      }
+
+      // Build combined Mapbox filter
+      const mapFilter = conditions.length === 0 ? null :
+                        conditions.length === 1 ? conditions[0] :
+                        ['all', ...conditions];
+
+      // Apply to all three layers
+      map.setFilter('campus-points', mapFilter);
+      map.setFilter('circle-fills', mapFilter);
+      map.setFilter('circle-borders', mapFilter);
+
+      // Filter JS features for stats
+      let filtered = campusesData.features;
+      jsFilters.forEach(fn => { filtered = filtered.filter(fn); });
+      updateMapStats(filtered);
+
+      // Update filter count badge + clear button visibility
+      updateMapFilterIndicators();
+    }
+
+    function updateMapFilterIndicators() {
+      let activeCount = 0;
+
+      if (document.getElementById('map-state-select').value) activeCount++;
+      if (document.getElementById('map-filter-enroll-min').value) activeCount++;
+      if (document.getElementById('map-filter-enroll-max').value) activeCount++;
+      if (document.getElementById('map-filter-districts-min').value) activeCount++;
+      if (document.getElementById('map-filter-districts-max').value) activeCount++;
+
+      // Badge
+      const badge = document.getElementById('map-filter-count');
+      if (activeCount > 0) {
+        badge.textContent = activeCount;
+        badge.style.display = 'inline-flex';
+      } else {
+        badge.style.display = 'none';
+      }
+
+      // Clear button
+      const clearBtn = document.getElementById('map-clear-filters');
+      clearBtn.style.display = activeCount > 0 ? 'inline' : 'none';
+    }
+
+    function clearAllMapFilters() {
+      document.getElementById('map-state-select').value = '';
+      document.getElementById('map-filter-enroll-min').value = '';
+      document.getElementById('map-filter-enroll-max').value = '';
+      document.getElementById('map-filter-districts-min').value = '';
+      document.getElementById('map-filter-districts-max').value = '';
+
+      applyMapFilters();
+      map.flyTo({ center: [-98.5, 39.8], zoom: 4 });
+    }
+
+    function setupMapFilters() {
+      // State select
       const stateSelect = document.getElementById('map-state-select');
-
       stateSelect.addEventListener('change', () => {
+        applyMapFilters();
+        // Fit bounds to selected state
         const selected = stateSelect.value;
-
-        if (!selected) {
-          map.setFilter('campus-points', null);
-          map.setFilter('circle-fills', null);
-          map.setFilter('circle-borders', null);
-          if (campusesData) updateMapStats(campusesData.features);
-          map.flyTo({ center: [-98.5, 39.8], zoom: 4 });
-          return;
-        }
-
-        const stateFilter = ['==', ['get', 'state'], selected];
-        map.setFilter('campus-points', stateFilter);
-        map.setFilter('circle-fills', stateFilter);
-        map.setFilter('circle-borders', stateFilter);
-
-        if (campusesData) {
+        if (selected && campusesData) {
           const filtered = campusesData.features.filter(f => f.properties.state === selected);
-          updateMapStats(filtered);
-
           if (filtered.length > 0) {
             const bounds = new mapboxgl.LngLatBounds();
             filtered.forEach(f => bounds.extend(f.geometry.coordinates));
             map.fitBounds(bounds, { padding: 60, maxZoom: 8 });
           }
+        } else if (!selected) {
+          map.flyTo({ center: [-98.5, 39.8], zoom: 4 });
         }
       });
+
+      // Numeric range inputs (debounced)
+      const debouncedApply = debounce(() => applyMapFilters(), 300);
+      ['map-filter-enroll-min', 'map-filter-enroll-max',
+       'map-filter-districts-min', 'map-filter-districts-max'].forEach(id => {
+        document.getElementById(id).addEventListener('input', debouncedApply);
+      });
+
+      // Clear All button
+      document.getElementById('map-clear-filters').addEventListener('click', clearAllMapFilters);
+
+      // Reset View button
+      document.getElementById('map-reset-view-btn').addEventListener('click', clearAllMapFilters);
     }
 
     /* ── Map sidebar hamburger ── */
@@ -2869,6 +3290,19 @@
       a.download = 'community_college_districts.csv';
       a.click();
       URL.revokeObjectURL(url);
+    });
+
+    /* ================================================================
+       SUMMARY TAB: CROSS-TAB LINKS
+       ================================================================ */
+    document.getElementById('summary-sweet-spot-link').addEventListener('click', () => {
+      navigateTo('data');
+      setTimeout(() => {
+        const eMin = document.getElementById('col-filter-enrollment-min');
+        const dMax = document.getElementById('col-filter-districts-max');
+        if (eMin) { eMin.value = '10000'; eMin.dispatchEvent(new Event('input', { bubbles: true })); }
+        if (dMax) { dMax.value = '3'; dMax.dispatchEvent(new Event('input', { bubbles: true })); }
+      }, 300);
     });
 
     /* ================================================================
