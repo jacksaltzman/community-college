@@ -1,6 +1,6 @@
 {
   "framework": null,
   "installCommand": "",
-  "buildCommand": "cp -r 'Students Per District/map' dist",
+  "buildCommand": "mkdir -p dist && cp -r Students\\ Per\\ District/map/* dist/",
   "outputDirectory": "dist"
 }

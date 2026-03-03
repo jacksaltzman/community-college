@@ -76,16 +76,14 @@
 
     .nav-brand {
       display: flex;
-      align-items: baseline;
+      align-items: center;
       gap: 12px;
       flex-shrink: 0;
     }
-    .nav-brand-name {
-      font-family: var(--font-heading);
-      font-weight: 700;
-      font-size: 18px;
-      color: white;
-      letter-spacing: 0.15em;
+    .nav-brand-logo {
+      height: 18px;
+      width: auto;
+      display: block;
     }
     .nav-brand-subtitle {
       font-family: var(--font-heading);
@@ -850,6 +848,80 @@
       vertical-align: middle;
     }
 
+    /* Column filter icon + popover */
+    .data-table th .th-content {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .col-filter-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 16px;
+      height: 16px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 0;
+      color: var(--gray-lighter);
+      font-size: 10px;
+      border-radius: 3px;
+      transition: color 0.15s, background 0.15s;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .col-filter-btn:hover { color: var(--teal); background: var(--hover-bg); }
+    .col-filter-btn.active { color: var(--coral); }
+    .col-filter-pop {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      z-index: 50;
+      background: white;
+      border: 1px solid var(--border-main);
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      padding: 8px;
+      min-width: 140px;
+      margin-top: 4px;
+    }
+    .col-filter-pop.pop-right { left: auto; right: 0; }
+    .col-filter-pop.open { display: block; }
+    .col-filter-pop input {
+      width: 100%;
+      padding: 5px 8px;
+      border: 1px solid var(--border-light);
+      border-radius: 4px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--black);
+      background: white;
+      box-sizing: border-box;
+    }
+    .col-filter-pop input::placeholder { color: var(--gray-lighter); }
+    .col-filter-pop input:focus { outline: none; border-color: var(--teal); }
+    .col-filter-pop .num-range {
+      display: flex;
+      gap: 4px;
+    }
+    .col-filter-pop .num-range input { width: 50%; }
+    .col-filter-pop .filter-clear-btn {
+      display: block;
+      width: 100%;
+      margin-top: 6px;
+      padding: 3px 0;
+      border: none;
+      background: none;
+      color: var(--gray-muted);
+      font-family: var(--font-body);
+      font-size: 11px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .col-filter-pop .filter-clear-btn:hover { color: var(--coral); }
+
     .data-table .districts-cell {
       font-size: 11px;
       color: var(--gray-body);
@@ -1059,7 +1131,7 @@
        ================================================================ -->
   <nav id="top-nav">
     <div class="nav-brand">
-      <span class="nav-brand-name">ACCOUNTABLE</span>
+      <img src="accountable_logo.avif" alt="Accountable" class="nav-brand-logo">
       <span class="nav-brand-subtitle">Community College District Map</span>
     </div>
     <div class="nav-tabs">
@@ -1290,16 +1362,16 @@
         <table class="data-table" id="data-table">
           <thead>
             <tr>
-              <th data-col="name">Name</th>
-              <th data-col="city">City</th>
-              <th data-col="state">State</th>
-              <th data-col="enrollment" class="num">Enrollment</th>
-              <th data-col="campus_type">Campus Type</th>
-              <th data-col="radius_miles" class="num">Radius (mi)</th>
-              <th data-col="districts_reached" class="num">Districts</th>
-              <th data-col="primary_district">Primary District</th>
-              <th data-col="primary_district_coverage" class="num">Coverage</th>
-              <th data-col="all_districts">All Districts</th>
+              <th data-col="name" style="position:relative"><span class="th-content">Name <button class="col-filter-btn" data-filter-target="col-filter-name" title="Filter">&#x25BE;</button></span><div class="col-filter-pop"><input type="text" id="col-filter-name" placeholder="Filter name..."><button class="filter-clear-btn">Clear</button></div></th>
+              <th data-col="city" style="position:relative"><span class="th-content">City <button class="col-filter-btn" data-filter-target="col-filter-city" title="Filter">&#x25BE;</button></span><div class="col-filter-pop"><input type="text" id="col-filter-city" placeholder="Filter city..."><button class="filter-clear-btn">Clear</button></div></th>
+              <th data-col="state" style="position:relative"><span class="th-content">State <button class="col-filter-btn" data-filter-target="col-filter-state" title="Filter">&#x25BE;</button></span><div class="col-filter-pop"><input type="text" id="col-filter-state" placeholder="Filter state..."><button class="filter-clear-btn">Clear</button></div></th>
+              <th data-col="enrollment" class="num" style="position:relative"><span class="th-content">Enrollment <button class="col-filter-btn" data-filter-target="col-filter-enrollment" title="Filter">&#x25BE;</button></span><div class="col-filter-pop pop-right"><div class="num-range"><input type="number" id="col-filter-enrollment-min" placeholder="Min"><input type="number" id="col-filter-enrollment-max" placeholder="Max"></div><button class="filter-clear-btn">Clear</button></div></th>
+              <th data-col="campus_type" style="position:relative"><span class="th-content">Campus Type <button class="col-filter-btn" data-filter-target="col-filter-campus_type" title="Filter">&#x25BE;</button></span><div class="col-filter-pop"><input type="text" id="col-filter-campus_type" placeholder="Filter type..."><button class="filter-clear-btn">Clear</button></div></th>
+              <th data-col="radius_miles" class="num" style="position:relative"><span class="th-content">Radius (mi) <button class="col-filter-btn" data-filter-target="col-filter-radius" title="Filter">&#x25BE;</button></span><div class="col-filter-pop pop-right"><div class="num-range"><input type="number" id="col-filter-radius-min" placeholder="Min"><input type="number" id="col-filter-radius-max" placeholder="Max"></div><button class="filter-clear-btn">Clear</button></div></th>
+              <th data-col="districts_reached" class="num" style="position:relative"><span class="th-content">Districts <button class="col-filter-btn" data-filter-target="col-filter-districts" title="Filter">&#x25BE;</button></span><div class="col-filter-pop pop-right"><div class="num-range"><input type="number" id="col-filter-districts-min" placeholder="Min"><input type="number" id="col-filter-districts-max" placeholder="Max"></div><button class="filter-clear-btn">Clear</button></div></th>
+              <th data-col="primary_district" style="position:relative"><span class="th-content">Primary District <button class="col-filter-btn" data-filter-target="col-filter-primary_district" title="Filter">&#x25BE;</button></span><div class="col-filter-pop"><input type="text" id="col-filter-primary_district" placeholder="Filter district..."><button class="filter-clear-btn">Clear</button></div></th>
+              <th data-col="primary_district_coverage" class="num" style="position:relative"><span class="th-content">Coverage <button class="col-filter-btn" data-filter-target="col-filter-coverage" title="Filter">&#x25BE;</button></span><div class="col-filter-pop pop-right"><div class="num-range"><input type="number" id="col-filter-coverage-min" placeholder="Min %"><input type="number" id="col-filter-coverage-max" placeholder="Max %"></div><button class="filter-clear-btn">Clear</button></div></th>
+              <th data-col="all_districts" style="position:relative"><span class="th-content">All Districts <button class="col-filter-btn" data-filter-target="col-filter-all_districts" title="Filter">&#x25BE;</button></span><div class="col-filter-pop"><input type="text" id="col-filter-all_districts" placeholder="Filter districts..."><button class="filter-clear-btn">Clear</button></div></th>
             </tr>
           </thead>
           <tbody id="data-tbody"></tbody>
@@ -2054,10 +2126,10 @@
             type: 'line',
             source: 'state-boundaries',
             'source-layer': 'admin',
-            filter: ['==', ['get', 'admin_level'], 1],
+            filter: ['all', ['==', ['get', 'admin_level'], 1], ['==', ['get', 'iso_3166_1'], 'US']],
             paint: {
               'line-color': '#111111',
-              'line-width': ['interpolate', ['linear'], ['zoom'], 3, 1.2, 10, 2.5],
+              'line-width': ['interpolate', ['linear'], ['zoom'], 3, 0.8, 10, 1.8],
               'line-opacity': 0.85,
             },
           });
@@ -2068,7 +2140,7 @@
             source: 'commute-circles',
             paint: {
               'fill-color': campusTypeColors,
-              'fill-opacity': ['interpolate', ['linear'], ['zoom'], 3, 0, 5, 0, 6, 0.12],
+              'fill-opacity': ['interpolate', ['linear'], ['zoom'], 3, 0, 4, 0.06, 6, 0.12],
             },
           });
 
@@ -2079,7 +2151,7 @@
             paint: {
               'line-color': campusTypeColors,
               'line-width': 1,
-              'line-opacity': ['interpolate', ['linear'], ['zoom'], 3, 0, 5, 0, 6, 0.4],
+              'line-opacity': ['interpolate', ['linear'], ['zoom'], 3, 0, 4, 0.2, 6, 0.4],
             },
           });
 
@@ -2352,16 +2424,31 @@
 
       const searchWords = searchVal.split(/\s+/).filter(w => w.length > 0);
 
+      /* Column filters */
+      const colFilterName = (document.getElementById('col-filter-name')?.value || '').trim().toLowerCase();
+      const colFilterCity = (document.getElementById('col-filter-city')?.value || '').trim().toLowerCase();
+      const colFilterState = (document.getElementById('col-filter-state')?.value || '').trim().toLowerCase();
+      const colFilterType = (document.getElementById('col-filter-campus_type')?.value || '').trim().toLowerCase();
+      const colFilterPrimary = (document.getElementById('col-filter-primary_district')?.value || '').trim().toLowerCase();
+      const colFilterAllDist = (document.getElementById('col-filter-all_districts')?.value || '').trim().toLowerCase();
+
+      const enrollMin = parseFloat(document.getElementById('col-filter-enrollment-min')?.value) || null;
+      const enrollMax = parseFloat(document.getElementById('col-filter-enrollment-max')?.value) || null;
+      const radiusMin = parseFloat(document.getElementById('col-filter-radius-min')?.value) || null;
+      const radiusMax = parseFloat(document.getElementById('col-filter-radius-max')?.value) || null;
+      const distMin = parseFloat(document.getElementById('col-filter-districts-min')?.value) || null;
+      const distMax = parseFloat(document.getElementById('col-filter-districts-max')?.value) || null;
+      const covMin = parseFloat(document.getElementById('col-filter-coverage-min')?.value) || null;
+      const covMax = parseFloat(document.getElementById('col-filter-coverage-max')?.value) || null;
+
       let filtered = campusesData.features.filter(f => {
         const p = f.properties;
 
-        /* State filter */
+        /* Dropdown filters */
         if (stateVal && p.state !== stateVal) return false;
-
-        /* Type filter */
         if (typeVal && p.campus_type !== typeVal) return false;
 
-        /* Search filter */
+        /* Global search */
         if (searchWords.length > 0) {
           const searchable = [
             (p.name || ''),
@@ -2371,6 +2458,31 @@
           ].join(' ').toLowerCase();
           if (!searchWords.every(w => searchable.includes(w))) return false;
         }
+
+        /* Column text filters */
+        if (colFilterName && !(p.name || '').toLowerCase().includes(colFilterName)) return false;
+        if (colFilterCity && !(p.city || '').toLowerCase().includes(colFilterCity)) return false;
+        if (colFilterState && !(p.state || '').toLowerCase().includes(colFilterState)) return false;
+        if (colFilterType && !(p.campus_type || '').toLowerCase().includes(colFilterType)) return false;
+        if (colFilterPrimary && !(p.primary_district || '').toLowerCase().includes(colFilterPrimary)) return false;
+        if (colFilterAllDist && !(p.all_districts || '').toLowerCase().includes(colFilterAllDist)) return false;
+
+        /* Column numeric range filters */
+        const enrollment = Number(p.enrollment) || 0;
+        if (enrollMin !== null && enrollment < enrollMin) return false;
+        if (enrollMax !== null && enrollment > enrollMax) return false;
+
+        const radius = Number(p.radius_miles) || 0;
+        if (radiusMin !== null && radius < radiusMin) return false;
+        if (radiusMax !== null && radius > radiusMax) return false;
+
+        const districts = Number(p.districts_reached) || 0;
+        if (distMin !== null && districts < distMin) return false;
+        if (distMax !== null && districts > distMax) return false;
+
+        const coverage = (Number(p.primary_district_coverage) || 0) * 100;
+        if (covMin !== null && coverage < covMin) return false;
+        if (covMax !== null && coverage > covMax) return false;
 
         return true;
       });
@@ -2505,7 +2617,9 @@
 
     /* Sort header clicks */
     document.querySelectorAll('#data-table th').forEach(th => {
-      th.addEventListener('click', () => {
+      th.addEventListener('click', (e) => {
+        /* Ignore clicks on filter buttons/popovers */
+        if (e.target.closest('.col-filter-btn') || e.target.closest('.col-filter-pop')) return;
         const col = th.dataset.col;
         if (!col) return;
         if (dataTableSortCol === col) {
@@ -2532,6 +2646,57 @@
       dataTablePage = 1;
       if (dataTableRendered) renderDataTable();
     });
+
+    /* Column filter popovers */
+    document.querySelectorAll('.col-filter-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const pop = btn.closest('th').querySelector('.col-filter-pop');
+        const wasOpen = pop.classList.contains('open');
+        /* Close all popovers first */
+        document.querySelectorAll('.col-filter-pop.open').forEach(p => p.classList.remove('open'));
+        if (!wasOpen) {
+          pop.classList.add('open');
+          const input = pop.querySelector('input');
+          if (input) input.focus();
+        }
+      });
+    });
+    /* Close popovers on outside click */
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.col-filter-pop') && !e.target.closest('.col-filter-btn')) {
+        document.querySelectorAll('.col-filter-pop.open').forEach(p => p.classList.remove('open'));
+      }
+    });
+    /* Filter inputs — reset to page 1 on change */
+    document.querySelectorAll('.col-filter-pop input').forEach(input => {
+      input.addEventListener('input', () => {
+        dataTablePage = 1;
+        if (dataTableRendered) renderDataTable();
+        /* Highlight the filter icon when active */
+        updateFilterBtnStates();
+      });
+      input.addEventListener('click', e => e.stopPropagation());
+    });
+    /* Clear buttons */
+    document.querySelectorAll('.filter-clear-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        const pop = btn.closest('.col-filter-pop');
+        pop.querySelectorAll('input').forEach(inp => { inp.value = ''; });
+        pop.classList.remove('open');
+        dataTablePage = 1;
+        if (dataTableRendered) renderDataTable();
+        updateFilterBtnStates();
+      });
+    });
+    function updateFilterBtnStates() {
+      document.querySelectorAll('.col-filter-btn').forEach(btn => {
+        const pop = btn.closest('th').querySelector('.col-filter-pop');
+        const hasValue = Array.from(pop.querySelectorAll('input')).some(inp => inp.value.trim() !== '');
+        btn.classList.toggle('active', hasValue);
+      });
+    }
 
     /* Pagination buttons */
     document.getElementById('data-prev-btn').addEventListener('click', () => {
