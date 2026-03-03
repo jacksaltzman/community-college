@@ -2171,8 +2171,14 @@
     });
 
     /* ================================================================
-       DATA LOADING (campuses.geojson at startup)
+       DATA LOADING (campuses + districts preloaded at startup)
        ================================================================ */
+    /* Start districts fetch immediately so it's cached when user opens map */
+    const districtsPromise = fetch('data/districts.geojson').then(r => r.json()).catch(err => {
+      console.error('Failed to preload districts:', err);
+      return null;
+    });
+
     async function loadCampusData() {
       try {
         const res = await fetch('data/campuses.geojson');
@@ -2435,9 +2441,8 @@
           });
           circlesData = { type: 'FeatureCollection', features: circleFeatures };
 
-          /* Lazy-load districts */
-          const districtsRes = await fetch('data/districts.geojson');
-          const districtsData = await districtsRes.json();
+          /* Use pre-fetched districts (started at page load) */
+          const districtsData = await districtsPromise;
 
           /* Add sources */
           map.addSource('districts', { type: 'geojson', data: districtsData });
