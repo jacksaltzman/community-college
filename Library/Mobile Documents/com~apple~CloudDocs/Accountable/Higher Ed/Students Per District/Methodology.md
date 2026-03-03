@@ -9,8 +9,7 @@ This document explains how the `cc_district_intersections.xlsx` workbook is prod
 | **HD2023** | Institutional characteristics (name, location, sector, highest level of offering) | IPEDS / NCES |
 | **EFFY2023** | 12-month unduplicated headcount enrollment | IPEDS / NCES |
 | **CB 2023 CD118 500k** | 118th Congress congressional district boundaries (cartographic, coast-clipped) | U.S. Census Bureau |
-| **TIGER 2022 Tract shapefiles** | Census tract polygon boundaries for all 50 states, DC, and territories | U.S. Census Bureau |
-| **ACS 5-Year (2022)** | Tract-level total population (table B01003) | U.S. Census Bureau API |
+| **NPSAS:20** | 75th-percentile student-to-campus distance by NCES locale code (retrieval code: swopse) | NCES PowerStats |
 
 ## Step 1: Identify Community Colleges
 
@@ -30,27 +29,43 @@ Campuses with missing or zero coordinates are dropped. A post-processing step re
 
 Total 12-month unduplicated headcount enrollment is joined from EFFY2023, filtered to `EFFYLEV = 1` (all students) and `LSTUDY = 999` (total across all levels of study). This is a left join — campuses without enrollment data retain null values rather than being dropped.
 
-## Step 3: Classify Campus Density
+## Step 3: Classify Campus by Locale and Assign Commute Radius
 
-Each campus is placed into a density category that determines its commute-shed radius. The classification works by spatial-joining each campus point to its containing Census tract, then computing tract population density:
+Each campus is assigned a commute-shed radius based on its NCES locale code (the `LOCALE` field in HD2023). Radii come from the 75th-percentile (P75) student-to-campus crow-flies distance computed from the 2020 National Postsecondary Student Aid Study (NPSAS:20) via NCES PowerStats (retrieval code: swopse). The P75 was chosen over the median because it captures the commuting range of ~75% of students, reflecting the broader service area relevant to legislative outreach.
 
-```
-density = tract population / (tract land area in sq mi)
-```
+### Per-Locale Radius Lookup
 
-| Category | Density Threshold | Commute Radius | Typical Setting |
-|----------|------------------|----------------|-----------------|
-| Compact | ≥ 15,000 pop/sq mi | 10 miles | Dense urban core |
-| Mid-Size | 3,000 – 14,999 | 13 miles | City or inner suburb |
-| Large Metro | 1,000 – 2,999 | 17 miles | Outer suburb or exurb |
-| Sprawl-Fragmented | < 1,000 | 22 miles | Rural or small town |
+| Locale Code | Description | P75 Radius |
+|-------------|-------------|------------|
+| 11 | City Large | 15 mi |
+| 12 | City Midsize | 19 mi |
+| 13 | City Small | 25 mi |
+| 21 | Suburb Large | 15 mi |
+| 22 | Suburb Midsize | 22 mi |
+| 23 | Suburb Small | 22 mi |
+| 31 | Town Fringe | 39 mi |
+| 32 | Town Distant | 44 mi |
+| 33 | Town Remote | 58 mi |
+| 41 | Rural Fringe | 27 mi |
+| 42 | Rural Distant | 37 mi |
+| 43 | Rural Remote | 55 mi |
 
-**Fallback rule:** When tract density is zero or null (uninhabited tracts, water, data gaps), the IPEDS locale code is used instead:
-- Locale 11–13 (City) → Mid-Size (13 mi)
-- Locale 21–23 (Suburb) → Large Metro (17 mi)
-- Locale 31–43 (Town/Rural) → Sprawl-Fragmented (22 mi)
+Note: City Small (locale 13) uses a conservative 25-mile radius; the raw P75 of 35 miles was unstable due to small sample size.
 
-This fallback affects approximately 13 campuses, including several in U.S. territories where Census tract data is sparse.
+### Display Groupings
+
+For the map legend and Excel labels, the 12 locale codes are grouped into 6 display categories:
+
+| Label | Locale Codes | Radius Range |
+|-------|-------------|-------------|
+| Large City | 11, 21 | 15 mi |
+| Midsize City | 12 | 19 mi |
+| Suburban | 22, 23 | 22 mi |
+| Small City | 13 | 25 mi |
+| Rural | 41, 42 | 27–37 mi |
+| Town / Remote | 31, 32, 33, 43 | 39–58 mi |
+
+**Fallback rule:** Campuses with a missing or invalid locale code (null or -3) are assigned a 22-mile radius and the "Suburban" label. This affects approximately 3 campuses, primarily in U.S. territories.
 
 ## Step 4: Build Commute-Shed Circles
 
@@ -93,8 +108,8 @@ One row per campus-district pair. Each row describes a single overlap between on
 | City, State | Campus location |
 | Latitude, Longitude | Campus coordinates |
 | Enrollment | 12-month unduplicated headcount (EFFY2023) |
-| Tract Density (pop/sq mi) | Population density of the campus's Census tract |
-| Campus Type | Density classification (Compact / Mid-Size / Large Metro / Sprawl-Fragmented) |
+| Locale Code | NCES locale code (11–43) from HD2023 |
+| Campus Type | Locale-based classification (Large City / Midsize City / Suburban / Small City / Rural / Town \/ Remote) |
 | Commute Radius (mi) | Radius of the commute-shed circle |
 | District | Congressional district code (e.g., "CA-12", "TX-AL") |
 | District State | State abbreviation of the district |
@@ -114,8 +129,8 @@ One row per campus. Aggregates the detail rows into a single record per institut
 | Institution | Campus name |
 | City, State, Latitude, Longitude | Campus location |
 | Enrollment | 12-month unduplicated headcount |
-| Tract Density (pop/sq mi) | Census tract density |
-| Campus Type | Density classification |
+| Locale Code | NCES locale code (11–43) |
+| Campus Type | Locale-based classification |
 | Commute Radius (mi) | Assigned commute radius |
 | Districts Reached | Count of congressional districts the commute circle overlaps |
 | Primary District | District code with the highest fractional overlap |
@@ -129,14 +144,14 @@ Flags for data quality issues and records of removed institutions.
 | Flag Type | Meaning |
 |-----------|---------|
 | `zero_districts` | Campus has no overlapping congressional districts (Pacific island territories) |
-| `missing_density` | Tract density was zero; campus was classified using the IPEDS locale code fallback |
+| `missing_locale` | Locale code is missing or -3; campus was classified using the fallback radius (22 mi) |
 | `removed` | Institution was removed during data quality cleanup — either wrong sector per HD2024 or closed/merged |
 
 ## Key Assumptions
 
 1. **Commute sheds are circular.** In practice, commuting patterns follow road networks and natural geography. Circles are a simplification that works well for nationwide analysis but overestimates reach in areas with barriers (mountains, rivers, limited road access).
 
-2. **Density determines radius.** Urban campuses get smaller circles because students commute shorter distances in dense areas. The four-tier system (10/13/17/22 miles) is based on observed commuting patterns for community college students.
+2. **NPSAS:20 P75 distance determines radius.** Each campus's commute radius is set to the 75th-percentile student-to-campus distance for its NCES locale code, as computed from NPSAS:20. Urban campuses get smaller circles because students commute shorter distances in dense areas. The 12 locale-specific radii range from 15 miles (large cities) to 58 miles (remote towns).
 
 3. **Fractional overlap is the right metric.** A campus's influence on a district is measured by what fraction of the district's land area falls within the commute shed. This means a campus in a small urban district may "cover" 30% of it, while the same campus covers only 0.5% of an adjacent rural district — reflecting the reality that community college students represent a larger share of the electorate in compact districts.
 
