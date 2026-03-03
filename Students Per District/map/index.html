@@ -3396,19 +3396,25 @@
       if (filtered.length === 0) return;
 
       const columns = [
-        { key: 'name', header: 'Name' },
-        { key: 'city', header: 'City' },
-        { key: 'state', header: 'State' },
-        { key: 'enrollment', header: 'Enrollment' },
-        { key: 'campus_type', header: 'Campus Type' },
-        { key: 'radius_miles', header: 'Radius (mi)' },
-        { key: 'districts_reached', header: 'Districts Reached' },
-        { key: 'primary_district', header: 'Primary District' },
-        { key: 'primary_district_coverage', header: 'Primary District Coverage' },
-        { key: 'all_districts', header: 'All Districts' },
+        { key: 'name', header: 'Name', note: 'Official institution name' },
+        { key: 'city', header: 'City', note: 'Campus city' },
+        { key: 'state', header: 'State', note: 'Two-letter state abbreviation' },
+        { key: 'enrollment', header: 'Enrollment', note: 'Total student headcount' },
+        { key: 'campus_type', header: 'Campus Type', note: 'NCES locale classification (Large City / Midsize City / Suburban / Small City / Rural / Town or Remote)' },
+        { key: 'radius_miles', header: 'Radius (mi)', note: 'Estimated commute radius in miles based on campus type' },
+        { key: 'districts_reached', header: 'Districts Reached', note: 'Number of congressional districts that overlap with the commute radius' },
+        { key: 'primary_district', header: 'Primary District', note: 'The congressional district with the largest geographic overlap with the commute radius' },
+        { key: 'primary_district_coverage', header: 'Primary District Coverage', note: 'Percentage of the primary district area that falls within the commute radius' },
+        { key: 'all_districts', header: 'All Districts', note: 'All congressional districts that overlap with the commute radius, ordered by overlap' },
       ];
 
-      const csvRows = [columns.map(c => c.header).join(',')];
+      const csvRows = [
+        columns.map(c => c.header).join(','),
+        columns.map(c => {
+          const n = c.note;
+          return n.includes(',') ? '"' + n + '"' : n;
+        }).join(','),
+      ];
       filtered.forEach(f => {
         const p = f.properties;
         const row = columns.map(c => {
