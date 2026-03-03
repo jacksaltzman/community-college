@@ -116,7 +116,7 @@ ENROLL_VARS = {
 
 
 # =========================================================================
-# ACS API Client
+# Task 2: ACS API Client
 # =========================================================================
 
 def fetch_acs_table(variables: dict[str, str]) -> pd.DataFrame:
@@ -189,4 +189,122 @@ def build_district_codes(df: pd.DataFrame) -> pd.DataFrame:
         axis=1,
     )
     df["swing_state"] = df["state"].isin(SWING_STATES)
+    return df
+
+
+# =========================================================================
+# Task 3: Pull All ACS Tables and Compute Proportions
+# =========================================================================
+
+def pull_all_acs_data() -> pd.DataFrame:
+    """Pull all five ACS tables and merge into a single district-level DataFrame."""
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Pull each table
+    age_df = fetch_acs_table(AGE_VARS)
+    edu_df = fetch_acs_table(EDU_VARS)
+    emp_df = fetch_acs_table(EMP_VARS)
+    inc_df = fetch_acs_table(INCOME_VARS)
+    enr_df = fetch_acs_table(ENROLL_VARS)
+
+    # Merge all on state_fips + cd_fips
+    merge_keys = ["state_fips", "cd_fips"]
+    # Start with age_df which has NAME and total_pop
+    df = age_df[merge_keys + ["NAME", "total_pop", "male_25_29", "male_30_34",
+                               "female_25_29", "female_30_34"]]
+
+    for other in [edu_df, emp_df, inc_df, enr_df]:
+        # Drop NAME if present to avoid duplication
+        other_cols = [c for c in other.columns if c not in ["NAME"]]
+        df = df.merge(other[other_cols], on=merge_keys, how="left")
+
+    # Add district codes
+    df = build_district_codes(df)
+
+    # Save intermediate data for auditing
+    intermediate_path = DATA_DIR / "acs_raw_merged.csv"
+    df.to_csv(intermediate_path, index=False)
+    log.info(f"Saved intermediate merged data to {intermediate_path}")
+
+    return df
+
+
+def compute_yp_estimates(df: pd.DataFrame) -> pd.DataFrame:
+    """Compute per-district YP proportions and final estimate.
+
+    Applies stepwise proportional estimation:
+      yp_estimate = pop_25_34 x pct_bachelors x pct_employed x pct_income x pct_not_enrolled
+    """
+    # -- Step 1: Total 25-34 population ------------------------------------
+    df["pop_25_34"] = (
+        df["male_25_29"] + df["male_30_34"]
+        + df["female_25_29"] + df["female_30_34"]
+    )
+
+    # -- Step 2: Education -- % with bachelor's+ among 25-34 ---------------
+    edu_bachelors_plus = (
+        df["edu_male_25_34_bachelors"] + df["edu_male_25_34_graduate"]
+        + df["edu_female_25_34_bachelors"] + df["edu_female_25_34_graduate"]
+    )
+    edu_total = df["edu_male_25_34_total"] + df["edu_female_25_34_total"]
+    df["pct_bachelors"] = (edu_bachelors_plus / edu_total).clip(0, 1).fillna(0)
+
+    # -- Step 3: Employment -- % civilian employed among 25-34 -------------
+    emp_employed = (
+        df["emp_male_25_29_civilian_employed"] + df["emp_male_30_34_civilian_employed"]
+        + df["emp_female_25_29_civilian_employed"] + df["emp_female_30_34_civilian_employed"]
+    )
+    emp_total = (
+        df["emp_male_25_29_total"] + df["emp_male_30_34_total"]
+        + df["emp_female_25_29_total"] + df["emp_female_30_34_total"]
+    )
+    df["pct_employed"] = (emp_employed / emp_total).clip(0, 1).fillna(0)
+
+    # -- Step 4: Income -- % in $40K-$200K among 25-44 householders --------
+    inc_in_range = (
+        df["inc_25_44_40k_45k"] + df["inc_25_44_45k_50k"]
+        + df["inc_25_44_50k_60k"] + df["inc_25_44_60k_75k"]
+        + df["inc_25_44_75k_100k"] + df["inc_25_44_100k_125k"]
+        + df["inc_25_44_125k_150k"] + df["inc_25_44_150k_200k"]
+    )
+    df["pct_income_40k_200k"] = (inc_in_range / df["inc_25_44_total"]).clip(0, 1).fillna(0)
+
+    # -- Step 5: Enrollment -- % NOT enrolled among 25-34 ------------------
+    enr_not_enrolled = (
+        df["enr_male_not_enrolled_25_34"] + df["enr_female_not_enrolled_25_34"]
+    )
+    enr_total = (
+        df["enr_male_public_25_34"] + df["enr_male_private_25_34"]
+        + df["enr_male_not_enrolled_25_34"]
+        + df["enr_female_public_25_34"] + df["enr_female_private_25_34"]
+        + df["enr_female_not_enrolled_25_34"]
+    )
+    df["pct_not_enrolled"] = (enr_not_enrolled / enr_total).clip(0, 1).fillna(0)
+
+    # -- Step 6: Final YP estimate -----------------------------------------
+    df["yp_estimate"] = (
+        df["pop_25_34"]
+        * df["pct_bachelors"]
+        * df["pct_employed"]
+        * df["pct_income_40k_200k"]
+        * df["pct_not_enrolled"]
+    ).round(0).astype(int)
+
+    # -- Step 7: Density metrics -------------------------------------------
+    df["yp_density_pct"] = (
+        (df["yp_estimate"] / df["total_pop"]) * 100
+    ).round(2)
+    df["yp_share_of_cohort_pct"] = (
+        (df["yp_estimate"] / df["pop_25_34"]) * 100
+    ).round(2)
+
+    # Handle districts where total_pop or pop_25_34 is 0 or missing
+    df.loc[df["total_pop"] <= 0, "yp_density_pct"] = 0
+    df.loc[df["pop_25_34"] <= 0, "yp_share_of_cohort_pct"] = 0
+
+    log.info(f"YP estimates computed for {len(df)} districts")
+    log.info(f"  National YP total: {df['yp_estimate'].sum():,}")
+    log.info(f"  Median per district: {df['yp_estimate'].median():,.0f}")
+    log.info(f"  Max density: {df['yp_density_pct'].max():.2f}%")
+
     return df
