@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useMemo } from 'react'
+import { useState, useCallback, useRef, useMemo, useEffect } from 'react'
 import Map, { NavigationControl } from 'react-map-gl/mapbox'
 import CampusesMapLayer from './CampusesMapLayer'
 import StatesMapLayer from './StatesMapLayer'
@@ -6,8 +6,7 @@ import DistrictsMapLayer from './DistrictsMapLayer'
 import MapControls from './MapControls'
 import '../../styles/map.css'
 
-const MAPBOX_TOKEN =
-  'pk.eyJ1IjoiamFja3NhbHR6bWFuIiwiYSI6ImNtbTltbmVuZTA0aWEycG9pNWJuZDR6dzYifQ.UT_hl5vyNQnGVDIq1GYkTw'
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
 const INITIAL_VIEW = {
   longitude: -98.5,
@@ -15,7 +14,7 @@ const INITIAL_VIEW = {
   zoom: 4,
 }
 
-export default function MapView({ subView, data, navigate, params }) {
+export default function MapView({ subView, data, navigate, params, isVisible }) {
   const mapRef = useRef(null)
   const [viewState, setViewState] = useState(INITIAL_VIEW)
 
@@ -33,6 +32,20 @@ export default function MapView({ subView, data, navigate, params }) {
     districts: true,
   })
   const [searchSelection, setSearchSelection] = useState(null)
+
+  /* Resize the Mapbox canvas when the map becomes visible again.
+     The always-mounted pattern (display:none ↔ contents) means
+     Mapbox may have cached a zero-width container size. */
+  useEffect(() => {
+    if (!isVisible) return
+    const map = mapRef.current?.getMap()
+    if (!map) return
+    // Small delay lets the browser finish layout before we measure
+    const id = requestAnimationFrame(() => {
+      try { map.resize() } catch (_) {}
+    })
+    return () => cancelAnimationFrame(id)
+  }, [isVisible])
 
   const handleStyleLoad = useCallback(() => {
     const map = mapRef.current?.getMap()

@@ -222,6 +222,11 @@ export default function StatesMapLayer({
     }
   }, [mapRef, handleMouseMove, handleMouseLeave, handleClick])
 
+  /* ── Clear detail panel when URL param is removed ── */
+  useEffect(() => {
+    if (!params?.state) setDetailData(null)
+  }, [params?.state])
+
   /* ── Auto-select state from URL params ── */
   useEffect(() => {
     const st = params?.state

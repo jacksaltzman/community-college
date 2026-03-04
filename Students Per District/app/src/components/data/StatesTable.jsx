@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
@@ -8,6 +8,8 @@ import {
   flexRender,
 } from '@tanstack/react-table'
 import TableControls from './TableControls'
+import ColumnFilterPopover from './ColumnFilterPopover'
+import { numericRangeFilter, makeGlobalSearchFilter } from './tableFilters'
 
 /* ── Constants ── */
 
@@ -15,107 +17,7 @@ const PAGE_SIZE = 50
 
 const numFmt = new Intl.NumberFormat('en-US')
 
-/* ── Column-level filter function for numeric range ── */
-
-function numericRangeFilter(row, columnId, filterValue) {
-  if (!filterValue) return true
-  const [min, max] = filterValue
-  const hasMin = min !== '' && min != null
-  const hasMax = max !== '' && max != null
-  if (!hasMin && !hasMax) return true
-  const val = row.getValue(columnId)
-  if (val == null) return false
-  if (hasMin && val < Number(min)) return false
-  if (hasMax && val > Number(max)) return false
-  return true
-}
-
-/* ── Global multi-word search filter ── */
-
-function globalSearchFilter(row, _columnId, filterValue) {
-  if (!filterValue) return true
-  const words = filterValue.toLowerCase().split(/\s+/).filter(Boolean)
-  const searchable = [row.original.state].filter(Boolean).join(' ').toLowerCase()
-  return words.every((w) => searchable.includes(w))
-}
-
-/* ── Column Filter Popover ── */
-
-function ColumnFilterPopover({ column, isNumeric, alignRight }) {
-  const [open, setOpen] = useState(false)
-  const popRef = useRef(null)
-  const filterValue = column.getFilterValue()
-  const isActive = isNumeric
-    ? filterValue && (filterValue[0] !== '' || filterValue[1] !== '')
-    : !!filterValue
-
-  // Close on outside click
-  useEffect(() => {
-    if (!open) return
-    function handleClick(e) {
-      if (popRef.current && !popRef.current.contains(e.target)) {
-        setOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [open])
-
-  function handleClear() {
-    column.setFilterValue(undefined)
-    setOpen(false)
-  }
-
-  return (
-    <span style={{ position: 'relative' }} ref={popRef}>
-      <button
-        className={`col-filter-btn${isActive ? ' active' : ''}`}
-        onClick={(e) => {
-          e.stopPropagation()
-          setOpen((prev) => !prev)
-        }}
-        title="Filter column"
-      >
-        &#9660;
-      </button>
-      <div
-        className={`col-filter-pop${open ? ' open' : ''}${alignRight ? ' pop-right' : ''}`}
-        onClick={(e) => e.stopPropagation()}
-      >
-        {isNumeric ? (
-          <div className="num-range">
-            <input
-              type="number"
-              placeholder="Min"
-              value={filterValue?.[0] ?? ''}
-              onChange={(e) =>
-                column.setFilterValue((old) => [e.target.value, old?.[1] ?? ''])
-              }
-            />
-            <input
-              type="number"
-              placeholder="Max"
-              value={filterValue?.[1] ?? ''}
-              onChange={(e) =>
-                column.setFilterValue((old) => [old?.[0] ?? '', e.target.value])
-              }
-            />
-          </div>
-        ) : (
-          <input
-            type="text"
-            placeholder="Filter..."
-            value={filterValue ?? ''}
-            onChange={(e) => column.setFilterValue(e.target.value || undefined)}
-          />
-        )}
-        <button className="filter-clear-btn" onClick={handleClear}>
-          Clear
-        </button>
-      </div>
-    </span>
-  )
-}
+const globalSearchFilter = makeGlobalSearchFilter(['state'])
 
 /* ── Main Component ── */
 

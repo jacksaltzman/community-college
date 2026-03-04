@@ -87,27 +87,13 @@ export default function Layout({ page, subView, params, navigate, data }) {
 
         <div className="page-content">
           {data?.loading ? (
-            <div
-              style={{
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              Loading...
+            <div className="page-status">
+              <div className="page-status-spinner" />
+              <span className="page-status-text">Loading data&hellip;</span>
             </div>
           ) : data?.error ? (
-            <div
-              style={{
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'red',
-              }}
-            >
-              Error: {data.error}
+            <div className="page-status page-status-error">
+              <span className="page-status-text">Error: {data.error}</span>
             </div>
           ) : (
             <>
@@ -118,6 +104,7 @@ export default function Layout({ page, subView, params, navigate, data }) {
                   data={data}
                   navigate={navigate}
                   params={params}
+                  isVisible={page === 'map'}
                 />
               </div>
               {page === 'data' && subView === 'campuses' && (

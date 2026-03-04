@@ -1,21 +1,5 @@
-import { useEffect, useRef } from 'react'
-
-const STATE_NAMES = {
-  AL: 'Alabama', AK: 'Alaska', AS: 'American Samoa', AZ: 'Arizona',
-  AR: 'Arkansas', CA: 'California', CO: 'Colorado', CT: 'Connecticut',
-  DE: 'Delaware', DC: 'District of Columbia', FL: 'Florida', GA: 'Georgia',
-  GU: 'Guam', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana',
-  IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine',
-  MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota',
-  MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', MP: 'Northern Mariana Islands',
-  NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey',
-  NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota',
-  OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania',
-  PR: 'Puerto Rico', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota',
-  TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont',
-  VI: 'U.S. Virgin Islands', VA: 'Virginia', WA: 'Washington',
-  WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming',
-}
+import { useEffect, useRef, useState } from 'react'
+import { STATE_NAMES } from '../../utils/stateNames'
 
 /**
  * DetailPanel — Shared slide-in panel for state or district details.
@@ -29,6 +13,18 @@ const STATE_NAMES = {
  */
 export default function DetailPanel({ type, data, onClose, navigate }) {
   const panelRef = useRef(null)
+  const [isOpen, setIsOpen] = useState(false)
+
+  /* Animate open after mount */
+  useEffect(() => {
+    if (!data) {
+      setIsOpen(false)
+      return
+    }
+    // Delay adding the `open` class so the CSS transition fires
+    const id = requestAnimationFrame(() => setIsOpen(true))
+    return () => cancelAnimationFrame(id)
+  }, [data])
 
   /* Close on Escape */
   useEffect(() => {
@@ -44,11 +40,13 @@ export default function DetailPanel({ type, data, onClose, navigate }) {
   const fmt = (n) =>
     n != null ? Number(n).toLocaleString() : 'N/A'
 
+  const panelClass = `detail-panel${isOpen ? ' open' : ''}`
+
   /* ── State detail ── */
   if (type === 'state') {
     const fullName = STATE_NAMES[data.stateCode] || data.stateCode
     return (
-      <div className="detail-panel open" ref={panelRef}>
+      <div className={panelClass} ref={panelRef}>
         <div className="detail-panel-header">
           <div>
             <div className="detail-panel-title">{fullName}</div>
@@ -92,7 +90,7 @@ export default function DetailPanel({ type, data, onClose, navigate }) {
   if (type === 'district') {
     const stateFull = STATE_NAMES[data.state] || data.state
     return (
-      <div className="detail-panel open" ref={panelRef}>
+      <div className={panelClass} ref={panelRef}>
         <div className="detail-panel-header">
           <div>
             <div className="detail-panel-title">{data.cdCode}</div>

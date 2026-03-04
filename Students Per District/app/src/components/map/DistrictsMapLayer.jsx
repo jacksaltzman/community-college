@@ -207,6 +207,11 @@ export default function DistrictsMapLayer({
     }
   }, [mapRef, handleMouseMove, handleMouseLeave, handleClick])
 
+  /* ── Clear detail panel when URL param is removed ── */
+  useEffect(() => {
+    if (!params?.district) setDetailData(null)
+  }, [params?.district])
+
   /* ── Auto-select district from URL params ── */
   useEffect(() => {
     const cd = params?.district
