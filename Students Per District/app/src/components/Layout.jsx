@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import SubNav from './SubNav'
+import MapView from './map/MapView'
 
 const TABS = [
   { key: 'map', label: 'Map' },
@@ -107,17 +108,11 @@ export default function Layout({ page, subView, params, navigate, data }) {
           ) : (
             <>
               {page === 'map' && (
-                <div
-                  style={{
-                    height: '100%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  Map: {subView} &mdash; {data?.campuses?.features?.length ?? 0}{' '}
-                  campuses loaded
-                </div>
+                <MapView
+                  subView={subView}
+                  data={data}
+                  navigate={navigate}
+                />
               )}
               {page === 'data' && (
                 <div style={{ padding: 24 }}>
