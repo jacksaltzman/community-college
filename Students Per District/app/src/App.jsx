@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import Layout from './components/Layout'
+import { useMapData } from './hooks/useMapData'
 
 const VALID_PAGES = ['map', 'data', 'methodology']
 const VALID_SUBVIEWS = ['states', 'districts', 'campuses']
@@ -24,6 +25,7 @@ export default function App() {
   const [page, setPage] = useState('map')
   const [subView, setSubView] = useState('states')
   const [params, setParams] = useState({})
+  const data = useMapData()
 
   const syncFromHash = useCallback(() => {
     const parsed = parseHash()
@@ -58,6 +60,7 @@ export default function App() {
       subView={subView}
       params={params}
       navigate={navigate}
+      data={data}
     />
   )
 }

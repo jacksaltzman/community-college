@@ -7,7 +7,7 @@ const TABS = [
   { key: 'methodology', label: 'Methodology' },
 ]
 
-export default function Layout({ page, subView, params, navigate }) {
+export default function Layout({ page, subView, params, navigate, data }) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   const handleTabClick = (tabKey) => {
@@ -81,7 +81,7 @@ export default function Layout({ page, subView, params, navigate }) {
         )}
 
         <div className="page-content">
-          {page === 'map' && (
+          {data?.loading ? (
             <div
               style={{
                 height: '100%',
@@ -90,14 +90,46 @@ export default function Layout({ page, subView, params, navigate }) {
                 justifyContent: 'center',
               }}
             >
-              Map: {subView}
+              Loading...
             </div>
-          )}
-          {page === 'data' && (
-            <div style={{ padding: 24 }}>Data: {subView}</div>
-          )}
-          {page === 'methodology' && (
-            <div style={{ padding: 24 }}>Methodology</div>
+          ) : data?.error ? (
+            <div
+              style={{
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'red',
+              }}
+            >
+              Error: {data.error}
+            </div>
+          ) : (
+            <>
+              {page === 'map' && (
+                <div
+                  style={{
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  Map: {subView} &mdash; {data?.campuses?.features?.length ?? 0}{' '}
+                  campuses loaded
+                </div>
+              )}
+              {page === 'data' && (
+                <div style={{ padding: 24 }}>
+                  Data: {subView} &mdash;{' '}
+                  {data?.campuses?.features?.length ?? 0} campuses,{' '}
+                  {data?.districts?.features?.length ?? 0} districts
+                </div>
+              )}
+              {page === 'methodology' && (
+                <div style={{ padding: 24 }}>Methodology</div>
+              )}
+            </>
           )}
         </div>
       </div>
