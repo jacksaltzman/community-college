@@ -1,0 +1,254 @@
+/* ================================================================
+   TARGET — Filter sidebar + accordion results tree
+   ================================================================ */
+
+/* Page layout (mirrors .map-page) */
+.target-page {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Export button */
+.target-export-btn {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--teal);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--teal);
+  color: white;
+  cursor: pointer;
+  margin-top: 8px;
+  text-align: center;
+  transition: background 0.15s, border-color 0.15s;
+}
+.target-export-btn:hover {
+  background: #3d575e;
+}
+
+/* Results panel */
+.target-results {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Summary bar */
+.target-summary-bar {
+  padding: 12px 24px;
+  background: #F3F0EB;
+  border-bottom: 1px solid var(--border-light);
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--gray-body);
+  flex-shrink: 0;
+}
+.target-summary-bar strong {
+  color: var(--black);
+  font-weight: 600;
+}
+
+/* Empty state */
+.target-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--gray-muted);
+  padding: 40px;
+}
+
+/* Tree container */
+.target-tree {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0;
+}
+
+/* Chevron */
+.target-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-size: 9px;
+  color: var(--gray-muted);
+  flex-shrink: 0;
+  transition: transform 0.15s;
+  transform: rotate(0deg);
+}
+.target-chevron.open {
+  transform: rotate(90deg);
+}
+
+/* State row */
+.target-state-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-light);
+  border-left: 4px solid var(--teal);
+  transition: background 0.12s;
+}
+.target-state-row:hover {
+  background: var(--hover-bg);
+}
+.target-state-name {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--black);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* PVI badge */
+.target-pvi {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--hover-bg);
+  color: var(--gray-body);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Meta text (counts) */
+.target-meta {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--gray-muted);
+  margin-left: auto;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* District row */
+.target-district-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px 10px 44px;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.12s;
+}
+.target-district-row:hover {
+  background: var(--hover-bg);
+}
+.target-district-name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--black);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.target-rep {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--gray-body);
+  white-space: nowrap;
+}
+
+/* Campus list */
+.target-campus-list {
+  border-bottom: 1px solid var(--border-light);
+}
+.target-campus-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 20px 8px 68px;
+  border-bottom: 1px solid #F5F3EF;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--gray-body);
+}
+.target-campus-row:last-child {
+  border-bottom: none;
+}
+.target-campus-row:hover {
+  background: #FAFAF8;
+}
+.target-campus-name {
+  flex: 1;
+  min-width: 0;
+}
+.target-campus-name .campus-link {
+  color: var(--teal);
+  text-decoration: none;
+  font-weight: 500;
+}
+.target-campus-name .campus-link:hover {
+  text-decoration: underline;
+}
+.target-campus-city {
+  width: 120px;
+  flex-shrink: 0;
+  color: var(--gray-muted);
+  font-size: 12px;
+}
+.target-campus-type {
+  width: 100px;
+  flex-shrink: 0;
+  font-size: 12px;
+}
+.target-campus-enroll {
+  width: 70px;
+  flex-shrink: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.target-campus-districts {
+  width: 50px;
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 12px;
+  color: var(--gray-muted);
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .target-state-row {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 10px 12px;
+  }
+  .target-meta {
+    width: 100%;
+    margin-left: 28px;
+  }
+  .target-district-row {
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 8px 12px 8px 32px;
+  }
+  .target-campus-row {
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 8px 12px 8px 48px;
+  }
+  .target-campus-city,
+  .target-campus-type,
+  .target-campus-enroll,
+  .target-campus-districts {
+    width: auto;
+    font-size: 11px;
+  }
+}
