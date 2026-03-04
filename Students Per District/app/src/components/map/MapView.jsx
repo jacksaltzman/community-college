@@ -47,6 +47,26 @@ export default function MapView({ subView, data, navigate, params, isVisible }) 
     return () => cancelAnimationFrame(id)
   }, [isVisible])
 
+  /* Reset view when switching subViews so all tabs start centered on the US.
+     The sidebar appearing/disappearing changes the viewport width, which
+     shifts the visible center if we don't re-center. */
+  useEffect(() => {
+    const map = mapRef.current?.getMap()
+    if (!map) return
+    // Resize first (sidebar may have just appeared/disappeared)
+    const id = requestAnimationFrame(() => {
+      try {
+        map.resize()
+        map.flyTo({
+          center: [INITIAL_VIEW.longitude, INITIAL_VIEW.latitude],
+          zoom: INITIAL_VIEW.zoom,
+          duration: 500,
+        })
+      } catch (_) {}
+    })
+    return () => cancelAnimationFrame(id)
+  }, [subView])
+
   const handleStyleLoad = useCallback(() => {
     const map = mapRef.current?.getMap()
     if (!map) return
