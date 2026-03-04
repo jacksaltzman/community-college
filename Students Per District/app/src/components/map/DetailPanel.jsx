@@ -119,7 +119,7 @@ export default function DetailPanel({ type, data, onClose, navigate }) {
 
         <button
           className="detail-panel-link"
-          onClick={() => navigate('data', 'districts', { cd: data.cdCode })}
+          onClick={() => navigate('data', 'districts', { district: data.cdCode })}
         >
           View in Data Table &rarr;
         </button>

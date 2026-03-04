@@ -15,7 +15,7 @@ const INITIAL_VIEW = {
   zoom: 4,
 }
 
-export default function MapView({ subView, data, navigate }) {
+export default function MapView({ subView, data, navigate, params }) {
   const mapRef = useRef(null)
   const [viewState, setViewState] = useState(INITIAL_VIEW)
 
@@ -164,6 +164,7 @@ export default function MapView({ subView, data, navigate }) {
               searchSelection={searchSelection}
               onSearchSelectionHandled={() => setSearchSelection(null)}
               mapRef={mapRef}
+              params={params}
             />
           )}
 
@@ -173,6 +174,7 @@ export default function MapView({ subView, data, navigate }) {
               districtsData={data.districts}
               mapRef={mapRef}
               navigate={navigate}
+              params={params}
             />
           )}
 
@@ -182,6 +184,7 @@ export default function MapView({ subView, data, navigate }) {
               districtsData={data.districts}
               mapRef={mapRef}
               navigate={navigate}
+              params={params}
             />
           )}
         </Map>

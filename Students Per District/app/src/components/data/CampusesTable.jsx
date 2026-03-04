@@ -144,12 +144,18 @@ function ColumnFilterPopover({ column, isNumeric, alignRight }) {
 
 /* ── Main Component ── */
 
-export default function CampusesTable({ campuses, navigate }) {
-  const [globalFilter, setGlobalFilter] = useState('')
+export default function CampusesTable({ campuses, navigate, params }) {
+  const [globalFilter, setGlobalFilter] = useState(params?.state || params?.campus || '')
   const [groupBy, setGroupBy] = useState('')
   const [collapsedGroups, setCollapsedGroups] = useState({})
   const [sorting, setSorting] = useState([])
   const [columnFilters, setColumnFilters] = useState([])
+
+  /* ── Sync global filter from URL params ── */
+  useEffect(() => {
+    if (params?.state) setGlobalFilter(params.state)
+    else if (params?.campus) setGlobalFilter(params.campus)
+  }, [params?.state, params?.campus])
 
   /* ── Flatten GeoJSON features into row data ── */
   const data = useMemo(() => {

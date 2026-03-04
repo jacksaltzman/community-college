@@ -123,6 +123,7 @@ export default function CampusesMapLayer({
   searchSelection,
   onSearchSelectionHandled,
   mapRef,
+  params,
 }) {
   const [popupInfo, setPopupInfo] = useState(null)
   const [highlightFilter, setHighlightFilter] = useState(['in', 'cd_code', ''])
@@ -215,6 +216,40 @@ export default function CampusesMapLayer({
     highlightCampusDistricts,
     mapRef,
   ])
+
+  /* ── Handle campus param from URL ── */
+  useEffect(() => {
+    const campusName = params?.campus
+    if (!campusName || !campusesData) return
+
+    const feat = campusesData.features.find(
+      (f) => f.properties.name === campusName
+    )
+    if (!feat) return
+
+    const [lon, lat] = feat.geometry.coordinates
+    const map = mapRef.current?.getMap()
+    if (map) {
+      map.flyTo({
+        center: [lon, lat],
+        zoom: Math.max(map.getZoom(), 8),
+        duration: 1000,
+        essential: true,
+      })
+
+      setTimeout(() => {
+        highlightCampusDistricts(
+          feat.properties.all_districts,
+          feat.properties.primary_district
+        )
+        setPopupInfo({
+          longitude: lon,
+          latitude: lat,
+          properties: feat.properties,
+        })
+      }, 1000)
+    }
+  }, [params?.campus, campusesData, mapRef, highlightCampusDistricts])
 
   /* ── Map event handlers ── */
   const handleMapClick = useCallback(

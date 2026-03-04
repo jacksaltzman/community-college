@@ -122,10 +122,16 @@ function ColumnFilterPopover({ column, isNumeric, alignRight }) {
 
 /* ── Main Component ── */
 
-export default function DistrictsTable({ campuses, navigate }) {
-  const [globalFilter, setGlobalFilter] = useState('')
+export default function DistrictsTable({ campuses, navigate, params }) {
+  const [globalFilter, setGlobalFilter] = useState(params?.district || params?.state || '')
   const [sorting, setSorting] = useState([{ id: 'enrollment', desc: true }])
   const [columnFilters, setColumnFilters] = useState([])
+
+  /* ── Sync global filter from URL params ── */
+  useEffect(() => {
+    if (params?.district) setGlobalFilter(params.district)
+    else if (params?.state) setGlobalFilter(params.state)
+  }, [params?.district, params?.state])
 
   /* ── Aggregate campus data into district-level rows ── */
   const data = useMemo(() => {

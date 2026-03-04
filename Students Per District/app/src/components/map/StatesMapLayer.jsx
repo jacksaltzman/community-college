@@ -24,6 +24,7 @@ export default function StatesMapLayer({
   districtsData,
   mapRef,
   navigate,
+  params,
 }) {
   const [selectedMetric, setSelectedMetric] = useState('enrollment')
   const [hoveredState, setHoveredState] = useState(null)
@@ -218,6 +219,51 @@ export default function StatesMapLayer({
       map.getCanvas().style.cursor = ''
     }
   }, [mapRef, handleMouseMove, handleMouseLeave, handleClick])
+
+  /* ── Auto-select state from URL params ── */
+  useEffect(() => {
+    const st = params?.state
+    if (!st || !districtsData || !campusesData) return
+
+    const map = mapRef.current?.getMap()
+    if (!map) return
+
+    // Compute bounds from all districts in this state
+    const stateDistricts = districtsData.features.filter(
+      (f) => f.properties.state === st
+    )
+
+    if (stateDistricts.length > 0) {
+      let minLng = Infinity, maxLng = -Infinity
+      let minLat = Infinity, maxLat = -Infinity
+
+      stateDistricts.forEach((f) => {
+        const coords = f.geometry.type === 'MultiPolygon'
+          ? f.geometry.coordinates.flat(2)
+          : f.geometry.coordinates.flat(1)
+        coords.forEach(([lng, lat]) => {
+          if (lng < minLng) minLng = lng
+          if (lng > maxLng) maxLng = lng
+          if (lat < minLat) minLat = lat
+          if (lat > maxLat) maxLat = lat
+        })
+      })
+
+      map.fitBounds(
+        [[minLng, minLat], [maxLng, maxLat]],
+        { padding: 60, duration: 1000 }
+      )
+    }
+
+    const m = stateMetrics[st] || {}
+    setDetailData({
+      stateCode: st,
+      enrollment: m.enrollment || 0,
+      campusCount: m.campusCount || 0,
+      districtCount: stateDistrictCounts[st] || 0,
+      avgDistricts: m.avgDistricts || 0,
+    })
+  }, [params?.state, districtsData, campusesData, mapRef, stateMetrics, stateDistrictCounts])
 
   if (!campusesData || !districtsData) return null
 

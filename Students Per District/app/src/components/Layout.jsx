@@ -116,24 +116,28 @@ export default function Layout({ page, subView, params, navigate, data }) {
                   subView={subView}
                   data={data}
                   navigate={navigate}
+                  params={params}
                 />
               )}
               {page === 'data' && subView === 'campuses' && (
                 <CampusesTable
                   campuses={data?.campuses}
                   navigate={navigate}
+                  params={params}
                 />
               )}
               {page === 'data' && subView === 'states' && (
                 <StatesTable
                   campuses={data?.campuses}
                   navigate={navigate}
+                  params={params}
                 />
               )}
               {page === 'data' && subView === 'districts' && (
                 <DistrictsTable
                   campuses={data?.campuses}
                   navigate={navigate}
+                  params={params}
                 />
               )}
               {page === 'methodology' && <Methodology />}

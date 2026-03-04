@@ -23,6 +23,7 @@ export default function DistrictsMapLayer({
   districtsData,
   mapRef,
   navigate,
+  params,
 }) {
   const [selectedMetric, setSelectedMetric] = useState('enrollment')
   const [hoveredDistrict, setHoveredDistrict] = useState(null)
@@ -199,6 +200,51 @@ export default function DistrictsMapLayer({
       map.getCanvas().style.cursor = ''
     }
   }, [mapRef, handleMouseMove, handleMouseLeave, handleClick])
+
+  /* ── Auto-select district from URL params ── */
+  useEffect(() => {
+    const cd = params?.district
+    if (!cd || !districtsData || !campusesData) return
+
+    const map = mapRef.current?.getMap()
+    if (!map) return
+
+    // Find the district feature
+    const districtFeature = districtsData.features.find(
+      (f) => f.properties.cd_code === cd
+    )
+
+    if (districtFeature) {
+      let minLng = Infinity, maxLng = -Infinity
+      let minLat = Infinity, maxLat = -Infinity
+
+      const coords = districtFeature.geometry.type === 'MultiPolygon'
+        ? districtFeature.geometry.coordinates.flat(2)
+        : districtFeature.geometry.coordinates.flat(1)
+
+      coords.forEach(([lng, lat]) => {
+        if (lng < minLng) minLng = lng
+        if (lng > maxLng) maxLng = lng
+        if (lat < minLat) minLat = lat
+        if (lat > maxLat) maxLat = lat
+      })
+
+      map.fitBounds(
+        [[minLng, minLat], [maxLng, maxLat]],
+        { padding: 60, duration: 1000 }
+      )
+
+      const props = districtFeature.properties
+      const m = districtMetrics[cd] || {}
+      setDetailData({
+        cdCode: cd,
+        name: props.name || '',
+        state: props.state || '',
+        enrollment: m.enrollment || 0,
+        campusCount: m.campusCount || 0,
+      })
+    }
+  }, [params?.district, districtsData, campusesData, mapRef, districtMetrics])
 
   if (!campusesData || !districtsData) return null
 
