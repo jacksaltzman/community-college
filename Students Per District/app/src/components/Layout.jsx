@@ -2,6 +2,8 @@ import { useState } from 'react'
 import SubNav from './SubNav'
 import MapView from './map/MapView'
 import CampusesTable from './data/CampusesTable'
+import StatesTable from './data/StatesTable'
+import DistrictsTable from './data/DistrictsTable'
 
 const TABS = [
   { key: 'map', label: 'Map' },
@@ -122,14 +124,16 @@ export default function Layout({ page, subView, params, navigate, data }) {
                 />
               )}
               {page === 'data' && subView === 'states' && (
-                <div style={{ padding: 24 }}>
-                  States table &mdash; coming soon
-                </div>
+                <StatesTable
+                  campuses={data?.campuses}
+                  navigate={navigate}
+                />
               )}
               {page === 'data' && subView === 'districts' && (
-                <div style={{ padding: 24 }}>
-                  Districts table &mdash; coming soon
-                </div>
+                <DistrictsTable
+                  campuses={data?.campuses}
+                  navigate={navigate}
+                />
               )}
               {page === 'methodology' && (
                 <div style={{ padding: 24 }}>Methodology</div>
