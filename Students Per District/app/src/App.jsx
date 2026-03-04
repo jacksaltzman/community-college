@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import Layout from './components/Layout'
 import { useMapData } from './hooks/useMapData'
 
-const VALID_PAGES = ['map', 'data', 'methodology']
+const VALID_PAGES = ['map', 'data', 'target', 'methodology']
 const VALID_SUBVIEWS = ['states', 'districts', 'campuses']
 
 function parseHash() {

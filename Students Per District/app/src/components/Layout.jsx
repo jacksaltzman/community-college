@@ -5,10 +5,12 @@ import CampusesTable from './data/CampusesTable'
 import StatesTable from './data/StatesTable'
 import DistrictsTable from './data/DistrictsTable'
 import Methodology from './methodology/Methodology'
+import TargetView from './target/TargetView'
 
 const TABS = [
   { key: 'map', label: 'Map' },
   { key: 'data', label: 'Data' },
+  { key: 'target', label: 'Target' },
   { key: 'methodology', label: 'Methodology' },
 ]
 
@@ -17,7 +19,7 @@ export default function Layout({ page, subView, params, navigate, data }) {
 
   const handleTabClick = (tabKey) => {
     setMenuOpen(false)
-    if (tabKey === 'methodology') {
+    if (tabKey === 'methodology' || tabKey === 'target') {
       navigate(tabKey)
     } else {
       navigate(tabKey, subView)
@@ -36,9 +38,7 @@ export default function Layout({ page, subView, params, navigate, data }) {
             alt="Accountable"
             className="nav-brand-logo"
           />
-          <span className="nav-brand-subtitle">
-            Community College District Map
-          </span>
+          <span className="nav-brand-subtitle" />
         </div>
 
         {/* Desktop tabs */}
@@ -131,6 +131,9 @@ export default function Layout({ page, subView, params, navigate, data }) {
                 />
               )}
               {page === 'methodology' && <Methodology />}
+              {page === 'target' && (
+                <TargetView data={data} navigate={navigate} />
+              )}
             </>
           )}
         </div>
