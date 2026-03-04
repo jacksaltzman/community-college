@@ -213,10 +213,12 @@ export default function StatesMapLayer({
     map.on('click', handleClick)
 
     return () => {
-      map.off('mousemove', handleMouseMove)
-      map.off('mouseleave', handleMouseLeave)
-      map.off('click', handleClick)
-      map.getCanvas().style.cursor = ''
+      try {
+        map.off('mousemove', handleMouseMove)
+        map.off('mouseleave', handleMouseLeave)
+        map.off('click', handleClick)
+        map.getCanvas().style.cursor = ''
+      } catch (_) {}
     }
   }, [mapRef, handleMouseMove, handleMouseLeave, handleClick])
 

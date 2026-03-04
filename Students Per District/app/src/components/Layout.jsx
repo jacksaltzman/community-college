@@ -111,14 +111,15 @@ export default function Layout({ page, subView, params, navigate, data }) {
             </div>
           ) : (
             <>
-              {page === 'map' && (
+              {/* MapView stays mounted (hidden) to avoid Mapbox GL teardown errors */}
+              <div style={{ display: page === 'map' ? 'contents' : 'none' }}>
                 <MapView
                   subView={subView}
                   data={data}
                   navigate={navigate}
                   params={params}
                 />
-              )}
+              </div>
               {page === 'data' && subView === 'campuses' && (
                 <CampusesTable
                   campuses={data?.campuses}
