@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import SubNav from './SubNav'
 import MapView from './map/MapView'
+import CampusesTable from './data/CampusesTable'
 
 const TABS = [
   { key: 'map', label: 'Map' },
@@ -114,11 +115,20 @@ export default function Layout({ page, subView, params, navigate, data }) {
                   navigate={navigate}
                 />
               )}
-              {page === 'data' && (
+              {page === 'data' && subView === 'campuses' && (
+                <CampusesTable
+                  campuses={data?.campuses}
+                  navigate={navigate}
+                />
+              )}
+              {page === 'data' && subView === 'states' && (
                 <div style={{ padding: 24 }}>
-                  Data: {subView} &mdash;{' '}
-                  {data?.campuses?.features?.length ?? 0} campuses,{' '}
-                  {data?.districts?.features?.length ?? 0} districts
+                  States table &mdash; coming soon
+                </div>
+              )}
+              {page === 'data' && subView === 'districts' && (
+                <div style={{ padding: 24 }}>
+                  Districts table &mdash; coming soon
                 </div>
               )}
               {page === 'methodology' && (
