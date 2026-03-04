@@ -125,7 +125,7 @@ export default function Layout({ page, subView, params, navigate, data }) {
               {page === 'data' && subView === 'districts' && (
                 <DistrictsTable
                   campuses={data?.campuses}
-                  districts={data?.districts}
+                  districtsMeta={data?.districtsMeta}
                   navigate={navigate}
                   params={params}
                 />

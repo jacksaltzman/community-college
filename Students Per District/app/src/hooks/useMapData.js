@@ -3,8 +3,7 @@ import { useState, useEffect } from 'react'
 export function useMapData() {
   const [data, setData] = useState({
     campuses: null,
-    districts: null,
-    statesGeo: null,
+    districtsMeta: null,
     statesData: null,
     loading: true,
     error: null,
@@ -13,36 +12,24 @@ export function useMapData() {
   useEffect(() => {
     async function load() {
       try {
-        const [campuses, districts] = await Promise.all([
+        const [campuses, districtsMeta] = await Promise.all([
           fetch('/data/campuses.geojson').then((r) => r.json()),
-          fetch('/data/districts.geojson').then((r) => r.json()),
+          fetch('/data/districts-meta.json').then((r) => r.json()),
         ])
 
-        let statesGeo = null
         let statesData = null
-
-        try {
-          statesGeo = await fetch('/data/states.geojson').then((r) => {
-            if (!r.ok) return null
-            return r.json()
-          })
-        } catch (e) {
-          /* states.geojson doesn't exist yet */
-        }
-
         try {
           statesData = await fetch('/data/states.json').then((r) => {
             if (!r.ok) return null
             return r.json()
           })
         } catch (e) {
-          /* states.json doesn't exist yet */
+          /* states.json optional */
         }
 
         setData({
           campuses,
-          districts,
-          statesGeo,
+          districtsMeta,
           statesData,
           loading: false,
           error: null,

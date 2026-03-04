@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { Source, Layer } from 'react-map-gl/mapbox'
 import DetailPanel from './DetailPanel'
+import { DISTRICTS_TILESET_URL, DISTRICTS_SOURCE_LAYER } from '../../config'
 
 const METRICS = [
   { key: 'enrollment', label: 'Enrollment' },
@@ -20,7 +21,7 @@ function lerpColor(t) {
 
 export default function DistrictsMapLayer({
   campusesData,
-  districtsData,
+  districtsMeta,
   mapRef,
   navigate,
   params,
@@ -145,26 +146,10 @@ export default function DistrictsMapLayer({
         const props = features[0].properties
         const cdCode = props.cd_code
 
-        // Compute bounds from the clicked district feature
-        const districtFeature = districtsData.features.find(
-          (f) => f.properties.cd_code === cdCode
-        )
-
-        if (districtFeature) {
-          let minLng = Infinity, maxLng = -Infinity
-          let minLat = Infinity, maxLat = -Infinity
-
-          const coords = districtFeature.geometry.type === 'MultiPolygon'
-            ? districtFeature.geometry.coordinates.flat(2)
-            : districtFeature.geometry.coordinates.flat(1)
-
-          coords.forEach(([lng, lat]) => {
-            if (lng < minLng) minLng = lng
-            if (lng > maxLng) maxLng = lng
-            if (lat < minLat) minLat = lat
-            if (lat > maxLat) maxLat = lat
-          })
-
+        // Use precomputed bounding box from metadata
+        const meta = districtsMeta?.districts?.[cdCode]
+        if (meta?.bbox) {
+          const [minLng, minLat, maxLng, maxLat] = meta.bbox
           map.fitBounds(
             [[minLng, minLat], [maxLng, maxLat]],
             { padding: 60, duration: 1000 }
@@ -172,20 +157,20 @@ export default function DistrictsMapLayer({
         }
 
         const m = districtMetrics[cdCode] || {}
-        const geoProps = districtFeature?.properties || props
+        const info = meta || props
         setDetailData({
           cdCode,
-          name: geoProps.name || '',
-          state: geoProps.state || '',
+          name: info.name || '',
+          state: info.state || '',
           enrollment: m.enrollment || 0,
           campusCount: m.campusCount || 0,
-          cookPVI: geoProps.cook_pvi || '',
-          member: geoProps.member || '',
-          party: geoProps.party || '',
+          cookPVI: info.cook_pvi || '',
+          member: info.member || '',
+          party: info.party || '',
         })
       }
     },
-    [mapRef, districtsData, districtMetrics]
+    [mapRef, districtsMeta, districtMetrics]
   )
 
   /* ── Register/unregister map events ── */
@@ -215,52 +200,35 @@ export default function DistrictsMapLayer({
   /* ── Auto-select district from URL params ── */
   useEffect(() => {
     const cd = params?.district
-    if (!cd || !districtsData || !campusesData) return
+    if (!cd || !districtsMeta || !campusesData) return
 
     const map = mapRef.current?.getMap()
     if (!map) return
 
-    // Find the district feature
-    const districtFeature = districtsData.features.find(
-      (f) => f.properties.cd_code === cd
-    )
-
-    if (districtFeature) {
-      let minLng = Infinity, maxLng = -Infinity
-      let minLat = Infinity, maxLat = -Infinity
-
-      const coords = districtFeature.geometry.type === 'MultiPolygon'
-        ? districtFeature.geometry.coordinates.flat(2)
-        : districtFeature.geometry.coordinates.flat(1)
-
-      coords.forEach(([lng, lat]) => {
-        if (lng < minLng) minLng = lng
-        if (lng > maxLng) maxLng = lng
-        if (lat < minLat) minLat = lat
-        if (lat > maxLat) maxLat = lat
-      })
-
+    // Use precomputed bounding box from metadata
+    const meta = districtsMeta.districts?.[cd]
+    if (meta?.bbox) {
+      const [minLng, minLat, maxLng, maxLat] = meta.bbox
       map.fitBounds(
         [[minLng, minLat], [maxLng, maxLat]],
         { padding: 60, duration: 1000 }
       )
 
-      const props = districtFeature.properties
       const m = districtMetrics[cd] || {}
       setDetailData({
         cdCode: cd,
-        name: props.name || '',
-        state: props.state || '',
+        name: meta.name || '',
+        state: meta.state || '',
         enrollment: m.enrollment || 0,
         campusCount: m.campusCount || 0,
-        cookPVI: props.cook_pvi || '',
-        member: props.member || '',
-        party: props.party || '',
+        cookPVI: meta.cook_pvi || '',
+        member: meta.member || '',
+        party: meta.party || '',
       })
     }
-  }, [params?.district, districtsData, campusesData, mapRef, districtMetrics])
+  }, [params?.district, districtsMeta, campusesData, mapRef, districtMetrics])
 
-  if (!campusesData || !districtsData) return null
+  if (!campusesData || !districtsMeta) return null
 
   return (
     <>
@@ -281,10 +249,11 @@ export default function DistrictsMapLayer({
       </div>
 
       {/* ── Choropleth layers ── */}
-      <Source id="districts-choropleth" type="geojson" data={districtsData}>
+      <Source id="districts-choropleth" type="vector" url={DISTRICTS_TILESET_URL}>
         <Layer
           id="districts-choropleth-fill"
           type="fill"
+          source-layer={DISTRICTS_SOURCE_LAYER}
           paint={{
             'fill-color': fillColorExpr,
             'fill-opacity': 0.7,
@@ -293,6 +262,7 @@ export default function DistrictsMapLayer({
         <Layer
           id="districts-choropleth-border"
           type="line"
+          source-layer={DISTRICTS_SOURCE_LAYER}
           paint={{
             'line-color': '#9CA3AF',
             'line-width': [
@@ -306,6 +276,7 @@ export default function DistrictsMapLayer({
         <Layer
           id="districts-hover"
           type="fill"
+          source-layer={DISTRICTS_SOURCE_LAYER}
           paint={{
             'fill-color': '#4C6971',
             'fill-opacity': 0.2,

@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { Source, Layer, Popup } from 'react-map-gl/mapbox'
+import { DISTRICTS_TILESET_URL, DISTRICTS_SOURCE_LAYER } from '../../config'
 
 /* ── Campus type color match expression ── */
 const campusTypeColors = [
@@ -117,7 +118,6 @@ function buildCircleFilter(filters) {
 
 export default function CampusesMapLayer({
   campusesData,
-  districtsData,
   filters,
   layers,
   searchSelection,
@@ -473,15 +473,16 @@ export default function CampusesMapLayer({
     )
   }
 
-  if (!campusesData || !districtsData) return null
+  if (!campusesData) return null
 
   return (
     <>
-      {/* ── District source and layers ── */}
-      <Source id="districts" type="geojson" data={districtsData}>
+      {/* ── District source (vector tiles) ── */}
+      <Source id="districts" type="vector" url={DISTRICTS_TILESET_URL}>
         <Layer
           id="district-fills"
           type="fill"
+          source-layer={DISTRICTS_SOURCE_LAYER}
           paint={{
             'fill-color': '#F5F0EB',
             'fill-opacity': 0.3,
@@ -491,6 +492,7 @@ export default function CampusesMapLayer({
         <Layer
           id="district-borders"
           type="line"
+          source-layer={DISTRICTS_SOURCE_LAYER}
           paint={{
             'line-color': '#9CA3AF',
             'line-width': [
@@ -509,6 +511,7 @@ export default function CampusesMapLayer({
         <Layer
           id="district-hover"
           type="fill"
+          source-layer={DISTRICTS_SOURCE_LAYER}
           paint={{
             'fill-color': '#4C6971',
             'fill-opacity': districtHoverOpacity,
@@ -518,6 +521,7 @@ export default function CampusesMapLayer({
         <Layer
           id="district-highlight-fills"
           type="fill"
+          source-layer={DISTRICTS_SOURCE_LAYER}
           paint={{
             'fill-color': '#FE4F40',
             'fill-opacity': highlightFillOpacity,
@@ -527,6 +531,7 @@ export default function CampusesMapLayer({
         <Layer
           id="district-highlight-borders"
           type="line"
+          source-layer={DISTRICTS_SOURCE_LAYER}
           paint={{
             'line-color': '#FE4F40',
             'line-width': 2.5,

@@ -1,6 +1,7 @@
 import { useState, useCallback, useMemo, useEffect } from 'react'
 import { Source, Layer } from 'react-map-gl/mapbox'
 import DetailPanel from './DetailPanel'
+import { DISTRICTS_TILESET_URL, DISTRICTS_SOURCE_LAYER } from '../../config'
 
 const METRICS = [
   { key: 'pviNumeric', label: 'Cook PVI' },
@@ -48,7 +49,7 @@ function parsePVI(s) {
 
 export default function StatesMapLayer({
   campusesData,
-  districtsData,
+  districtsMeta,
   statesData,
   mapRef,
   navigate,
@@ -88,17 +89,17 @@ export default function StatesMapLayer({
     return metrics
   }, [campusesData, statesData])
 
-  /* ── Collect unique district-count per state for the "districtCount" metric ── */
+  /* ── Collect unique district-count per state from metadata ── */
   const stateDistrictCounts = useMemo(() => {
-    if (!districtsData) return {}
+    if (!districtsMeta?.districts) return {}
     const counts = {}
-    districtsData.features.forEach((f) => {
-      const st = f.properties.state
+    Object.values(districtsMeta.districts).forEach((d) => {
+      const st = d.state
       if (!st) return
       counts[st] = (counts[st] || 0) + 1
     })
     return counts
-  }, [districtsData])
+  }, [districtsMeta])
 
   /* ── Compute min/max for the active metric ── */
   const { min, max } = useMemo(() => {
@@ -211,27 +212,10 @@ export default function StatesMapLayer({
       if (features && features.length > 0) {
         const st = features[0].properties.state
 
-        // Compute bounds from all districts in this state
-        const stateDistricts = districtsData.features.filter(
-          (f) => f.properties.state === st
-        )
-
-        if (stateDistricts.length > 0) {
-          let minLng = Infinity, maxLng = -Infinity
-          let minLat = Infinity, maxLat = -Infinity
-
-          stateDistricts.forEach((f) => {
-            const coords = f.geometry.type === 'MultiPolygon'
-              ? f.geometry.coordinates.flat(2)
-              : f.geometry.coordinates.flat(1)
-            coords.forEach(([lng, lat]) => {
-              if (lng < minLng) minLng = lng
-              if (lng > maxLng) maxLng = lng
-              if (lat < minLat) minLat = lat
-              if (lat > maxLat) maxLat = lat
-            })
-          })
-
+        // Use precomputed state bounds from metadata
+        const bounds = districtsMeta?.stateBounds?.[st]
+        if (bounds) {
+          const [minLng, minLat, maxLng, maxLat] = bounds
           map.fitBounds(
             [[minLng, minLat], [maxLng, maxLat]],
             { padding: 60, duration: 1000 }
@@ -255,7 +239,7 @@ export default function StatesMapLayer({
         })
       }
     },
-    [mapRef, districtsData, stateMetrics, stateDistrictCounts, statesData]
+    [mapRef, districtsMeta, stateMetrics, stateDistrictCounts, statesData]
   )
 
   /* ── Register/unregister map events ── */
@@ -285,32 +269,15 @@ export default function StatesMapLayer({
   /* ── Auto-select state from URL params ── */
   useEffect(() => {
     const st = params?.state
-    if (!st || !districtsData || !campusesData) return
+    if (!st || !districtsMeta || !campusesData) return
 
     const map = mapRef.current?.getMap()
     if (!map) return
 
-    // Compute bounds from all districts in this state
-    const stateDistricts = districtsData.features.filter(
-      (f) => f.properties.state === st
-    )
-
-    if (stateDistricts.length > 0) {
-      let minLng = Infinity, maxLng = -Infinity
-      let minLat = Infinity, maxLat = -Infinity
-
-      stateDistricts.forEach((f) => {
-        const coords = f.geometry.type === 'MultiPolygon'
-          ? f.geometry.coordinates.flat(2)
-          : f.geometry.coordinates.flat(1)
-        coords.forEach(([lng, lat]) => {
-          if (lng < minLng) minLng = lng
-          if (lng > maxLng) maxLng = lng
-          if (lat < minLat) minLat = lat
-          if (lat > maxLat) maxLat = lat
-        })
-      })
-
+    // Use precomputed state bounds from metadata
+    const bounds = districtsMeta.stateBounds?.[st]
+    if (bounds) {
+      const [minLng, minLat, maxLng, maxLat] = bounds
       map.fitBounds(
         [[minLng, minLat], [maxLng, maxLat]],
         { padding: 60, duration: 1000 }
@@ -332,9 +299,9 @@ export default function StatesMapLayer({
       senator2: stInfo.senator2 || '',
       senator2Party: stInfo.senator2Party || '',
     })
-  }, [params?.state, districtsData, campusesData, mapRef, stateMetrics, stateDistrictCounts, statesData])
+  }, [params?.state, districtsMeta, campusesData, mapRef, stateMetrics, stateDistrictCounts, statesData])
 
-  if (!campusesData || !districtsData) return null
+  if (!campusesData || !districtsMeta) return null
 
   return (
     <>
@@ -354,11 +321,12 @@ export default function StatesMapLayer({
         </select>
       </div>
 
-      {/* ── Choropleth layers on district source ── */}
-      <Source id="states-choropleth" type="geojson" data={districtsData}>
+      {/* ── Choropleth layers on district vector tiles ── */}
+      <Source id="states-choropleth" type="vector" url={DISTRICTS_TILESET_URL}>
         <Layer
           id="state-choropleth-fill"
           type="fill"
+          source-layer={DISTRICTS_SOURCE_LAYER}
           paint={{
             'fill-color': fillColorExpr,
             'fill-opacity': 0.7,
@@ -367,6 +335,7 @@ export default function StatesMapLayer({
         <Layer
           id="state-choropleth-border"
           type="line"
+          source-layer={DISTRICTS_SOURCE_LAYER}
           paint={{
             'line-color': '#9CA3AF',
             'line-width': [
@@ -380,6 +349,7 @@ export default function StatesMapLayer({
         <Layer
           id="state-hover"
           type="fill"
+          source-layer={DISTRICTS_SOURCE_LAYER}
           paint={{
             'fill-color': '#4C6971',
             'fill-opacity': 0.15,

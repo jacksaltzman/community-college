@@ -28,3 +28,6 @@ dist-ssr
 .env.local
 .env.*.local
 
+# Large geojson (served via Mapbox vector tiles instead)
+public/data/districts.geojson
+

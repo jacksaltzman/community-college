@@ -168,10 +168,9 @@ export default function MapView({ subView, data, navigate, params, isVisible }) 
         >
           <NavigationControl position="top-right" />
 
-          {subView === 'campuses' && data?.campuses && data?.districts && (
+          {subView === 'campuses' && data?.campuses && (
             <CampusesMapLayer
               campusesData={data.campuses}
-              districtsData={data.districts}
               filters={filters}
               layers={layers}
               searchSelection={searchSelection}
@@ -181,10 +180,10 @@ export default function MapView({ subView, data, navigate, params, isVisible }) 
             />
           )}
 
-          {subView === 'states' && data?.campuses && data?.districts && (
+          {subView === 'states' && data?.campuses && data?.districtsMeta && (
             <StatesMapLayer
               campusesData={data.campuses}
-              districtsData={data.districts}
+              districtsMeta={data.districtsMeta}
               statesData={data.statesData}
               mapRef={mapRef}
               navigate={navigate}
@@ -192,10 +191,10 @@ export default function MapView({ subView, data, navigate, params, isVisible }) 
             />
           )}
 
-          {subView === 'districts' && data?.campuses && data?.districts && (
+          {subView === 'districts' && data?.campuses && data?.districtsMeta && (
             <DistrictsMapLayer
               campusesData={data.campuses}
-              districtsData={data.districts}
+              districtsMeta={data.districtsMeta}
               mapRef={mapRef}
               navigate={navigate}
               params={params}

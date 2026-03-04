@@ -21,7 +21,7 @@ const globalSearchFilter = makeGlobalSearchFilter(['district', 'state', 'member'
 
 /* ── Main Component ── */
 
-export default function DistrictsTable({ campuses, districts, navigate, params }) {
+export default function DistrictsTable({ campuses, districtsMeta, navigate, params }) {
   const [globalFilter, setGlobalFilter] = useState(params?.district || params?.state || '')
   const [sorting, setSorting] = useState([{ id: 'enrollment', desc: true }])
   const [columnFilters, setColumnFilters] = useState([])
@@ -38,20 +38,19 @@ export default function DistrictsTable({ campuses, districts, navigate, params }
     setVisibleCount(INITIAL_VISIBLE)
   }, [globalFilter, columnFilters, sorting])
 
-  /* ── Build lookup from districts GeoJSON for Cook PVI / member / party ── */
+  /* ── Build lookup from districts metadata for Cook PVI / member / party ── */
   const districtLookup = useMemo(() => {
-    if (!districts?.features) return {}
+    if (!districtsMeta?.districts) return {}
     const lookup = {}
-    districts.features.forEach((f) => {
-      const p = f.properties
-      lookup[p.cd_code] = {
-        cook_pvi: p.cook_pvi || '',
-        member: p.member || '',
-        party: p.party || '',
+    Object.entries(districtsMeta.districts).forEach(([cd, d]) => {
+      lookup[cd] = {
+        cook_pvi: d.cook_pvi || '',
+        member: d.member || '',
+        party: d.party || '',
       }
     })
     return lookup
-  }, [districts])
+  }, [districtsMeta])
 
   /* ── Aggregate campus data into district-level rows ── */
   const data = useMemo(() => {
