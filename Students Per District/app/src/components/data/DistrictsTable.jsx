@@ -35,7 +35,7 @@ function numericRangeFilter(row, columnId, filterValue) {
 function globalSearchFilter(row, _columnId, filterValue) {
   if (!filterValue) return true
   const words = filterValue.toLowerCase().split(/\s+/).filter(Boolean)
-  const searchable = [row.original.district, row.original.state]
+  const searchable = [row.original.district, row.original.state, row.original.member, row.original.party, row.original.cookPVI]
     .filter(Boolean)
     .join(' ')
     .toLowerCase()
@@ -122,7 +122,7 @@ function ColumnFilterPopover({ column, isNumeric, alignRight }) {
 
 /* ── Main Component ── */
 
-export default function DistrictsTable({ campuses, navigate, params }) {
+export default function DistrictsTable({ campuses, districts, navigate, params }) {
   const [globalFilter, setGlobalFilter] = useState(params?.district || params?.state || '')
   const [sorting, setSorting] = useState([{ id: 'enrollment', desc: true }])
   const [columnFilters, setColumnFilters] = useState([])
@@ -132,6 +132,21 @@ export default function DistrictsTable({ campuses, navigate, params }) {
     if (params?.district) setGlobalFilter(params.district)
     else if (params?.state) setGlobalFilter(params.state)
   }, [params?.district, params?.state])
+
+  /* ── Build lookup from districts GeoJSON for Cook PVI / member / party ── */
+  const districtLookup = useMemo(() => {
+    if (!districts?.features) return {}
+    const lookup = {}
+    districts.features.forEach((f) => {
+      const p = f.properties
+      lookup[p.cd_code] = {
+        cook_pvi: p.cook_pvi || '',
+        member: p.member || '',
+        party: p.party || '',
+      }
+    })
+    return lookup
+  }, [districts])
 
   /* ── Aggregate campus data into district-level rows ── */
   const data = useMemo(() => {
@@ -150,17 +165,20 @@ export default function DistrictsTable({ campuses, navigate, params }) {
     })
 
     return Object.entries(metrics).map(([district, m]) => {
-      // Extract state from district code (e.g., "CA-12" -> "CA")
       const dashIdx = district.indexOf('-')
       const state = dashIdx > 0 ? district.substring(0, dashIdx) : district
+      const info = districtLookup[district] || {}
       return {
         district,
         state,
         enrollment: m.enrollment,
         campusCount: m.campusCount,
+        cookPVI: info.cook_pvi || '',
+        member: info.member || '',
+        party: info.party || '',
       }
     })
-  }, [campuses])
+  }, [campuses, districtLookup])
 
   /* ── Column definitions ── */
   const columns = useMemo(
@@ -213,22 +231,32 @@ export default function DistrictsTable({ campuses, navigate, params }) {
       {
         id: 'cookPVI',
         header: 'Cook PVI',
-        accessorFn: () => null,
-        filterFn: numericRangeFilter,
-        meta: { isNumeric: true },
-        cell: () => '\u2014',
-        sortDescFirst: true,
-        enableSorting: false,
+        accessorKey: 'cookPVI',
+        filterFn: 'includesString',
+        cell: ({ getValue }) => getValue() || '\u2014',
+        sortingFn: (rowA, rowB) => {
+          const parse = (s) => {
+            if (!s || s === 'EVEN') return 0
+            const m = s.match(/^([DR])\+(\d+)$/)
+            if (!m) return 0
+            return m[1] === 'D' ? -Number(m[2]) : Number(m[2])
+          }
+          return parse(rowA.original.cookPVI) - parse(rowB.original.cookPVI)
+        },
       },
       {
-        id: 'midtermTurnout',
-        header: 'Midterm Turnout',
-        accessorFn: () => null,
-        filterFn: numericRangeFilter,
-        meta: { isNumeric: true },
-        cell: () => '\u2014',
-        sortDescFirst: true,
-        enableSorting: false,
+        id: 'member',
+        header: 'Representative',
+        accessorKey: 'member',
+        filterFn: 'includesString',
+        cell: ({ getValue }) => getValue() || '\u2014',
+      },
+      {
+        id: 'party',
+        header: 'Party',
+        accessorKey: 'party',
+        filterFn: 'includesString',
+        cell: ({ getValue }) => getValue() || '\u2014',
       },
     ],
     [navigate],
@@ -284,15 +312,17 @@ export default function DistrictsTable({ campuses, navigate, params }) {
       'Enrollment',
       'Campus Count',
       'Cook PVI',
-      'Midterm Turnout',
+      'Representative',
+      'Party',
     ]
     const notes = [
       'Congressional district code',
       'State abbreviation',
       'Sum of enrollment from campuses reaching this district',
       'Number of community college campuses reaching this district',
-      'Deferred — data not yet available',
-      'Deferred — data not yet available',
+      '2025 Cook Partisan Voter Index',
+      'Current U.S. Representative',
+      'Party affiliation (R/D)',
     ]
 
     function csvEscape(val) {
@@ -318,8 +348,9 @@ export default function DistrictsTable({ campuses, navigate, params }) {
           d.state,
           d.enrollment,
           d.campusCount,
-          '',
-          '',
+          d.cookPVI,
+          d.member,
+          d.party,
         ]
           .map(csvEscape)
           .join(','),

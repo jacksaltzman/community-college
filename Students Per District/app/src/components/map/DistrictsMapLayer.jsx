@@ -172,12 +172,16 @@ export default function DistrictsMapLayer({
         }
 
         const m = districtMetrics[cdCode] || {}
+        const geoProps = districtFeature?.properties || props
         setDetailData({
           cdCode,
-          name: props.name || '',
-          state: props.state || '',
+          name: geoProps.name || '',
+          state: geoProps.state || '',
           enrollment: m.enrollment || 0,
           campusCount: m.campusCount || 0,
+          cookPVI: geoProps.cook_pvi || '',
+          member: geoProps.member || '',
+          party: geoProps.party || '',
         })
       }
     },
@@ -244,6 +248,9 @@ export default function DistrictsMapLayer({
         state: props.state || '',
         enrollment: m.enrollment || 0,
         campusCount: m.campusCount || 0,
+        cookPVI: props.cook_pvi || '',
+        member: props.member || '',
+        party: props.party || '',
       })
     }
   }, [params?.district, districtsData, campusesData, mapRef, districtMetrics])

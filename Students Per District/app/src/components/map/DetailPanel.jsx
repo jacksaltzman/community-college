@@ -115,6 +115,18 @@ export default function DetailPanel({ type, data, onClose, navigate }) {
             <span className="detail-metric-label">CAMPUS COUNT</span>
             <span className="detail-metric-value">{fmt(data.campusCount)}</span>
           </div>
+          {data.cookPVI && (
+            <div className="detail-metric-row">
+              <span className="detail-metric-label">COOK PVI</span>
+              <span className="detail-metric-value">{data.cookPVI}</span>
+            </div>
+          )}
+          {data.member && (
+            <div className="detail-metric-row">
+              <span className="detail-metric-label">REPRESENTATIVE</span>
+              <span className="detail-metric-value">{data.member} ({data.party})</span>
+            </div>
+          )}
         </div>
 
         <button
