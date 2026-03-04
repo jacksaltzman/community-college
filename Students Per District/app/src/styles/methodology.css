@@ -1,0 +1,112 @@
+/* ── Methodology Page ── */
+
+.page-scroll {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.methodology-content {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+.methodology-content h1 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 28px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--black);
+  margin-bottom: 16px;
+}
+.methodology-content h2 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 18px;
+  text-transform: uppercase;
+  color: var(--teal);
+  border-bottom: 2px solid var(--coral);
+  padding-bottom: 6px;
+  margin-top: 40px;
+  margin-bottom: 16px;
+}
+.methodology-content h3 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  color: var(--gray-muted);
+  margin-top: 24px;
+  margin-bottom: 12px;
+}
+.methodology-content p {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--black);
+  margin-bottom: 12px;
+}
+.methodology-content strong { font-weight: 700; }
+.methodology-content code {
+  background: var(--hover-bg);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+.methodology-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 16px;
+}
+.methodology-content th {
+  background: var(--black);
+  color: white;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 8px 12px;
+  text-align: left;
+}
+.methodology-content td {
+  font-family: var(--font-body);
+  font-size: 13px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--black);
+}
+.methodology-content tr:nth-child(even) td {
+  background: var(--hover-bg);
+}
+.methodology-content ol,
+.methodology-content ul {
+  padding-left: 24px;
+  margin-bottom: 16px;
+}
+.methodology-content li {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+  .methodology-content {
+    padding: 24px 16px 60px;
+  }
+  .methodology-content h1 {
+    font-size: 22px;
+  }
+  .methodology-content h2 {
+    font-size: 16px;
+    margin-top: 28px;
+  }
+  .methodology-content table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

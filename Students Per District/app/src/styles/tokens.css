@@ -1,0 +1,22 @@
+:root {
+  --coral: #FE4F40;
+  --teal: #4C6971;
+  --lime: #D4F72A;
+  --black: #111111;
+  --paper: #FDFBF9;
+  --border-main: #C8C1B6;
+  --border-light: #EEEAE4;
+  --gray-muted: #78716C;
+  --gray-lighter: #9CA3AF;
+  --gray-body: #44403C;
+  --hover-bg: #F5F0EB;
+  --color-large-city: #FE4F40;
+  --color-midsize-city: #4C6971;
+  --color-suburban: #7CB518;
+  --color-small-city: #E8A838;
+  --color-rural: #8B6F47;
+  --color-town-remote: #9CA3AF;
+  --font-body: 'DM Sans', sans-serif;
+  --font-heading: 'Oswald', sans-serif;
+  --nav-height: 56px;
+}

@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Oswald:wght@700&display=swap');
+@import 'mapbox-gl/dist/mapbox-gl.css';
+
+/* ── Reset ── */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Base ── */
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--gray-body);
+}
+
+/* ── Shared: search input ── */
+.search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  background: white;
+  color: var(--black);
+  outline: none;
+}
+.search-input::placeholder { color: var(--gray-lighter); }
+.search-input:focus { border-color: var(--teal); }
+
+/* ── Shared: styled select ── */
+.styled-select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-main);
+  border-radius: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  background: white;
+  color: var(--black);
+  outline: none;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2378716C' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
+.styled-select:focus { border-color: var(--teal); }
+
+/* ── Shared: section label ── */
+.section-label {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 11px;
+  color: var(--gray-muted);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+/* ── Mobile: touch-friendly inputs ── */
+@media (max-width: 768px) {
+  .search-input,
+  .styled-select {
+    min-height: 40px;
+    font-size: 14px;
+  }
+}
