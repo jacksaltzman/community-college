@@ -4,6 +4,7 @@ import MapView from './map/MapView'
 import CampusesTable from './data/CampusesTable'
 import StatesTable from './data/StatesTable'
 import DistrictsTable from './data/DistrictsTable'
+import Methodology from './methodology/Methodology'
 
 const TABS = [
   { key: 'map', label: 'Map' },
@@ -135,9 +136,7 @@ export default function Layout({ page, subView, params, navigate, data }) {
                   navigate={navigate}
                 />
               )}
-              {page === 'methodology' && (
-                <div style={{ padding: 24 }}>Methodology</div>
-              )}
+              {page === 'methodology' && <Methodology />}
             </>
           )}
         </div>

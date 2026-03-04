@@ -6,6 +6,7 @@ import './styles/global.css'
 import './styles/layout.css'
 import './styles/map.css'
 import './styles/data.css'
+import './styles/methodology.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
