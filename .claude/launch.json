@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "app-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "Students Per District/app"],
+      "port": 5173
+    },
+    {
+      "name": "map-server",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8080", "--directory", "Students Per District/map"],
+      "port": 8080
+    }
+  ]
+}

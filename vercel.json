@@ -1,6 +1,6 @@
 {
-  "framework": null,
-  "installCommand": "",
-  "buildCommand": "cp -r 'Students Per District/map' dist",
-  "outputDirectory": "dist"
+  "framework": "vite",
+  "installCommand": "cd 'Students Per District/app' && npm install",
+  "buildCommand": "cd 'Students Per District/app' && npm run build",
+  "outputDirectory": "Students Per District/app/dist"
 }
