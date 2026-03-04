@@ -35,7 +35,7 @@ export default function ColumnFilterPopover({ column, isNumeric, alignRight }) {
         }}
         title="Filter column"
       >
-        &#9660;
+        <svg width="10" height="10" viewBox="0 0 16 16" fill="currentColor"><path d="M0 1.5A.5.5 0 0 1 .5 1h15a.5.5 0 0 1 .37.84L10 8.52V14.5a.5.5 0 0 1-.74.44l-3-1.5A.5.5 0 0 1 6 13V8.52L.13 1.84A.5.5 0 0 1 .5 1z"/></svg>
       </button>
       <div
         className={`col-filter-pop${open ? ' open' : ''}${alignRight ? ' pop-right' : ''}`}
