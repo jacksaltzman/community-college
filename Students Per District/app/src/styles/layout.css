@@ -1,0 +1,175 @@
+/* ================================================================
+   LAYOUT — Top Navigation, SubNav, Page Container
+   ================================================================ */
+
+/* ── Top Navigation Bar ── */
+.top-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  background: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 1000;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.nav-brand-logo {
+  height: 18px;
+  width: auto;
+  display: block;
+}
+.nav-brand-subtitle {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--gray-muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ── Desktop Tab Buttons ── */
+.nav-tabs {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+  height: 100%;
+}
+.nav-tab {
+  background: none;
+  border: none;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gray-muted);
+  cursor: pointer;
+  padding: 0 20px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  border-bottom: 3px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
+}
+.nav-tab:hover {
+  color: white;
+}
+.nav-tab.active {
+  color: white;
+  border-bottom-color: var(--coral);
+}
+
+/* ── Mobile Hamburger ── */
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: white;
+  margin: 5px 0;
+  transition: 0.3s;
+}
+
+/* ── Mobile Dropdown ── */
+.nav-mobile-dropdown {
+  display: none;
+  position: fixed;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  background: var(--black);
+  z-index: 999;
+  flex-direction: column;
+  border-top: 1px solid #333;
+}
+.nav-mobile-dropdown.open {
+  display: flex;
+}
+.nav-mobile-dropdown .nav-tab {
+  height: 48px;
+  padding: 0 24px;
+  border-bottom: none;
+  border-left: 3px solid transparent;
+  justify-content: flex-start;
+}
+.nav-mobile-dropdown .nav-tab.active {
+  border-left-color: var(--coral);
+  border-bottom-color: transparent;
+}
+
+@media (max-width: 768px) {
+  .nav-tabs {
+    display: none;
+  }
+  .nav-hamburger {
+    display: block;
+  }
+  .nav-brand-subtitle {
+    display: none;
+  }
+}
+
+/* ── Page Container ── */
+.app-container {
+  margin-top: var(--nav-height);
+  height: calc(100vh - var(--nav-height));
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── SubNav (Segmented Control) ── */
+.sub-nav {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+  background: var(--border-light);
+  gap: 2px;
+  flex-shrink: 0;
+}
+.sub-nav-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gray-body);
+  cursor: pointer;
+  padding: 6px 20px;
+  border-radius: 16px;
+  transition: background 0.15s, color 0.15s;
+}
+.sub-nav-btn:hover {
+  background: var(--hover-bg);
+}
+.sub-nav-btn.active {
+  background: var(--coral);
+  color: white;
+}
+.sub-nav-btn.active:hover {
+  background: var(--coral);
+}
+
+/* ── Page Content Area ── */
+.page-content {
+  flex: 1;
+  overflow: hidden;
+}
