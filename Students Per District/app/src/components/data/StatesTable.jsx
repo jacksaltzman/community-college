@@ -81,8 +81,19 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         midtermTurnout2022: stInfo.midtermTurnout2022 ?? null,
         senator1: stInfo.senator1 || '',
         senator1Party: stInfo.senator1Party || '',
+        senator1NextElection: stInfo.senator1NextElection ?? null,
+        senator1LastMargin: stInfo.senator1LastMargin ?? null,
         senator2: stInfo.senator2 || '',
         senator2Party: stInfo.senator2Party || '',
+        senator2NextElection: stInfo.senator2NextElection ?? null,
+        senator2LastMargin: stInfo.senator2LastMargin ?? null,
+        adultPop18: stInfo.adultPop18 ?? null,
+        totalFilers: stInfo.totalFilers ?? null,
+        totalFedTaxPaidB: stInfo.totalFedTaxPaidB ?? null,
+        eitcClaimsThousands: stInfo.eitcClaimsThousands ?? null,
+        eitcParticipationRate: stInfo.eitcParticipationRate ?? null,
+        eitcUnclaimedRate: stInfo.eitcUnclaimedRate ?? null,
+        urbanPopPct: stInfo.urbanPopPct ?? null,
       }
     })
   }, [campuses, statesData])
@@ -181,10 +192,12 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         header: 'Senator 1',
         filterFn: 'includesString',
         cell: ({ row }) => {
-          const name = row.original.senator1
-          const party = row.original.senator1Party
-          if (!name) return '\u2014'
-          return party ? `${name} (${party})` : name
+          const d = row.original
+          if (!d.senator1) return '\u2014'
+          const party = d.senator1Party ? ` (${d.senator1Party})` : ''
+          const margin = d.senator1LastMargin != null ? `, +${d.senator1LastMargin}%` : ''
+          const election = d.senator1NextElection ? ` \u00B7 ${d.senator1NextElection}` : ''
+          return `${d.senator1}${party}${margin}${election}`
         },
       },
       {
@@ -193,11 +206,61 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         header: 'Senator 2',
         filterFn: 'includesString',
         cell: ({ row }) => {
-          const name = row.original.senator2
-          const party = row.original.senator2Party
-          if (!name) return '\u2014'
-          return party ? `${name} (${party})` : name
+          const d = row.original
+          if (!d.senator2) return '\u2014'
+          const party = d.senator2Party ? ` (${d.senator2Party})` : ''
+          const margin = d.senator2LastMargin != null ? `, +${d.senator2LastMargin}%` : ''
+          const election = d.senator2NextElection ? ` \u00B7 ${d.senator2NextElection}` : ''
+          return `${d.senator2}${party}${margin}${election}`
         },
+      },
+      {
+        id: 'adultPop18',
+        accessorKey: 'adultPop18',
+        header: 'Adult Pop (18+)',
+        meta: { isNumeric: true },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? numFmt.format(v) : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'totalFedTaxPaidB',
+        accessorKey: 'totalFedTaxPaidB',
+        header: 'Fed Tax Paid ($B)',
+        meta: { isNumeric: true },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? `$${v.toFixed(1)}B` : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'eitcClaimsThousands',
+        accessorKey: 'eitcClaimsThousands',
+        header: 'EITC Claims (K)',
+        meta: { isNumeric: true },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? `${numFmt.format(v)}K` : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'eitcUnclaimedRate',
+        accessorKey: 'eitcUnclaimedRate',
+        header: 'EITC Unclaimed',
+        meta: { isNumeric: true },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? `${v.toFixed(1)}%` : '\u2014'
+        },
+        sortDescFirst: true,
       },
     ],
     [navigate],
@@ -244,8 +307,19 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
       '2022 Midterm Turnout (%)',
       'Senator 1',
       'Senator 1 Party',
+      'S1 Next Election',
+      'S1 Last Margin (%)',
       'Senator 2',
       'Senator 2 Party',
+      'S2 Next Election',
+      'S2 Last Margin (%)',
+      'Adult Pop (18+)',
+      'Total Filers',
+      'Fed Tax Paid ($B)',
+      'EITC Claims (thousands)',
+      'EITC Participation Rate (%)',
+      'EITC Unclaimed Rate (%)',
+      'Urban Pop (%)',
     ]
     const notes = [
       'State abbreviation',
@@ -257,8 +331,19 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
       'VEP turnout rate, 2022 midterm (US Elections Project)',
       'U.S. Senator (119th Congress)',
       'Party affiliation',
+      'Next election year',
+      'Last election margin percentage',
       'U.S. Senator (119th Congress)',
       'Party affiliation',
+      'Next election year',
+      'Last election margin percentage',
+      'Adult population age 18+',
+      'Total tax filers in state',
+      'Total federal tax paid in billions',
+      'EITC claims in thousands',
+      'EITC participation rate',
+      'EITC unclaimed rate',
+      'Urban population percentage',
     ]
 
     function csvEscape(val) {
@@ -289,8 +374,19 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
           d.midtermTurnout2022 != null ? d.midtermTurnout2022.toFixed(1) : '',
           d.senator1,
           d.senator1Party,
+          d.senator1NextElection ?? '',
+          d.senator1LastMargin ?? '',
           d.senator2,
           d.senator2Party,
+          d.senator2NextElection ?? '',
+          d.senator2LastMargin ?? '',
+          d.adultPop18 ?? '',
+          d.totalFilers ?? '',
+          d.totalFedTaxPaidB ?? '',
+          d.eitcClaimsThousands ?? '',
+          d.eitcParticipationRate ?? '',
+          d.eitcUnclaimedRate ?? '',
+          d.urbanPopPct ?? '',
         ]
           .map(csvEscape)
           .join(','),

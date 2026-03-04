@@ -89,13 +89,45 @@ export default function DetailPanel({ type, data, onClose, navigate }) {
           {data.senator1 && (
             <div className="detail-metric-row">
               <span className="detail-metric-label">SENATOR</span>
-              <span className="detail-metric-value">{data.senator1} ({data.senator1Party})</span>
+              <span className="detail-metric-value">
+                {data.senator1} ({data.senator1Party})
+                {data.senator1LastMargin != null && `, +${data.senator1LastMargin}%`}
+                {data.senator1NextElection && ` \u00B7 ${data.senator1NextElection}`}
+              </span>
             </div>
           )}
           {data.senator2 && (
             <div className="detail-metric-row">
               <span className="detail-metric-label">SENATOR</span>
-              <span className="detail-metric-value">{data.senator2} ({data.senator2Party})</span>
+              <span className="detail-metric-value">
+                {data.senator2} ({data.senator2Party})
+                {data.senator2LastMargin != null && `, +${data.senator2LastMargin}%`}
+                {data.senator2NextElection && ` \u00B7 ${data.senator2NextElection}`}
+              </span>
+            </div>
+          )}
+          {data.adultPop18 != null && (
+            <div className="detail-metric-row">
+              <span className="detail-metric-label">ADULT POP (18+)</span>
+              <span className="detail-metric-value">{fmt(data.adultPop18)}</span>
+            </div>
+          )}
+          {data.totalFedTaxPaidB != null && (
+            <div className="detail-metric-row">
+              <span className="detail-metric-label">FED TAX PAID</span>
+              <span className="detail-metric-value">${data.totalFedTaxPaidB}B</span>
+            </div>
+          )}
+          {data.eitcClaimsThousands != null && (
+            <div className="detail-metric-row">
+              <span className="detail-metric-label">EITC CLAIMS</span>
+              <span className="detail-metric-value">{fmt(data.eitcClaimsThousands)}K</span>
+            </div>
+          )}
+          {data.eitcUnclaimedRate != null && (
+            <div className="detail-metric-row">
+              <span className="detail-metric-label">EITC UNCLAIMED</span>
+              <span className="detail-metric-value">{data.eitcUnclaimedRate}%</span>
             </div>
           )}
         </div>

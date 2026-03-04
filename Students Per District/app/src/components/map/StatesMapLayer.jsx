@@ -234,8 +234,16 @@ export default function StatesMapLayer({
           midtermTurnout2022: m.midtermTurnout ?? null,
           senator1: stInfo.senator1 || '',
           senator1Party: stInfo.senator1Party || '',
+          senator1NextElection: stInfo.senator1NextElection ?? null,
+          senator1LastMargin: stInfo.senator1LastMargin ?? null,
           senator2: stInfo.senator2 || '',
           senator2Party: stInfo.senator2Party || '',
+          senator2NextElection: stInfo.senator2NextElection ?? null,
+          senator2LastMargin: stInfo.senator2LastMargin ?? null,
+          adultPop18: stInfo.adultPop18 ?? null,
+          totalFedTaxPaidB: stInfo.totalFedTaxPaidB ?? null,
+          eitcClaimsThousands: stInfo.eitcClaimsThousands ?? null,
+          eitcUnclaimedRate: stInfo.eitcUnclaimedRate ?? null,
         })
       }
     },
@@ -296,8 +304,16 @@ export default function StatesMapLayer({
       midtermTurnout2022: m.midtermTurnout ?? null,
       senator1: stInfo.senator1 || '',
       senator1Party: stInfo.senator1Party || '',
+      senator1NextElection: stInfo.senator1NextElection ?? null,
+      senator1LastMargin: stInfo.senator1LastMargin ?? null,
       senator2: stInfo.senator2 || '',
       senator2Party: stInfo.senator2Party || '',
+      senator2NextElection: stInfo.senator2NextElection ?? null,
+      senator2LastMargin: stInfo.senator2LastMargin ?? null,
+      adultPop18: stInfo.adultPop18 ?? null,
+      totalFedTaxPaidB: stInfo.totalFedTaxPaidB ?? null,
+      eitcClaimsThousands: stInfo.eitcClaimsThousands ?? null,
+      eitcUnclaimedRate: stInfo.eitcUnclaimedRate ?? null,
     })
   }, [params?.state, districtsMeta, campusesData, mapRef, stateMetrics, stateDistrictCounts, statesData])
 
