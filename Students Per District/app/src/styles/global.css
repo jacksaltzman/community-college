@@ -60,3 +60,12 @@ body {
   margin-bottom: 8px;
   font-weight: 700;
 }
+
+/* ── Mobile: touch-friendly inputs ── */
+@media (max-width: 768px) {
+  .search-input,
+  .styled-select {
+    min-height: 40px;
+    font-size: 14px;
+  }
+}

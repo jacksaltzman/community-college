@@ -645,21 +645,107 @@
     max-height: calc(100% - 48px);
   }
 
+  /* Detail panel: full-screen overlay on mobile */
   .detail-panel {
     width: 100%;
     max-width: 100vw;
     border-radius: 0;
+    border-left: none;
+    border-top: 4px solid var(--coral);
+  }
+  .detail-panel-close {
+    font-size: 28px;
+    padding: 4px 8px;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .detail-panel-title {
+    font-size: 18px;
+  }
+  .detail-panel-link {
+    margin: 4px 16px 20px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
+  /* Metric selector: stack vertically, constrain width */
   .metric-selector {
-    top: 8px;
+    top: 56px;
     left: 8px;
-    padding: 6px 10px;
+    right: 8px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 8px 10px;
+    max-width: calc(100vw - 16px);
+  }
+  .metric-selector-label {
+    font-size: 10px;
+  }
+  .metric-selector-select {
+    width: 100%;
+    font-size: 13px;
+    min-height: 36px;
   }
 
+  /* Choropleth legend: smaller on mobile */
   .choropleth-legend {
     bottom: 24px;
     left: 8px;
-    min-width: 140px;
+    min-width: 120px;
+    padding: 8px 10px;
+  }
+  .choropleth-legend-title {
+    font-size: 10px;
+  }
+  .choropleth-legend-labels {
+    font-size: 10px;
+  }
+
+  /* Touch-friendly: filter inputs & toggles */
+  .toggle-label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+  .toggle-label {
+    min-height: 36px;
+    padding: 4px 0;
+  }
+  .map-filter-input {
+    min-height: 36px;
+    font-size: 14px;
+  }
+  .map-reset-btn {
+    min-height: 44px;
+  }
+  .search-input {
+    min-height: 40px;
+    font-size: 14px;
+  }
+  .styled-select {
+    min-height: 40px;
+    font-size: 14px;
+  }
+
+  /* Popup: constrain width */
+  .campus-popup {
+    min-width: 180px;
+    max-width: 260px;
+  }
+}
+
+/* ── Tablet adjustments (769px - 1024px) ── */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .map-sidebar {
+    width: 280px;
+    min-width: 280px;
+  }
+  .detail-panel {
+    width: 340px;
   }
 }

@@ -91,3 +91,22 @@
   line-height: 1.7;
   margin-bottom: 12px;
 }
+
+/* ── Mobile Responsive ── */
+@media (max-width: 768px) {
+  .methodology-content {
+    padding: 24px 16px 60px;
+  }
+  .methodology-content h1 {
+    font-size: 22px;
+  }
+  .methodology-content h2 {
+    font-size: 16px;
+    margin-top: 28px;
+  }
+  .methodology-content table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
