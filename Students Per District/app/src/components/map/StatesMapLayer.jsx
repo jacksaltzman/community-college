@@ -3,9 +3,9 @@ import { Source, Layer } from 'react-map-gl/mapbox'
 import DetailPanel from './DetailPanel'
 
 const METRICS = [
-  { key: 'enrollment', label: 'Total Enrollment' },
   { key: 'campusCount', label: 'Campus Count' },
   { key: 'avgDistricts', label: 'Avg Districts Reached' },
+  { key: 'midtermTurnout', label: '2022 Midterm Turnout' },
 ]
 
 /* Color-scale endpoints */
@@ -22,11 +22,12 @@ function lerpColor(t) {
 export default function StatesMapLayer({
   campusesData,
   districtsData,
+  statesData,
   mapRef,
   navigate,
   params,
 }) {
-  const [selectedMetric, setSelectedMetric] = useState('enrollment')
+  const [selectedMetric, setSelectedMetric] = useState('campusCount')
   const [hoveredState, setHoveredState] = useState(null)
   const [tooltip, setTooltip] = useState(null)
   const [detailData, setDetailData] = useState(null)
@@ -51,9 +52,13 @@ export default function StatesMapLayer({
         m.campusCount > 0
           ? parseFloat((m.totalDistricts / m.campusCount).toFixed(1))
           : 0
+      // Merge in state-level data (Cook PVI, midterm turnout)
+      const stInfo = statesData?.[st] || {}
+      m.cookPVI = stInfo.cookPVI || ''
+      m.midtermTurnout = stInfo.midtermTurnout2022 ?? null
     })
     return metrics
-  }, [campusesData])
+  }, [campusesData, statesData])
 
   /* ── Collect unique district-count per state for the "districtCount" metric ── */
   const stateDistrictCounts = useMemo(() => {
@@ -127,7 +132,9 @@ export default function StatesMapLayer({
         const metricVal = m
           ? selectedMetric === 'avgDistricts'
             ? m.avgDistricts
-            : Number(m[selectedMetric] || 0).toLocaleString()
+            : selectedMetric === 'midtermTurnout'
+              ? m.midtermTurnout != null ? `${m.midtermTurnout.toFixed(1)}%` : 'N/A'
+              : Number(m[selectedMetric] || 0).toLocaleString()
           : 'N/A'
 
         setTooltip({
@@ -191,16 +198,23 @@ export default function StatesMapLayer({
         }
 
         const m = stateMetrics[st] || {}
+        const stInfo = statesData?.[st] || {}
         setDetailData({
           stateCode: st,
           enrollment: m.enrollment || 0,
           campusCount: m.campusCount || 0,
           districtCount: stateDistrictCounts[st] || 0,
           avgDistricts: m.avgDistricts || 0,
+          cookPVI: m.cookPVI || '',
+          midtermTurnout2022: m.midtermTurnout ?? null,
+          senator1: stInfo.senator1 || '',
+          senator1Party: stInfo.senator1Party || '',
+          senator2: stInfo.senator2 || '',
+          senator2Party: stInfo.senator2Party || '',
         })
       }
     },
-    [mapRef, districtsData, stateMetrics, stateDistrictCounts]
+    [mapRef, districtsData, stateMetrics, stateDistrictCounts, statesData]
   )
 
   /* ── Register/unregister map events ── */
@@ -263,14 +277,21 @@ export default function StatesMapLayer({
     }
 
     const m = stateMetrics[st] || {}
+    const stInfo = statesData?.[st] || {}
     setDetailData({
       stateCode: st,
       enrollment: m.enrollment || 0,
       campusCount: m.campusCount || 0,
       districtCount: stateDistrictCounts[st] || 0,
       avgDistricts: m.avgDistricts || 0,
+      cookPVI: m.cookPVI || '',
+      midtermTurnout2022: m.midtermTurnout ?? null,
+      senator1: stInfo.senator1 || '',
+      senator1Party: stInfo.senator1Party || '',
+      senator2: stInfo.senator2 || '',
+      senator2Party: stInfo.senator2Party || '',
     })
-  }, [params?.state, districtsData, campusesData, mapRef, stateMetrics, stateDistrictCounts])
+  }, [params?.state, districtsData, campusesData, mapRef, stateMetrics, stateDistrictCounts, statesData])
 
   if (!campusesData || !districtsData) return null
 
@@ -360,8 +381,16 @@ export default function StatesMapLayer({
         </div>
         <div className="choropleth-legend-bar" />
         <div className="choropleth-legend-labels">
-          <span>{selectedMetric === 'avgDistricts' ? min.toFixed(1) : Math.round(min).toLocaleString()}</span>
-          <span>{selectedMetric === 'avgDistricts' ? max.toFixed(1) : Math.round(max).toLocaleString()}</span>
+          <span>
+            {selectedMetric === 'avgDistricts' ? min.toFixed(1)
+              : selectedMetric === 'midtermTurnout' ? `${min.toFixed(1)}%`
+              : Math.round(min).toLocaleString()}
+          </span>
+          <span>
+            {selectedMetric === 'avgDistricts' ? max.toFixed(1)
+              : selectedMetric === 'midtermTurnout' ? `${max.toFixed(1)}%`
+              : Math.round(max).toLocaleString()}
+          </span>
         </div>
       </div>
 

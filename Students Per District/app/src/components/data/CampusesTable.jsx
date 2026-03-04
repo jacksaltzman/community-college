@@ -4,7 +4,6 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   flexRender,
 } from '@tanstack/react-table'
 import TableControls from './TableControls'
@@ -32,7 +31,8 @@ const GROUP_BY_OPTIONS = [
   { value: 'primary_district', label: 'Primary District' },
 ]
 
-const PAGE_SIZE = 50
+const INITIAL_VISIBLE = 50
+const LOAD_MORE_COUNT = 50
 
 const numFmt = new Intl.NumberFormat('en-US')
 
@@ -171,6 +171,8 @@ export default function CampusesTable({ campuses, navigate, params }) {
     [navigate],
   )
 
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE)
+
   /* ── TanStack Table instance ── */
   const table = useReactTable({
     data,
@@ -179,10 +181,6 @@ export default function CampusesTable({ campuses, navigate, params }) {
       sorting,
       columnFilters,
       globalFilter,
-      pagination: {
-        pageIndex: 0,
-        pageSize: PAGE_SIZE,
-      },
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -191,15 +189,11 @@ export default function CampusesTable({ campuses, navigate, params }) {
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
   })
 
-  /* ── Pagination state (managed separately so grouping can disable it) ── */
-  const [pageIndex, setPageIndex] = useState(0)
-
-  // Reset page when filters/sorting/grouping change
+  // Reset visible count when filters/sorting/grouping change
   useEffect(() => {
-    setPageIndex(0)
+    setVisibleCount(INITIAL_VISIBLE)
   }, [globalFilter, columnFilters, sorting, groupBy])
 
   const filteredRows = table.getFilteredRowModel().rows
@@ -225,14 +219,13 @@ export default function CampusesTable({ campuses, navigate, params }) {
     return entries
   }, [groupBy, sortedRows])
 
-  /* ── Paginated rows (only when not grouped) ── */
-  const paginatedRows = useMemo(() => {
+  /* ── Visible rows (show-more pattern, only when not grouped) ── */
+  const visibleRows = useMemo(() => {
     if (groupBy) return sortedRows
-    const start = pageIndex * PAGE_SIZE
-    return sortedRows.slice(start, start + PAGE_SIZE)
-  }, [groupBy, sortedRows, pageIndex])
+    return sortedRows.slice(0, visibleCount)
+  }, [groupBy, sortedRows, visibleCount])
 
-  const totalPages = groupBy ? 1 : Math.ceil(sortedRows.length / PAGE_SIZE)
+  const hasMore = !groupBy && visibleCount < sortedRows.length
 
   /* ── Group toggle ── */
   const toggleGroup = useCallback((key) => {
@@ -386,7 +379,7 @@ export default function CampusesTable({ campuses, navigate, params }) {
 
     return (
       <tbody>
-        {paginatedRows.map((row) => (
+        {visibleRows.map((row) => (
           <tr key={row.id}>
             {row.getVisibleCells().map((cell) => {
               const isNum = cell.column.columnDef.meta?.isNumeric
@@ -405,10 +398,6 @@ export default function CampusesTable({ campuses, navigate, params }) {
       </tbody>
     )
   }
-
-  /* ── Pagination info ── */
-  const start = pageIndex * PAGE_SIZE + 1
-  const end = Math.min((pageIndex + 1) * PAGE_SIZE, sortedRows.length)
 
   return (
     <div className="data-page">
@@ -457,25 +446,13 @@ export default function CampusesTable({ campuses, navigate, params }) {
         </table>
       </div>
 
-      {!groupBy && totalPages > 1 && (
-        <div className="data-pagination">
+      {hasMore && (
+        <div className="data-show-more">
           <button
-            disabled={pageIndex === 0}
-            onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
+            className="show-more-btn"
+            onClick={() => setVisibleCount((c) => c + LOAD_MORE_COUNT)}
           >
-            Previous
-          </button>
-          <span className="page-info">
-            Page {pageIndex + 1} of {totalPages}
-            {' \u00B7 '}
-            Showing {start.toLocaleString()}&ndash;{end.toLocaleString()} of{' '}
-            {sortedRows.length.toLocaleString()} campuses
-          </span>
-          <button
-            disabled={pageIndex >= totalPages - 1}
-            onClick={() => setPageIndex((p) => Math.min(totalPages - 1, p + 1))}
-          >
-            Next
+            Show more ({sortedRows.length - visibleCount} remaining)
           </button>
         </div>
       )}

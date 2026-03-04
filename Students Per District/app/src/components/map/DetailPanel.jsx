@@ -74,6 +74,30 @@ export default function DetailPanel({ type, data, onClose, navigate }) {
             <span className="detail-metric-label">AVG DISTRICTS REACHED</span>
             <span className="detail-metric-value">{data.avgDistricts}</span>
           </div>
+          {data.cookPVI && (
+            <div className="detail-metric-row">
+              <span className="detail-metric-label">COOK PVI</span>
+              <span className="detail-metric-value">{data.cookPVI}</span>
+            </div>
+          )}
+          {data.midtermTurnout2022 != null && (
+            <div className="detail-metric-row">
+              <span className="detail-metric-label">2022 MIDTERM TURNOUT</span>
+              <span className="detail-metric-value">{data.midtermTurnout2022.toFixed(1)}%</span>
+            </div>
+          )}
+          {data.senator1 && (
+            <div className="detail-metric-row">
+              <span className="detail-metric-label">SENATOR</span>
+              <span className="detail-metric-value">{data.senator1} ({data.senator1Party})</span>
+            </div>
+          )}
+          {data.senator2 && (
+            <div className="detail-metric-row">
+              <span className="detail-metric-label">SENATOR</span>
+              <span className="detail-metric-value">{data.senator2} ({data.senator2Party})</span>
+            </div>
+          )}
         </div>
 
         <button

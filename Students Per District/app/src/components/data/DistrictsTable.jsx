@@ -4,7 +4,6 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   flexRender,
 } from '@tanstack/react-table'
 import TableControls from './TableControls'
@@ -13,7 +12,8 @@ import { numericRangeFilter, makeGlobalSearchFilter } from './tableFilters'
 
 /* ── Constants ── */
 
-const PAGE_SIZE = 50
+const INITIAL_VISIBLE = 50
+const LOAD_MORE_COUNT = 50
 
 const numFmt = new Intl.NumberFormat('en-US')
 
@@ -25,12 +25,18 @@ export default function DistrictsTable({ campuses, districts, navigate, params }
   const [globalFilter, setGlobalFilter] = useState(params?.district || params?.state || '')
   const [sorting, setSorting] = useState([{ id: 'enrollment', desc: true }])
   const [columnFilters, setColumnFilters] = useState([])
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE)
 
   /* ── Sync global filter from URL params ── */
   useEffect(() => {
     if (params?.district) setGlobalFilter(params.district)
     else if (params?.state) setGlobalFilter(params.state)
   }, [params?.district, params?.state])
+
+  /* Reset visible count when filters/sorting change */
+  useEffect(() => {
+    setVisibleCount(INITIAL_VISIBLE)
+  }, [globalFilter, columnFilters, sorting])
 
   /* ── Build lookup from districts GeoJSON for Cook PVI / member / party ── */
   const districtLookup = useMemo(() => {
@@ -169,10 +175,6 @@ export default function DistrictsTable({ campuses, districts, navigate, params }
       sorting,
       columnFilters,
       globalFilter,
-      pagination: {
-        pageIndex: 0,
-        pageSize: PAGE_SIZE,
-      },
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -181,27 +183,18 @@ export default function DistrictsTable({ campuses, districts, navigate, params }
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
   })
-
-  /* ── Pagination state ── */
-  const [pageIndex, setPageIndex] = useState(0)
-
-  // Reset page when filters/sorting change
-  useEffect(() => {
-    setPageIndex(0)
-  }, [globalFilter, columnFilters, sorting])
 
   const filteredRows = table.getFilteredRowModel().rows
   const sortedRows = table.getSortedRowModel().rows
 
-  /* ── Paginated rows ── */
-  const paginatedRows = useMemo(() => {
-    const start = pageIndex * PAGE_SIZE
-    return sortedRows.slice(start, start + PAGE_SIZE)
-  }, [sortedRows, pageIndex])
+  /* ── Visible rows (show-more pattern) ── */
+  const visibleRows = useMemo(
+    () => sortedRows.slice(0, visibleCount),
+    [sortedRows, visibleCount],
+  )
 
-  const totalPages = Math.ceil(sortedRows.length / PAGE_SIZE)
+  const hasMore = visibleCount < sortedRows.length
 
   /* ── CSV Export ── */
   const handleExport = useCallback(() => {
@@ -219,7 +212,7 @@ export default function DistrictsTable({ campuses, districts, navigate, params }
       'State abbreviation',
       'Sum of enrollment from campuses reaching this district',
       'Number of community college campuses reaching this district',
-      '2025 Cook Partisan Voter Index',
+      '2022 Cook Partisan Voter Index',
       'Current U.S. Representative',
       'Party affiliation (R/D)',
     ]
@@ -276,10 +269,6 @@ export default function DistrictsTable({ campuses, districts, navigate, params }
   /* ── Header columns (for rendering) ── */
   const headerGroups = table.getHeaderGroups()
 
-  /* ── Pagination info ── */
-  const start = pageIndex * PAGE_SIZE + 1
-  const end = Math.min((pageIndex + 1) * PAGE_SIZE, sortedRows.length)
-
   return (
     <div className="data-page">
       <TableControls
@@ -325,7 +314,7 @@ export default function DistrictsTable({ campuses, districts, navigate, params }
             ))}
           </thead>
           <tbody>
-            {paginatedRows.map((row) => (
+            {visibleRows.map((row) => (
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => {
                   const isNum = cell.column.columnDef.meta?.isNumeric
@@ -345,25 +334,13 @@ export default function DistrictsTable({ campuses, districts, navigate, params }
         </table>
       </div>
 
-      {totalPages > 1 && (
-        <div className="data-pagination">
+      {hasMore && (
+        <div className="data-show-more">
           <button
-            disabled={pageIndex === 0}
-            onClick={() => setPageIndex((p) => Math.max(0, p - 1))}
+            className="show-more-btn"
+            onClick={() => setVisibleCount((c) => c + LOAD_MORE_COUNT)}
           >
-            Previous
-          </button>
-          <span className="page-info">
-            Page {pageIndex + 1} of {totalPages}
-            {' \u00B7 '}
-            Showing {start.toLocaleString()}&ndash;{end.toLocaleString()} of{' '}
-            {sortedRows.length.toLocaleString()} districts
-          </span>
-          <button
-            disabled={pageIndex >= totalPages - 1}
-            onClick={() => setPageIndex((p) => Math.min(totalPages - 1, p + 1))}
-          >
-            Next
+            Show more ({sortedRows.length - visibleCount} remaining)
           </button>
         </div>
       )}

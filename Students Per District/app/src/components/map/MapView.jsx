@@ -185,6 +185,7 @@ export default function MapView({ subView, data, navigate, params, isVisible }) 
             <StatesMapLayer
               campusesData={data.campuses}
               districtsData={data.districts}
+              statesData={data.statesData}
               mapRef={mapRef}
               navigate={navigate}
               params={params}

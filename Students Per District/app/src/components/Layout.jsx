@@ -117,6 +117,7 @@ export default function Layout({ page, subView, params, navigate, data }) {
               {page === 'data' && subView === 'states' && (
                 <StatesTable
                   campuses={data?.campuses}
+                  statesData={data?.statesData}
                   navigate={navigate}
                   params={params}
                 />

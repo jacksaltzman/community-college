@@ -28,6 +28,3 @@ dist-ssr
 .env.local
 .env.*.local
 
-# Large data files (copies from ../map/data/)
-public/data/*.geojson
-public/data/*.json
