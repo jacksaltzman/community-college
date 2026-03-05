@@ -13,7 +13,7 @@ import Toast from '../Toast'
 
 /* ── Constants ── */
 
-const INITIAL_VISIBLE = 50
+const INITIAL_VISIBLE = 60
 const LOAD_MORE_COUNT = 50
 
 const numFmt = new Intl.NumberFormat('en-US')
