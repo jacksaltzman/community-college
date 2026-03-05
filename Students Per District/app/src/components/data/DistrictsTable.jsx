@@ -154,7 +154,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         id: 'enrollment',
         accessorKey: 'enrollment',
         header: 'Enrollment',
-        meta: { isNumeric: true, fieldKey: 'enrollment' },
+        meta: { isNumeric: true, fieldKey: 'enrollment', aggregate: 'sum' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => numFmt.format(getValue()),
         sortDescFirst: true,
@@ -163,7 +163,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         id: 'campusCount',
         accessorKey: 'campusCount',
         header: 'Campus Count',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, aggregate: 'sum' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => numFmt.format(getValue()),
         sortDescFirst: true,
@@ -215,7 +215,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         id: 'medianIncome',
         accessorKey: 'medianIncome',
         header: 'Median Income',
-        meta: { isNumeric: true, fieldKey: 'median_income' },
+        meta: { isNumeric: true, fieldKey: 'median_income', aggregate: 'avg' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -227,7 +227,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         id: 'povertyRate',
         accessorKey: 'povertyRate',
         header: 'Poverty Rate',
-        meta: { isNumeric: true, fieldKey: 'poverty_rate' },
+        meta: { isNumeric: true, fieldKey: 'poverty_rate', aggregate: 'avg' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -239,7 +239,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         id: 'pctAssociatesPlus',
         accessorKey: 'pctAssociatesPlus',
         header: "% Associate's+",
-        meta: { isNumeric: true, fieldKey: 'pct_associates_plus' },
+        meta: { isNumeric: true, fieldKey: 'pct_associates_plus', aggregate: 'avg' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -251,7 +251,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         id: 'pct1824',
         accessorKey: 'pct1824',
         header: '% Age 18-24',
-        meta: { isNumeric: true, fieldKey: 'pct_18_24' },
+        meta: { isNumeric: true, fieldKey: 'pct_18_24', aggregate: 'avg' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -263,7 +263,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         id: 'totalVotes2022',
         accessorKey: 'totalVotes2022',
         header: 'Votes 2022',
-        meta: { isNumeric: true, fieldKey: 'total_votes_2022' },
+        meta: { isNumeric: true, fieldKey: 'total_votes_2022', aggregate: 'sum' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -275,7 +275,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         id: 'totalVotes2024',
         accessorKey: 'totalVotes2024',
         header: 'Votes 2024',
-        meta: { isNumeric: true, fieldKey: 'total_votes_2024' },
+        meta: { isNumeric: true, fieldKey: 'total_votes_2024', aggregate: 'sum' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -287,7 +287,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         id: 'turnoutRate2022',
         accessorKey: 'turnoutRate2022',
         header: 'Turnout 2022',
-        meta: { isNumeric: true, fieldKey: 'turnout_rate_2022' },
+        meta: { isNumeric: true, fieldKey: 'turnout_rate_2022', aggregate: 'avg' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -299,7 +299,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         id: 'turnoutRate2024',
         accessorKey: 'turnoutRate2024',
         header: 'Turnout 2024',
-        meta: { isNumeric: true, fieldKey: 'turnout_rate_2024' },
+        meta: { isNumeric: true, fieldKey: 'turnout_rate_2024', aggregate: 'avg' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -347,6 +347,31 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
   )
 
   const hasMore = visibleCount < sortedRows.length
+
+  const footerSummary = useMemo(() => {
+    const cols = table.getAllLeafColumns()
+    const rows = filteredRows
+    if (!rows.length) return null
+
+    return cols.map((col) => {
+      const agg = col.columnDef.meta?.aggregate
+      if (!agg) return { id: col.id, value: null }
+
+      const values = rows
+        .map((r) => r.getValue(col.id))
+        .filter((v) => v != null && !isNaN(v))
+
+      if (!values.length) return { id: col.id, value: null }
+
+      if (agg === 'sum') {
+        return { id: col.id, label: 'Sum', value: values.reduce((a, b) => a + b, 0), agg }
+      }
+      if (agg === 'avg') {
+        return { id: col.id, label: 'Avg', value: values.reduce((a, b) => a + b, 0) / values.length, agg }
+      }
+      return { id: col.id, value: null }
+    })
+  }, [filteredRows, table])
 
   /* ── CSV Export ── */
   const handleExport = useCallback(() => {
@@ -502,11 +527,16 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
                         <DraggableHeader
                           key={header.id}
                           header={header}
-                          className={isNum ? 'num' : ''}
+                          className={[
+                            isNum ? 'num' : '',
+                            header.column.getIsSorted() ? 'th-sorted' : '',
+                            header.column.getIsFiltered() ? 'th-filtered' : '',
+                          ].filter(Boolean).join(' ')}
                           style={colSize ? { width: colSize } : {}}
                         >
                           <span className="th-content" onClick={header.column.getToggleSortingHandler()}>
                             {flexRender(header.column.columnDef.header, header.getContext())}
+                            {sortIcon(header.column)}
                             {fieldKey && <SourceFootnote fieldKey={fieldKey} sources={sources} />}
                           </span>
                         </DraggableHeader>
@@ -538,6 +568,32 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
                 </tr>
               ))}
             </tbody>
+            {footerSummary && (
+              <tfoot>
+                <tr>
+                  {footerSummary.map((col) => {
+                    const colDef = table.getColumn(col.id)?.columnDef
+                    const isNum = colDef?.meta?.isNumeric
+                    return (
+                      <td key={col.id} className={isNum ? 'num' : ''}>
+                        {col.value != null && (
+                          <>
+                            <span className="footer-label">{col.label}</span>
+                            <span className="footer-value">
+                              {col.agg === 'sum'
+                                ? numFmt.format(Math.round(col.value))
+                                : col.id === 'medianIncome'
+                                  ? dollarFmt.format(Math.round(col.value))
+                                  : `${col.value.toFixed(1)}%`}
+                            </span>
+                          </>
+                        )}
+                      </td>
+                    )
+                  })}
+                </tr>
+              </tfoot>
+            )}
           </table>
         </DndContext>
       </div>
