@@ -9,6 +9,7 @@ import {
 import TableControls from './TableControls'
 import ColumnFilterPopover from './ColumnFilterPopover'
 import { numericRangeFilter, makeGlobalSearchFilter } from './tableFilters'
+import Toast from '../Toast'
 
 /* ── Constants ── */
 
@@ -26,6 +27,8 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
   const [sorting, setSorting] = useState([{ id: 'enrollment', desc: true }])
   const [columnFilters, setColumnFilters] = useState([])
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE)
+  const [columnVisibility, setColumnVisibility] = useState({})
+  const [toast, setToast] = useState(null)
 
   /* ── Sync global filter from URL params ── */
   useEffect(() => {
@@ -174,10 +177,12 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
       sorting,
       columnFilters,
       globalFilter,
+      columnVisibility,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
+    onColumnVisibilityChange: setColumnVisibility,
     globalFilterFn: globalSearchFilter,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -256,6 +261,7 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
     a.download = 'districts_data.csv'
     a.click()
     URL.revokeObjectURL(url)
+    setToast('CSV exported')
   }, [sortedRows])
 
   /* ── Sort icon helper ── */
@@ -281,6 +287,7 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
         onExport={handleExport}
         searchPlaceholder="Search by district or state..."
         entityName="districts"
+        columns={table.getAllLeafColumns()}
       />
 
       <div className="data-table-wrap">
@@ -314,7 +321,11 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
           </thead>
           <tbody>
             {visibleRows.map((row) => (
-              <tr key={row.id}>
+              <tr
+                key={row.id}
+                className="data-row-clickable"
+                onClick={() => navigate('map', 'districts', { district: row.original.district })}
+              >
                 {row.getVisibleCells().map((cell) => {
                   const isNum = cell.column.columnDef.meta?.isNumeric
                   return (
@@ -343,6 +354,7 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
           </button>
         </div>
       )}
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   )
 }

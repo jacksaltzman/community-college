@@ -406,12 +406,17 @@
   font-family: var(--font-body);
   font-size: 13px;
   color: var(--black);
-  background: var(--paper);
+  background: white;
   border: 1px solid var(--border-main);
   border-radius: 6px;
-  padding: 4px 8px;
+  padding: 5px 28px 5px 10px;
   outline: none;
   cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%2378716C' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
 }
 .metric-selector-select:focus {
   border-color: var(--teal);
@@ -583,6 +588,59 @@
   border-color: var(--teal);
 }
 
+/* ── Detail Panel Child Entities ── */
+.detail-panel-children {
+  padding: 0 20px 16px;
+  border-top: 1px solid var(--border-light);
+}
+.detail-children-title {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 10px;
+  color: var(--gray-muted);
+  font-weight: 700;
+  padding: 12px 0 8px;
+}
+.detail-children-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+.detail-child-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: background 0.1s;
+  border-radius: 4px;
+}
+.detail-child-row:hover {
+  background: var(--hover-bg);
+}
+.detail-child-row:last-child {
+  border-bottom: none;
+}
+.detail-child-name {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--teal);
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.detail-child-meta {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--gray-muted);
+  text-align: right;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
+
 /* ── Mobile responsive ── */
 @media (max-width: 768px) {
   .map-hamburger {
@@ -736,6 +794,15 @@
   .campus-popup {
     min-width: 180px;
     max-width: 260px;
+  }
+
+  /* Detail panel children: touch-friendly rows */
+  .detail-child-row {
+    min-height: 44px;
+    padding: 8px 4px;
+  }
+  .detail-panel-children {
+    padding: 0 16px 16px;
   }
 }
 

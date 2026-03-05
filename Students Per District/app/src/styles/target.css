@@ -220,6 +220,23 @@
   white-space: nowrap;
 }
 
+/* ── Map link button ── */
+.target-map-link {
+  background: none;
+  border: none;
+  color: var(--gray-muted);
+  cursor: pointer;
+  padding: 2px;
+  margin-left: 8px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+  display: flex;
+  align-items: center;
+}
+.target-map-link:hover {
+  color: var(--teal);
+}
+
 /* ── Meta text (counts) ── */
 .target-meta {
   font-family: var(--font-body);
@@ -390,11 +407,27 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+    padding: 10px 12px;
+    flex-wrap: wrap;
+  }
+  .target-summary-left {
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .target-summary-right {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .target-view-btn {
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
   }
   .target-state-row {
     flex-wrap: wrap;
     gap: 6px;
     padding: 10px 12px;
+    min-height: 44px;
   }
   .target-meta {
     width: 100%;
@@ -404,11 +437,13 @@
     flex-wrap: wrap;
     gap: 6px;
     padding: 8px 12px 8px 32px;
+    min-height: 44px;
   }
   .target-campus-row {
     flex-wrap: wrap;
     gap: 4px;
     padding: 8px 12px 8px 48px;
+    min-height: 44px;
   }
   .target-campus-city,
   .target-campus-type,
@@ -418,6 +453,13 @@
     font-size: 11px;
   }
   .target-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     font-size: 12px;
+  }
+  .target-text-btn {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
   }
 }

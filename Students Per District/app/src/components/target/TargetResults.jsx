@@ -213,6 +213,19 @@ export default function TargetResults({ filteredStates, summary, navigate }) {
                 <span className="target-meta">
                   {st.districtCount} dist. · {numFmt(st.campusCount)} campus{st.campusCount !== 1 ? 'es' : ''} · {numFmt(st.enrollment)} enrolled
                 </span>
+                <button
+                  className="target-map-link"
+                  title="View on map"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    navigate('map', 'states', { state: st.code })
+                  }}
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                </button>
               </div>
 
               {stateOpen && districts.map(([cd, d]) => {
@@ -240,6 +253,19 @@ export default function TargetResults({ filteredStates, summary, navigate }) {
                       <span className="target-meta">
                         {uniqueCampuses.length} campus{uniqueCampuses.length !== 1 ? 'es' : ''} · {numFmt(d.enrollment)} enrolled
                       </span>
+                      <button
+                        className="target-map-link"
+                        title="View on map"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          navigate('map', 'districts', { district: cd })
+                        }}
+                      >
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                          <circle cx="12" cy="10" r="3"/>
+                        </svg>
+                      </button>
                     </div>
 
                     {distOpen && (

@@ -132,6 +132,22 @@ export default function DetailPanel({ type, data, onClose, navigate }) {
           )}
         </div>
 
+        {data.children && data.children.length > 0 && (
+          <div className="detail-panel-children">
+            <div className="detail-children-title">
+              Districts ({data.children.length})
+            </div>
+            <div className="detail-children-list">
+              {data.children.map((child) => (
+                <div key={child.id} className="detail-child-row" onClick={() => child.onClick?.()}>
+                  <span className="detail-child-name">{child.name}</span>
+                  <span className="detail-child-meta">{child.meta}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         <button
           className="detail-panel-link"
           onClick={() => navigate('data', 'states', { state: data.stateCode })}
@@ -182,6 +198,22 @@ export default function DetailPanel({ type, data, onClose, navigate }) {
             </div>
           )}
         </div>
+
+        {data.children && data.children.length > 0 && (
+          <div className="detail-panel-children">
+            <div className="detail-children-title">
+              Campuses ({data.children.length})
+            </div>
+            <div className="detail-children-list">
+              {data.children.map((child) => (
+                <div key={child.id} className="detail-child-row" onClick={() => child.onClick?.()}>
+                  <span className="detail-child-name">{child.name}</span>
+                  <span className="detail-child-meta">{child.meta}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         <button
           className="detail-panel-link"

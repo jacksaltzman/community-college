@@ -1,6 +1,7 @@
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import TargetFilters from './TargetFilters'
 import TargetResults from './TargetResults'
+import Toast from '../Toast'
 import '../../styles/target.css'
 
 const INITIAL_STATE_FILTERS = {
@@ -32,10 +33,86 @@ const INITIAL_CAMPUS_FILTERS = {
   districtsMax: '',
 }
 
-export default function TargetView({ data, navigate }) {
+export default function TargetView({ data, navigate, params }) {
   const [stateFilters, setStateFilters] = useState(INITIAL_STATE_FILTERS)
   const [districtFilters, setDistrictFilters] = useState(INITIAL_DISTRICT_FILTERS)
   const [campusFilters, setCampusFilters] = useState(INITIAL_CAMPUS_FILTERS)
+  const [toast, setToast] = useState(null)
+
+  // Serialize filters to URL
+  useEffect(() => {
+    const p = {}
+    // State filters
+    if (stateFilters.pvi) p.spvi = stateFilters.pvi
+    if (stateFilters.senatorElection) p.sse = stateFilters.senatorElection
+    if (stateFilters.senatorParty.length) p.ssp = stateFilters.senatorParty.join(',')
+    if (stateFilters.enrollMin !== '') p.semin = stateFilters.enrollMin
+    if (stateFilters.enrollMax !== '') p.semax = stateFilters.enrollMax
+    if (stateFilters.turnoutMin !== '') p.stmin = stateFilters.turnoutMin
+    if (stateFilters.turnoutMax !== '') p.stmax = stateFilters.turnoutMax
+    if (stateFilters.eitcMin !== '') p.simin = stateFilters.eitcMin
+    if (stateFilters.eitcMax !== '') p.simax = stateFilters.eitcMax
+    // District filters
+    if (districtFilters.pvi) p.dpvi = districtFilters.pvi
+    if (districtFilters.repParty.length) p.drp = districtFilters.repParty.join(',')
+    if (districtFilters.enrollMin !== '') p.demin = districtFilters.enrollMin
+    if (districtFilters.enrollMax !== '') p.demax = districtFilters.enrollMax
+    if (districtFilters.campusMin !== '') p.dcmin = districtFilters.campusMin
+    if (districtFilters.campusMax !== '') p.dcmax = districtFilters.campusMax
+    // Campus filters
+    if (campusFilters.enrollMin !== '') p.cemin = campusFilters.enrollMin
+    if (campusFilters.enrollMax !== '') p.cemax = campusFilters.enrollMax
+    if (campusFilters.campusTypes.length) p.cct = campusFilters.campusTypes.join(',')
+    if (campusFilters.districtsMin !== '') p.cdmin = campusFilters.districtsMin
+    if (campusFilters.districtsMax !== '') p.cdmax = campusFilters.districtsMax
+
+    const qs = Object.entries(p)
+      .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+      .join('&')
+    const hash = qs ? `#target?${qs}` : '#target'
+    if (window.location.hash !== hash) {
+      window.history.replaceState(null, '', hash)
+    }
+  }, [stateFilters, districtFilters, campusFilters])
+
+  // Restore filters from URL on mount
+  const initializedRef = useRef(false)
+  useEffect(() => {
+    if (initializedRef.current || !params || Object.keys(params).length === 0) return
+    initializedRef.current = true
+
+    // State filters
+    const sf = { ...INITIAL_STATE_FILTERS }
+    if (params.spvi) sf.pvi = params.spvi
+    if (params.sse) sf.senatorElection = params.sse
+    if (params.ssp) sf.senatorParty = params.ssp.split(',')
+    if (params.semin) sf.enrollMin = params.semin
+    if (params.semax) sf.enrollMax = params.semax
+    if (params.stmin) sf.turnoutMin = params.stmin
+    if (params.stmax) sf.turnoutMax = params.stmax
+    if (params.simin) sf.eitcMin = params.simin
+    if (params.simax) sf.eitcMax = params.simax
+    setStateFilters(sf)
+
+    // District filters
+    const df = { ...INITIAL_DISTRICT_FILTERS }
+    if (params.dpvi) df.pvi = params.dpvi
+    if (params.drp) df.repParty = params.drp.split(',')
+    if (params.demin) df.enrollMin = params.demin
+    if (params.demax) df.enrollMax = params.demax
+    if (params.dcmin) df.campusMin = params.dcmin
+    if (params.dcmax) df.campusMax = params.dcmax
+    setDistrictFilters(df)
+
+    // Campus filters
+    const cf = { ...INITIAL_CAMPUS_FILTERS }
+    if (params.cemin) cf.enrollMin = params.cemin
+    if (params.cemax) cf.enrollMax = params.cemax
+    if (params.cct) cf.campusTypes = params.cct.split(',')
+    if (params.cdmin) cf.districtsMin = params.cdmin
+    if (params.cdmax) cf.districtsMax = params.cdmax
+    setCampusFilters(cf)
+  }, [params])
 
   const campusesData = data?.campuses
   const districtsMeta = data?.districtsMeta
@@ -175,6 +252,7 @@ export default function TargetView({ data, navigate }) {
     setStateFilters(INITIAL_STATE_FILTERS)
     setDistrictFilters(INITIAL_DISTRICT_FILTERS)
     setCampusFilters(INITIAL_CAMPUS_FILTERS)
+    window.history.replaceState(null, '', '#target')
   }, [])
 
   const handleExport = useCallback(() => {
@@ -219,6 +297,7 @@ export default function TargetView({ data, navigate }) {
     a.download = 'target_campuses.csv'
     a.click()
     URL.revokeObjectURL(url)
+    setToast('CSV exported')
   }, [filteredStates])
 
   if (data?.loading) return null
@@ -241,6 +320,7 @@ export default function TargetView({ data, navigate }) {
         summary={summary}
         navigate={navigate}
       />
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   )
 }

@@ -9,6 +9,7 @@ import {
 import TableControls from './TableControls'
 import ColumnFilterPopover from './ColumnFilterPopover'
 import { numericRangeFilter, makeGlobalSearchFilter } from './tableFilters'
+import Toast from '../Toast'
 
 /* ── Constants ── */
 
@@ -44,6 +45,8 @@ export default function CampusesTable({ campuses, navigate, params }) {
   const [collapsedGroups, setCollapsedGroups] = useState({})
   const [sorting, setSorting] = useState([])
   const [columnFilters, setColumnFilters] = useState([])
+  const [columnVisibility, setColumnVisibility] = useState({})
+  const [toast, setToast] = useState(null)
 
   /* ── Sync global filter from URL params ── */
   useEffect(() => {
@@ -181,10 +184,12 @@ export default function CampusesTable({ campuses, navigate, params }) {
       sorting,
       columnFilters,
       globalFilter,
+      columnVisibility,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
+    onColumnVisibilityChange: setColumnVisibility,
     globalFilterFn: globalSearchFilter,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -318,6 +323,7 @@ export default function CampusesTable({ campuses, navigate, params }) {
     a.download = 'campuses_data.csv'
     a.click()
     URL.revokeObjectURL(url)
+    setToast('CSV exported')
   }, [sortedRows])
 
   /* ── Sort icon helper ── */
@@ -411,6 +417,7 @@ export default function CampusesTable({ campuses, navigate, params }) {
         totalCount={data.length}
         onExport={handleExport}
         searchPlaceholder="Search campuses..."
+        columns={table.getAllLeafColumns()}
       />
 
       <div className="data-table-wrap">
@@ -456,6 +463,7 @@ export default function CampusesTable({ campuses, navigate, params }) {
           </button>
         </div>
       )}
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   )
 }

@@ -132,7 +132,7 @@ export default function Layout({ page, subView, params, navigate, data }) {
               )}
               {page === 'methodology' && <Methodology />}
               {page === 'target' && (
-                <TargetView data={data} navigate={navigate} />
+                <TargetView data={data} navigate={navigate} params={params} />
               )}
             </>
           )}

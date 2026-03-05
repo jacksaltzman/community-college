@@ -9,6 +9,7 @@ import {
 import TableControls from './TableControls'
 import ColumnFilterPopover from './ColumnFilterPopover'
 import { numericRangeFilter, makeGlobalSearchFilter } from './tableFilters'
+import Toast from '../Toast'
 
 /* ── Constants ── */
 
@@ -26,6 +27,8 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
   const [sorting, setSorting] = useState([{ id: 'enrollment', desc: true }])
   const [columnFilters, setColumnFilters] = useState([])
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE)
+  const [columnVisibility, setColumnVisibility] = useState({})
+  const [toast, setToast] = useState(null)
 
   /* ── Sync global filter from URL params ── */
   useEffect(() => {
@@ -274,10 +277,12 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
       sorting,
       columnFilters,
       globalFilter,
+      columnVisibility,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
+    onColumnVisibilityChange: setColumnVisibility,
     globalFilterFn: globalSearchFilter,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -401,6 +406,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
     a.download = 'states_data.csv'
     a.click()
     URL.revokeObjectURL(url)
+    setToast('CSV exported')
   }, [sortedRows])
 
   /* ── Sort icon helper ── */
@@ -426,6 +432,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         onExport={handleExport}
         searchPlaceholder="Search by state, PVI, or senator..."
         entityName="states"
+        columns={table.getAllLeafColumns()}
       />
 
       <div className="data-table-wrap">
@@ -459,7 +466,11 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
           </thead>
           <tbody>
             {visibleRows.map((row) => (
-              <tr key={row.id}>
+              <tr
+                key={row.id}
+                className="data-row-clickable"
+                onClick={() => navigate('map', 'states', { state: row.original.state })}
+              >
                 {row.getVisibleCells().map((cell) => {
                   const isNum = cell.column.columnDef.meta?.isNumeric
                   return (
@@ -488,6 +499,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
           </button>
         </div>
       )}
+      {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   )
 }

@@ -224,6 +224,15 @@ export default function StatesMapLayer({
 
         const m = stateMetrics[st] || {}
         const stInfo = statesData?.[st] || {}
+        const children = Object.entries(districtsMeta.districts || {})
+          .filter(([, d]) => d.state === st)
+          .map(([cd, d]) => ({
+            id: cd,
+            name: cd,
+            meta: `${d.member || 'Vacant'} (${d.party || '?'}) · ${d.cook_pvi || 'N/A'}`,
+            onClick: () => navigate('map', 'districts', { district: cd }),
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name))
         setDetailData({
           stateCode: st,
           enrollment: m.enrollment || 0,
@@ -244,10 +253,11 @@ export default function StatesMapLayer({
           totalFedTaxPaidB: stInfo.totalFedTaxPaidB ?? null,
           eitcClaimsThousands: stInfo.eitcClaimsThousands ?? null,
           eitcUnclaimedRate: stInfo.eitcUnclaimedRate ?? null,
+          children,
         })
       }
     },
-    [mapRef, districtsMeta, stateMetrics, stateDistrictCounts, statesData]
+    [mapRef, districtsMeta, stateMetrics, stateDistrictCounts, statesData, navigate]
   )
 
   /* ── Register/unregister map events ── */
@@ -294,6 +304,15 @@ export default function StatesMapLayer({
 
     const m = stateMetrics[st] || {}
     const stInfo = statesData?.[st] || {}
+    const children = Object.entries(districtsMeta.districts || {})
+      .filter(([, d]) => d.state === st)
+      .map(([cd, d]) => ({
+        id: cd,
+        name: cd,
+        meta: `${d.member || 'Vacant'} (${d.party || '?'}) · ${d.cook_pvi || 'N/A'}`,
+        onClick: () => navigate('map', 'districts', { district: cd }),
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name))
     setDetailData({
       stateCode: st,
       enrollment: m.enrollment || 0,
@@ -314,8 +333,9 @@ export default function StatesMapLayer({
       totalFedTaxPaidB: stInfo.totalFedTaxPaidB ?? null,
       eitcClaimsThousands: stInfo.eitcClaimsThousands ?? null,
       eitcUnclaimedRate: stInfo.eitcUnclaimedRate ?? null,
+      children,
     })
-  }, [params?.state, districtsMeta, campusesData, mapRef, stateMetrics, stateDistrictCounts, statesData])
+  }, [params?.state, districtsMeta, campusesData, mapRef, stateMetrics, stateDistrictCounts, statesData, navigate])
 
   if (!campusesData || !districtsMeta) return null
 

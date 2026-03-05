@@ -190,6 +190,16 @@ export default function DistrictsMapLayer({
 
         const m = districtMetrics[cdCode] || {}
         const info = meta || props
+        const children = campusesData.features
+          .filter(f => (f.properties.all_districts || '').split('|').map(s => s.trim()).includes(cdCode))
+          .map(f => ({
+            id: f.properties.unitid,
+            name: f.properties.name,
+            meta: `${(f.properties.enrollment || 0).toLocaleString()} enrolled`,
+            enrollment: f.properties.enrollment || 0,
+            onClick: () => navigate('map', 'campuses', { campus: String(f.properties.unitid) }),
+          }))
+          .sort((a, b) => b.enrollment - a.enrollment)
         setDetailData({
           cdCode,
           name: info.name || '',
@@ -199,10 +209,11 @@ export default function DistrictsMapLayer({
           cookPVI: info.cook_pvi || '',
           member: info.member || '',
           party: info.party || '',
+          children,
         })
       }
     },
-    [mapRef, districtsMeta, districtMetrics]
+    [mapRef, districtsMeta, districtMetrics, campusesData, navigate]
   )
 
   /* ── Register/unregister map events ── */
@@ -247,6 +258,16 @@ export default function DistrictsMapLayer({
       )
 
       const m = districtMetrics[cd] || {}
+      const children = campusesData.features
+        .filter(f => (f.properties.all_districts || '').split('|').map(s => s.trim()).includes(cd))
+        .map(f => ({
+          id: f.properties.unitid,
+          name: f.properties.name,
+          meta: `${(f.properties.enrollment || 0).toLocaleString()} enrolled`,
+          enrollment: f.properties.enrollment || 0,
+          onClick: () => navigate('map', 'campuses', { campus: String(f.properties.unitid) }),
+        }))
+        .sort((a, b) => b.enrollment - a.enrollment)
       setDetailData({
         cdCode: cd,
         name: meta.name || '',
@@ -256,9 +277,10 @@ export default function DistrictsMapLayer({
         cookPVI: meta.cook_pvi || '',
         member: meta.member || '',
         party: meta.party || '',
+        children,
       })
     }
-  }, [params?.district, districtsMeta, campusesData, mapRef, districtMetrics])
+  }, [params?.district, districtsMeta, campusesData, mapRef, districtMetrics, navigate])
 
   if (!campusesData || !districtsMeta) return null
 
