@@ -11,7 +11,7 @@ const TABS = [
   { key: 'map', label: 'Map' },
   { key: 'data', label: 'Data' },
   { key: 'target', label: 'Target' },
-  { key: 'methodology', label: 'Methodology' },
+  { key: 'methodology', label: 'Sources' },
 ]
 
 export default function Layout({ page, subView, params, navigate, data }) {
