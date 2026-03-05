@@ -34,6 +34,7 @@ function DimensionRow({ dim, weight, defaultWeight, onChange }) {
   )
 
   const hasFields = dim.fields && dim.fields.length > 0
+  const expandable = hasFields || dim.formula
 
   return (
     <div className="scoring-dimension-wrap">
@@ -51,7 +52,7 @@ function DimensionRow({ dim, weight, defaultWeight, onChange }) {
               &#9432;
             </span>
           )}
-          {hasFields && (
+          {expandable && (
             <button
               className={`scoring-subfield-count${showFields ? ' active' : ''}`}
               onClick={(e) => {
@@ -59,9 +60,9 @@ function DimensionRow({ dim, weight, defaultWeight, onChange }) {
                 setShowFields((s) => !s)
               }}
               type="button"
-              title={`${dim.fields.length} component fields`}
+              title={hasFields ? `${dim.fields.length} component fields` : 'View formula'}
             >
-              {dim.fields.length}
+              {hasFields ? dim.fields.length : 'ƒ'}
             </button>
           )}
         </span>
@@ -76,13 +77,18 @@ function DimensionRow({ dim, weight, defaultWeight, onChange }) {
         />
         <span className="scoring-dimension-value">{weight}</span>
       </div>
-      {showFields && hasFields && (
+      {showFields && (hasFields || dim.formula) && (
         <div className="scoring-field-detail">
-          {dim.fields.map((f) => (
+          {hasFields && dim.fields.map((f) => (
             <span key={f} className="scoring-field-detail-tag">
               {FIELD_LABELS[f] || f}
             </span>
           ))}
+          {dim.formula && (
+            <span className="scoring-field-formula">
+              ƒ&ensp;{dim.formula}
+            </span>
+          )}
         </div>
       )}
     </div>

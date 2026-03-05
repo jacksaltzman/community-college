@@ -467,6 +467,16 @@
   white-space: nowrap;
 }
 
+.scoring-field-formula {
+  display: block;
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 10px;
+  line-height: 1.45;
+  color: var(--gray-muted);
+  margin-top: 3px;
+}
+
 /* ── Add Field ── */
 .scoring-add-field-wrap {
   position: relative;
@@ -539,13 +549,23 @@
    ================================================================ */
 .target-filters-bar {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 6px;
   padding: 10px 24px;
   background: white;
   border-bottom: 1px solid var(--border-light);
   flex-shrink: 0;
+}
+
+.target-filters-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   flex-wrap: wrap;
+}
+
+.target-filters-numeric-row {
+  margin-left: 26px;
 }
 
 .target-filters-label {
@@ -560,7 +580,7 @@
   margin-right: 8px;
 }
 
-/* ── Divider between categorical and numeric groups ── */
+/* ── Divider (unused, kept for compat) ── */
 .target-filters-divider {
   width: 1px;
   height: 20px;
@@ -699,14 +719,15 @@
 }
 
 .target-dashboard-left {
-  width: 30%;
-  min-width: 240px;
-  max-width: 380px;
+  width: 50%;
+  min-width: 320px;
+  max-width: 560px;
   flex-shrink: 0;
-  border-right: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-main);
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  background: white;
 }
 
 .target-dashboard-right {
@@ -719,14 +740,35 @@
 .target-dashboard-chart {
   flex: 1;
   min-height: 200px;
-  border-bottom: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-main);
   overflow: hidden;
+  position: relative;
+  background: white;
 }
 
 .target-dashboard-map {
   flex: 1;
   min-height: 200px;
   overflow: hidden;
+  position: relative;
+}
+
+/* ── Panel label overlays for chart & map ── */
+.target-panel-label {
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  z-index: 3;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-muted);
+  background: rgba(255, 255, 255, 0.85);
+  padding: 3px 8px;
+  border-radius: 4px;
+  pointer-events: none;
 }
 
 /* ================================================================
@@ -771,15 +813,18 @@
 
 .compact-list-row {
   cursor: pointer;
-  transition: background 0.1s;
+  transition: background 0.12s;
 }
 .compact-list-row:hover,
 .compact-list-row.hovered {
-  background: rgba(76, 105, 113, 0.06);
+  background: rgba(76, 105, 113, 0.07);
+}
+.compact-list-row:active {
+  background: rgba(76, 105, 113, 0.12);
 }
 
 .compact-list-td {
-  padding: 6px 10px;
+  padding: 8px 10px;
   border-bottom: 1px solid #F0EDE8;
   vertical-align: middle;
 }
@@ -844,7 +889,8 @@
 }
 
 .compact-list-bar {
-  width: 48px;
+  flex: 1;
+  max-width: 100px;
   height: 4px;
   background: #EEEAE4;
   border-radius: 2px;
@@ -863,6 +909,51 @@
   text-align: center;
   font-family: var(--font-body);
   font-size: 13px;
+  color: var(--gray-muted);
+}
+
+/* ── Row chevron (click affordance) ── */
+.compact-list-td.chevron-cell {
+  width: 24px;
+  padding: 6px 4px 6px 0;
+  text-align: center;
+}
+.compact-list-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 7px;
+  color: var(--gray-lighter);
+  transition: color 0.15s, transform 0.15s;
+}
+.compact-list-row:hover .compact-list-chevron {
+  color: var(--teal);
+  transform: translateX(2px);
+}
+.compact-list-row.hovered .compact-list-chevron {
+  color: var(--teal);
+}
+
+/* ── List header bar ── */
+.compact-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px 8px;
+  border-bottom: 1px solid var(--border-light);
+  flex-shrink: 0;
+}
+.compact-list-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--black);
+}
+.compact-list-subtitle {
+  font-family: var(--font-body);
+  font-size: 11px;
   color: var(--gray-muted);
 }
 
@@ -1243,6 +1334,12 @@
     align-items: flex-start;
     padding: 10px 16px;
     gap: 8px;
+  }
+  .target-filters-numeric-row {
+    margin-left: 0;
+  }
+  .target-filters-label {
+    margin-left: 0;
   }
   .target-filters-right-controls {
     width: 100%;
