@@ -1,7 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 
-const POP_WIDTH = 280
-
 export default function SourceFootnote({ fieldKey, sources }) {
   const [open, setOpen] = useState(false)
   const [popStyle, setPopStyle] = useState({})
@@ -9,20 +7,20 @@ export default function SourceFootnote({ fieldKey, sources }) {
   const popRef = useRef(null)
 
   const positionPop = useCallback(() => {
-    if (!btnRef.current) return
-    const rect = btnRef.current.getBoundingClientRect()
-    let left = rect.left + rect.width / 2 - POP_WIDTH / 2
-    // Clamp to viewport
-    if (left + POP_WIDTH > window.innerWidth - 8) {
-      left = window.innerWidth - POP_WIDTH - 8
-    }
+    if (!btnRef.current || !popRef.current) return
+    const btnRect = btnRef.current.getBoundingClientRect()
+    const popRect = popRef.current.getBoundingClientRect()
+    const vw = window.innerWidth
+    let left = btnRect.left + btnRect.width / 2 - popRect.width / 2
+    if (left + popRect.width > vw - 8) left = vw - popRect.width - 8
     if (left < 8) left = 8
-    setPopStyle({ top: rect.bottom + 6, left })
+    setPopStyle({ top: btnRect.bottom + 6, left })
   }, [])
 
   useEffect(() => {
     if (!open) return
-    positionPop()
+    // Position after first paint so popRef has its natural dimensions
+    requestAnimationFrame(() => positionPop())
     function handleClick(e) {
       if (popRef.current && !popRef.current.contains(e.target) &&
           btnRef.current && !btnRef.current.contains(e.target)) {
@@ -60,7 +58,7 @@ export default function SourceFootnote({ fieldKey, sources }) {
         <div
           ref={popRef}
           className="source-footnote-pop"
-          style={popStyle}
+          style={popStyle.top != null ? popStyle : { top: -9999, left: -9999 }}
           onClick={(e) => e.stopPropagation()}
         >
           <div className="source-footnote-name">{source.name}</div>
