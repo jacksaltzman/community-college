@@ -155,7 +155,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         id: 'enrollment',
         accessorKey: 'enrollment',
         header: 'CC Enrollment',
-        meta: { isNumeric: true, fieldKey: 'state_enrollment' },
+        meta: { isNumeric: true, fieldKey: 'state_enrollment', aggregate: 'sum' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => numFmt.format(getValue()),
         sortDescFirst: true,
@@ -164,7 +164,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         id: 'campusCount',
         accessorKey: 'campusCount',
         header: 'Campus Count',
-        meta: { isNumeric: true, fieldKey: 'state_campus_count' },
+        meta: { isNumeric: true, fieldKey: 'state_campus_count', aggregate: 'sum' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => numFmt.format(getValue()),
         sortDescFirst: true,
@@ -173,7 +173,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         id: 'districtCount',
         accessorKey: 'districtCount',
         header: 'District Count',
-        meta: { isNumeric: true, fieldKey: 'state_district_count' },
+        meta: { isNumeric: true, fieldKey: 'state_district_count', aggregate: 'sum' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => numFmt.format(getValue()),
         sortDescFirst: true,
@@ -182,7 +182,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         id: 'avgDistrictsReached',
         accessorKey: 'avgDistrictsReached',
         header: 'Avg Districts Reached',
-        meta: { isNumeric: true, fieldKey: 'state_avg_districts_reached' },
+        meta: { isNumeric: true, fieldKey: 'state_avg_districts_reached', aggregate: 'avg' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => getValue().toFixed(1),
         sortDescFirst: true,
@@ -208,7 +208,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         id: 'midtermTurnout2022',
         accessorKey: 'midtermTurnout2022',
         header: '2022 Turnout',
-        meta: { isNumeric: true, fieldKey: 'midterm_turnout_2022' },
+        meta: { isNumeric: true, fieldKey: 'midterm_turnout_2022', aggregate: 'avg' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -242,7 +242,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
                 id: 'senator1LastMargin',
                 accessorKey: 'senator1LastMargin',
                 header: 'Margin',
-                meta: { isNumeric: true, fieldKey: 'senator_last_margin' },
+                meta: { isNumeric: true, fieldKey: 'senator_last_margin', aggregate: 'avg' },
                 filterFn: numericRangeFilter,
                 cell: ({ getValue }) => {
                   const v = getValue()
@@ -310,7 +310,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
                 id: 'senator2LastMargin',
                 accessorKey: 'senator2LastMargin',
                 header: 'Margin',
-                meta: { isNumeric: true, fieldKey: 'senator_last_margin' },
+                meta: { isNumeric: true, fieldKey: 'senator_last_margin', aggregate: 'avg' },
                 filterFn: numericRangeFilter,
                 cell: ({ getValue }) => {
                   const v = getValue()
@@ -356,7 +356,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         id: 'adultPop18',
         accessorKey: 'adultPop18',
         header: 'Adult Pop (18+)',
-        meta: { isNumeric: true, fieldKey: 'adult_pop_18' },
+        meta: { isNumeric: true, fieldKey: 'adult_pop_18', aggregate: 'sum' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -368,7 +368,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         id: 'totalFedTaxPaidB',
         accessorKey: 'totalFedTaxPaidB',
         header: 'Fed Tax Paid ($B)',
-        meta: { isNumeric: true, fieldKey: 'total_fed_tax_paid' },
+        meta: { isNumeric: true, fieldKey: 'total_fed_tax_paid', aggregate: 'sum' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -380,7 +380,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         id: 'eitcClaimsThousands',
         accessorKey: 'eitcClaimsThousands',
         header: 'EITC Claims (K)',
-        meta: { isNumeric: true, fieldKey: 'eitc_claims' },
+        meta: { isNumeric: true, fieldKey: 'eitc_claims', aggregate: 'sum' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -392,7 +392,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         id: 'eitcUnclaimedRate',
         accessorKey: 'eitcUnclaimedRate',
         header: 'EITC Unclaimed',
-        meta: { isNumeric: true, fieldKey: 'eitc_unclaimed_rate' },
+        meta: { isNumeric: true, fieldKey: 'eitc_unclaimed_rate', aggregate: 'avg' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -404,7 +404,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         id: 'youngProfessionalPop',
         accessorKey: 'youngProfessionalPop',
         header: 'Young Professionals',
-        meta: { isNumeric: true, fieldKey: 'young_professional_pop' },
+        meta: { isNumeric: true, fieldKey: 'young_professional_pop', aggregate: 'sum' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -416,7 +416,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         id: 'collegeEnrollment',
         accessorKey: 'collegeEnrollment',
         header: 'College Enrollment',
-        meta: { isNumeric: true, fieldKey: 'college_enrollment' },
+        meta: { isNumeric: true, fieldKey: 'college_enrollment', aggregate: 'sum' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -428,7 +428,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         id: 'urbanPopPct',
         accessorKey: 'urbanPopPct',
         header: 'Urban Pop %',
-        meta: { isNumeric: true, fieldKey: 'urban_pop_pct' },
+        meta: { isNumeric: true, fieldKey: 'urban_pop_pct', aggregate: 'avg' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -474,6 +474,31 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
     () => sortedRows.slice(0, visibleCount),
     [sortedRows, visibleCount],
   )
+
+  const footerSummary = useMemo(() => {
+    const cols = table.getAllLeafColumns()
+    const rows = filteredRows
+    if (!rows.length) return null
+
+    return cols.map((col) => {
+      const agg = col.columnDef.meta?.aggregate
+      if (!agg) return { id: col.id, value: null }
+
+      const values = rows
+        .map((r) => r.getValue(col.id))
+        .filter((v) => v != null && !isNaN(v))
+
+      if (!values.length) return { id: col.id, value: null }
+
+      if (agg === 'sum') {
+        return { id: col.id, label: 'Sum', value: values.reduce((a, b) => a + b, 0), agg }
+      }
+      if (agg === 'avg') {
+        return { id: col.id, label: 'Avg', value: values.reduce((a, b) => a + b, 0) / values.length, agg }
+      }
+      return { id: col.id, value: null }
+    })
+  }, [filteredRows, table])
 
   const hasMore = visibleCount < sortedRows.length
 
@@ -675,7 +700,11 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
                                   key={header.id}
                                   header={header}
                                   rowSpan={headerGroups.length}
-                                  className="col-group-collapsed"
+                                  className={[
+                                    'col-group-collapsed',
+                                    leafHeader.column.getIsSorted() ? 'th-sorted' : '',
+                                    leafHeader.column.getIsFiltered() ? 'th-filtered' : '',
+                                  ].filter(Boolean).join(' ')}
                                 >
                                   <span className="th-content" onClick={leafHeader.column.getToggleSortingHandler()}>
                                     <span
@@ -699,7 +728,11 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
                                 key={header.id}
                                 header={header}
                                 rowSpan={headerGroups.length}
-                                className={isLeafNum ? 'num' : ''}
+                                className={[
+                                  isLeafNum ? 'num' : '',
+                                  leafHeader.column.getIsSorted() ? 'th-sorted' : '',
+                                  leafHeader.column.getIsFiltered() ? 'th-filtered' : '',
+                                ].filter(Boolean).join(' ')}
                               >
                                 <span className="th-content" onClick={leafHeader.column.getToggleSortingHandler()}>
                                   {flexRender(leafHeader.column.columnDef.header, leafHeader.getContext())}
@@ -742,7 +775,12 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
                             <DraggableHeader
                               key={header.id}
                               header={header}
-                              className={`col-group-collapsed ${isNum ? 'num' : ''}`}
+                              className={[
+                                'col-group-collapsed',
+                                isNum ? 'num' : '',
+                                header.column.getIsSorted() ? 'th-sorted' : '',
+                                header.column.getIsFiltered() ? 'th-filtered' : '',
+                              ].filter(Boolean).join(' ')}
                             >
                               <span className="th-content" onClick={header.column.getToggleSortingHandler()}>
                                 <span
@@ -768,7 +806,11 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
                           <DraggableHeader
                             key={header.id}
                             header={header}
-                            className={isNum ? 'num' : ''}
+                            className={[
+                              isNum ? 'num' : '',
+                              header.column.getIsSorted() ? 'th-sorted' : '',
+                              header.column.getIsFiltered() ? 'th-filtered' : '',
+                            ].filter(Boolean).join(' ')}
                           >
                             <span className="th-content" onClick={header.column.getToggleSortingHandler()}>
                               {flexRender(header.column.columnDef.header, header.getContext())}
@@ -805,6 +847,32 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
                 </tr>
               ))}
             </tbody>
+            {footerSummary && (
+              <tfoot>
+                <tr>
+                  {footerSummary.map((col) => {
+                    const colDef = table.getColumn(col.id)?.columnDef
+                    const isNum = colDef?.meta?.isNumeric
+                    return (
+                      <td key={col.id} className={isNum ? 'num' : ''}>
+                        {col.value != null && (
+                          <>
+                            <span className="footer-label">{col.label}</span>
+                            <span className="footer-value">
+                              {col.agg === 'sum'
+                                ? numFmt.format(Math.round(col.value))
+                                : col.id === 'urbanPopPct' || col.id === 'eitcUnclaimedRate' || col.id === 'midtermTurnout2022'
+                                  ? `${col.value.toFixed(1)}%`
+                                  : col.value.toFixed(1)}
+                            </span>
+                          </>
+                        )}
+                      </td>
+                    )
+                  })}
+                </tr>
+              </tfoot>
+            )}
           </table>
         </DndContext>
       </div>
