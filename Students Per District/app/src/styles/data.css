@@ -124,23 +124,39 @@
 .data-table .col-group-expandable:hover {
   background: #E8E5E0;
 }
-.data-table .col-group-chevron {
-  display: inline-block;
-  margin-left: 4px;
-  font-size: 8px;
+.data-table .col-group-toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 6px;
+  border: 1px solid var(--gray-muted);
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--gray-muted);
   vertical-align: middle;
-  opacity: 0.6;
+  flex-shrink: 0;
 }
 .data-table .col-group-collapsed {
   background: #FAFAF8;
 }
 .data-table .col-group-expand-trigger {
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
   border-radius: 3px;
-  padding: 0 2px;
+  padding: 2px 4px;
+  margin: -2px -4px;
 }
 .data-table .col-group-expand-trigger:hover {
   background: #E8E5E0;
+}
+.data-table .col-group-expand-trigger:hover .col-group-toggle-icon {
+  border-color: var(--black);
+  color: var(--black);
 }
 
 .data-table td {

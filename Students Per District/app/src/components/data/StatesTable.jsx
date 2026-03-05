@@ -593,7 +593,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                                   title="Expand columns"
                                 >
                                   {flexRender(leafHeader.column.columnDef.header, leafHeader.getContext())}
-                                  <span className="col-group-chevron">&#9656;</span>
+                                  <span className="col-group-toggle-icon">+</span>
                                 </span>
                                 {sortIcon(leafHeader.column)}
                                 <ColumnFilterPopover
@@ -644,7 +644,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                           onClick={() => toggleGroup(groupId)}
                         >
                           {flexRender(header.column.columnDef.header, header.getContext())}
-                          <span className="col-group-chevron">&#9662;</span>
+                          <span className="col-group-toggle-icon">&minus;</span>
                         </th>
                       )
                     }
@@ -666,7 +666,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                               title="Expand columns"
                             >
                               {flexRender(header.column.columnDef.header, header.getContext())}
-                              <span className="col-group-chevron">&#9656;</span>
+                              <span className="col-group-toggle-icon">+</span>
                             </span>
                             {sortIcon(header.column)}
                             <ColumnFilterPopover
