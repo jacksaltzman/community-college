@@ -567,7 +567,6 @@
   letter-spacing: 0.08em;
   color: var(--black);
   white-space: nowrap;
-  margin-left: 26px;
   margin-right: 8px;
 }
 
@@ -584,18 +583,28 @@
 .filter-pill {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 12px;
-  border-radius: 20px;
+  gap: 5px;
+  padding: 5px 10px 5px 10px;
+  border-radius: 8px;
   border: 1px solid var(--border-light);
-  background: white;
+  background: #FAFAF8;
   font-family: var(--font-body);
   font-size: 12px;
   white-space: nowrap;
-  transition: border-color 0.15s, background 0.15s;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.filter-pill:hover {
+  border-color: var(--border-main);
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+.filter-pill:focus-within {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 2px rgba(76, 105, 113, 0.12);
 }
 .filter-pill.active {
-  background: rgba(76, 105, 113, 0.08);
+  background: rgba(76, 105, 113, 0.07);
   border-color: var(--teal);
 }
 
@@ -606,9 +615,10 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--gray-muted);
+  margin-right: 2px;
 }
 
-/* ── Categorical pill: stripped-down native select inside pill ── */
+/* ── Categorical pill: select with dropdown caret ── */
 .filter-pill select {
   -webkit-appearance: none;
   appearance: none;
@@ -616,32 +626,46 @@
   background: transparent;
   font-family: var(--font-body);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--gray-body);
-  padding: 0;
+  padding: 0 14px 0 0;
   cursor: pointer;
   outline: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239CA3AF' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+  background-size: 10px 6px;
 }
 .filter-pill.active select {
   color: var(--black);
-  font-weight: 600;
+  font-weight: 700;
 }
 
-/* ── Numeric pill: min/max inputs ── */
+/* ── Numeric pill: min/max inputs with underline ── */
 .filter-pill input[type="number"] {
   -moz-appearance: textfield;
   -webkit-appearance: none;
   appearance: none;
   border: none;
+  border-bottom: 1px dashed var(--border-main);
   background: transparent;
   font-family: var(--font-body);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--gray-body);
-  width: 52px;
-  padding: 0;
+  width: 46px;
+  padding: 1px 0;
   outline: none;
-  text-align: right;
+  text-align: center;
+  transition: border-color 0.15s;
+}
+.filter-pill input[type="number"]:hover {
+  border-bottom-color: var(--teal);
+  border-bottom-style: solid;
+}
+.filter-pill input[type="number"]:focus {
+  border-bottom-color: var(--teal);
+  border-bottom-style: solid;
 }
 .filter-pill input[type="number"]::-webkit-inner-spin-button,
 .filter-pill input[type="number"]::-webkit-outer-spin-button {
@@ -650,7 +674,7 @@
 }
 .filter-pill.active input[type="number"] {
   color: var(--black);
-  font-weight: 600;
+  font-weight: 700;
 }
 .filter-pill input[type="number"]::placeholder {
   color: var(--gray-lighter, #C5C0B8);
