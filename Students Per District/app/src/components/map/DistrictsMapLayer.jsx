@@ -6,17 +6,37 @@ import { DISTRICTS_TILESET_URL, DISTRICTS_SOURCE_LAYER } from '../../config'
 const METRICS = [
   { key: 'enrollment', label: 'Enrollment' },
   { key: 'campusCount', label: 'Campus Count' },
+  { key: 'cookPVI', label: 'Cook PVI' },
 ]
 
 /* Color-scale endpoints */
 const PAPER = [253, 251, 249] // #FDFBF9
 const TEAL = [76, 105, 113]  // #4C6971
+const BLUE = [37, 99, 235]   // #2563EB
+const RED = [220, 38, 38]    // #DC2626
 
 function lerpColor(t) {
   const r = Math.round(PAPER[0] + (TEAL[0] - PAPER[0]) * t)
   const g = Math.round(PAPER[1] + (TEAL[1] - PAPER[1]) * t)
   const b = Math.round(PAPER[2] + (TEAL[2] - PAPER[2]) * t)
   return `rgb(${r},${g},${b})`
+}
+
+function parsePVI(s) {
+  if (!s || s === 'EVEN') return 0
+  const m = s.match(/^([DR])\+(\d+)$/)
+  if (!m) return 0
+  return m[1] === 'D' ? -Number(m[2]) : Number(m[2])
+}
+
+function pviColor(pviNum) {
+  const clamped = Math.max(-30, Math.min(30, pviNum))
+  const t = clamped / 30
+  if (t <= 0) {
+    const s = -t
+    return `rgb(${Math.round(PAPER[0] + (BLUE[0] - PAPER[0]) * s)},${Math.round(PAPER[1] + (BLUE[1] - PAPER[1]) * s)},${Math.round(PAPER[2] + (BLUE[2] - PAPER[2]) * s)})`
+  }
+  return `rgb(${Math.round(PAPER[0] + (RED[0] - PAPER[0]) * t)},${Math.round(PAPER[1] + (RED[1] - PAPER[1]) * t)},${Math.round(PAPER[2] + (RED[2] - PAPER[2]) * t)})`
 }
 
 export default function DistrictsMapLayer({
@@ -26,7 +46,7 @@ export default function DistrictsMapLayer({
   navigate,
   params,
 }) {
-  const [selectedMetric, setSelectedMetric] = useState('enrollment')
+  const [selectedMetric, setSelectedMetric] = useState('cookPVI')
   const [hoveredDistrict, setHoveredDistrict] = useState(null)
   const [tooltip, setTooltip] = useState(null)
   const [detailData, setDetailData] = useState(null)
@@ -59,14 +79,22 @@ export default function DistrictsMapLayer({
   /* ── Build cd_code -> color mapping ── */
   const districtColorMap = useMemo(() => {
     const map = {}
-    const range = max - min || 1
-    Object.entries(districtMetrics).forEach(([cd, m]) => {
-      const val = m[selectedMetric] || 0
-      const t = (val - min) / range
-      map[cd] = lerpColor(t)
-    })
+    if (selectedMetric === 'cookPVI') {
+      if (districtsMeta?.districts) {
+        Object.entries(districtsMeta.districts).forEach(([cd, meta]) => {
+          map[cd] = pviColor(parsePVI(meta.cook_pvi))
+        })
+      }
+    } else {
+      const range = max - min || 1
+      Object.entries(districtMetrics).forEach(([cd, m]) => {
+        const val = m[selectedMetric] || 0
+        const t = (val - min) / range
+        map[cd] = lerpColor(t)
+      })
+    }
     return map
-  }, [districtMetrics, selectedMetric, min, max])
+  }, [districtMetrics, districtsMeta, selectedMetric, min, max])
 
   /* ── Build Mapbox fill-color expression ── */
   const fillColorExpr = useMemo(() => {
@@ -107,9 +135,13 @@ export default function DistrictsMapLayer({
 
         const m = districtMetrics[cdCode]
         const metricLabel = METRICS.find((x) => x.key === selectedMetric)?.label
-        const metricVal = m
-          ? Number(m[selectedMetric] || 0).toLocaleString()
-          : '0'
+        let metricVal
+        if (selectedMetric === 'cookPVI') {
+          const meta = districtsMeta?.districts?.[cdCode]
+          metricVal = meta?.cook_pvi || 'N/A'
+        } else {
+          metricVal = m ? Number(m[selectedMetric] || 0).toLocaleString() : '0'
+        }
 
         const name = props.name ? ` — ${props.name}` : ''
         setTooltip({
@@ -317,10 +349,25 @@ export default function DistrictsMapLayer({
         <div className="choropleth-legend-title">
           {METRICS.find((m) => m.key === selectedMetric)?.label}
         </div>
-        <div className="choropleth-legend-bar" />
+        <div
+          className="choropleth-legend-bar"
+          style={selectedMetric === 'cookPVI'
+            ? { background: 'linear-gradient(to right, #2563EB, #FDFBF9 50%, #DC2626)' }
+            : undefined}
+        />
         <div className="choropleth-legend-labels">
-          <span>{Math.round(min).toLocaleString()}</span>
-          <span>{Math.round(max).toLocaleString()}</span>
+          {selectedMetric === 'cookPVI' ? (
+            <>
+              <span>D+30</span>
+              <span>EVEN</span>
+              <span>R+30</span>
+            </>
+          ) : (
+            <>
+              <span>{Math.round(min).toLocaleString()}</span>
+              <span>{Math.round(max).toLocaleString()}</span>
+            </>
+          )}
         </div>
       </div>
 
