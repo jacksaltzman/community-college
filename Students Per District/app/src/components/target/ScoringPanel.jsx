@@ -248,17 +248,24 @@ export default function ScoringPanel({ config, onConfigChange, collapsed, onTogg
           <div className="scoring-alpha-section">
             <div className="scoring-alpha-labels">
               <span className="scoring-alpha-label-left">Acquisition</span>
-              <span className="scoring-alpha-value">{acqPct} / {civicPct}</span>
               <span className="scoring-alpha-label-right">Make Political Change</span>
             </div>
-            <input
-              type="range"
-              className="scoring-alpha-slider"
-              min={0}
-              max={100}
-              value={acqPct}
-              onChange={handleAlphaChange}
-            />
+            <div className="scoring-alpha-slider-wrap">
+              <span
+                className="scoring-alpha-value"
+                style={{ left: `${acqPct}%` }}
+              >
+                {acqPct} / {civicPct}
+              </span>
+              <input
+                type="range"
+                className="scoring-alpha-slider"
+                min={0}
+                max={100}
+                value={acqPct}
+                onChange={handleAlphaChange}
+              />
+            </div>
           </div>
 
           {/* Two-column lens layout */}
