@@ -550,7 +550,6 @@
 
 /* ── Source Footnote ── */
 .source-footnote {
-  position: relative;
   display: inline-flex;
   align-items: center;
 }
@@ -573,9 +572,7 @@
   color: var(--teal);
 }
 .source-footnote-pop {
-  position: absolute;
-  top: 100%;
-  right: 0;
+  position: fixed;
   z-index: 60;
   background: white;
   border: 1px solid var(--border-main);
@@ -583,7 +580,6 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
   padding: 12px 14px;
   width: 280px;
-  margin-top: 6px;
   word-wrap: break-word;
 }
 .source-footnote-name {

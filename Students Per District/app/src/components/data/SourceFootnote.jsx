@@ -1,19 +1,37 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
+
+const POP_WIDTH = 280
 
 export default function SourceFootnote({ fieldKey, sources }) {
   const [open, setOpen] = useState(false)
+  const [popStyle, setPopStyle] = useState({})
+  const btnRef = useRef(null)
   const popRef = useRef(null)
+
+  const positionPop = useCallback(() => {
+    if (!btnRef.current) return
+    const rect = btnRef.current.getBoundingClientRect()
+    let left = rect.left + rect.width / 2 - POP_WIDTH / 2
+    // Clamp to viewport
+    if (left + POP_WIDTH > window.innerWidth - 8) {
+      left = window.innerWidth - POP_WIDTH - 8
+    }
+    if (left < 8) left = 8
+    setPopStyle({ top: rect.bottom + 6, left })
+  }, [])
 
   useEffect(() => {
     if (!open) return
+    positionPop()
     function handleClick(e) {
-      if (popRef.current && !popRef.current.contains(e.target)) {
+      if (popRef.current && !popRef.current.contains(e.target) &&
+          btnRef.current && !btnRef.current.contains(e.target)) {
         setOpen(false)
       }
     }
     document.addEventListener('mousedown', handleClick)
     return () => document.removeEventListener('mousedown', handleClick)
-  }, [open])
+  }, [open, positionPop])
 
   if (!sources || !sources.fieldMap || !sources.sources) return null
 
@@ -24,8 +42,9 @@ export default function SourceFootnote({ fieldKey, sources }) {
   if (!source) return null
 
   return (
-    <span className="source-footnote" ref={popRef}>
+    <span className="source-footnote">
       <button
+        ref={btnRef}
         className="source-footnote-btn"
         onClick={(e) => {
           e.stopPropagation()
@@ -38,7 +57,12 @@ export default function SourceFootnote({ fieldKey, sources }) {
         </svg>
       </button>
       {open && (
-        <div className="source-footnote-pop" onClick={(e) => e.stopPropagation()}>
+        <div
+          ref={popRef}
+          className="source-footnote-pop"
+          style={popStyle}
+          onClick={(e) => e.stopPropagation()}
+        >
           <div className="source-footnote-name">{source.name}</div>
           <div className="source-footnote-detail">
             <span className="source-footnote-label">Provider:</span> {source.provider}
