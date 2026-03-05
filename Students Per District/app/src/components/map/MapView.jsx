@@ -14,8 +14,8 @@ const INITIAL_VIEW = {
   zoom: 4,
 }
 
-// Continental US bounding box for consistent framing across all views
-const US_BOUNDS = [[-125, 24], [-66, 50]]
+// Continental US bounding box — tighter for a closer initial zoom
+const US_BOUNDS = [[-120, 25], [-72, 49]]
 
 export default function MapView({ subView, data, navigate, params, isVisible }) {
   const mapRef = useRef(null)
@@ -60,7 +60,7 @@ export default function MapView({ subView, data, navigate, params, isVisible }) 
       requestAnimationFrame(() => {
         try {
           map.resize()
-          map.fitBounds(US_BOUNDS, { duration: 500, padding: 20 })
+          map.fitBounds(US_BOUNDS, { duration: 0, padding: 20 })
         } catch (_) {}
       })
     })
