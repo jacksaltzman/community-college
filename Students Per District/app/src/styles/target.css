@@ -689,7 +689,259 @@
 }
 
 /* ================================================================
-   RESULTS TABLE
+   THREE-PANEL DASHBOARD
+   ================================================================ */
+.target-dashboard {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 0;
+}
+
+.target-dashboard-left {
+  width: 30%;
+  min-width: 240px;
+  max-width: 380px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border-light);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.target-dashboard-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.target-dashboard-chart {
+  flex: 1;
+  min-height: 200px;
+  border-bottom: 1px solid var(--border-light);
+  overflow: hidden;
+}
+
+.target-dashboard-map {
+  flex: 1;
+  min-height: 200px;
+  overflow: hidden;
+}
+
+/* ================================================================
+   COMPACT RANKED LIST
+   ================================================================ */
+.compact-list-wrap {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.compact-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: 12px;
+}
+
+.compact-list-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.compact-list-th {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-muted);
+  background: #FAFAF8;
+  padding: 8px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-light);
+  white-space: nowrap;
+}
+.compact-list-th.num {
+  text-align: center;
+  width: 36px;
+}
+
+.compact-list-row {
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.compact-list-row:hover,
+.compact-list-row.hovered {
+  background: rgba(76, 105, 113, 0.06);
+}
+
+.compact-list-td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #F0EDE8;
+  vertical-align: middle;
+}
+.compact-list-td.num {
+  text-align: center;
+}
+
+.compact-list-rank {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.compact-list-state {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.compact-list-code {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--black);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.compact-list-name {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--gray-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.compact-list-tier {
+  font-family: var(--font-heading);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.compact-list-score {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.compact-list-score-num {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-body);
+  font-variant-numeric: tabular-nums;
+  min-width: 22px;
+  text-align: right;
+}
+
+.compact-list-bar {
+  width: 48px;
+  height: 4px;
+  background: #EEEAE4;
+  border-radius: 2px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.compact-list-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.compact-list-empty {
+  padding: 32px 16px;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--gray-muted);
+}
+
+/* ================================================================
+   QUADRANT CHART
+   ================================================================ */
+.quadrant-chart-wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.quadrant-chart-svg {
+  display: block;
+}
+
+/* ================================================================
+   TARGET MAP
+   ================================================================ */
+.target-map-wrap {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.target-map-legend {
+  position: absolute;
+  bottom: 24px;
+  left: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  padding: 8px 12px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.target-map-legend-label {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray-muted);
+  margin-bottom: 4px;
+}
+
+.target-map-legend-bar {
+  width: 100px;
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(to right, rgb(253, 251, 249), rgb(76, 105, 113));
+}
+
+.target-map-legend-range {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-body);
+  font-size: 9px;
+  color: var(--gray-muted);
+  margin-top: 2px;
+}
+
+.target-map-tooltip {
+  position: fixed;
+  pointer-events: none;
+  z-index: 50;
+  background: var(--black);
+  color: white;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+/* ================================================================
+   RESULTS TABLE (legacy)
    ================================================================ */
 .target-ranked-wrap {
   flex: 1;
@@ -997,7 +1249,19 @@
     flex-wrap: wrap;
   }
 
-  /* Results table */
+  /* Dashboard stacking */
+  .target-dashboard {
+    flex-direction: column;
+  }
+  .target-dashboard-left {
+    width: 100%;
+    max-width: none;
+    max-height: 300px;
+    border-right: none;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  /* Results table (legacy) */
   .target-ranked-wrap {
     margin: 0 8px 8px;
     border-radius: 8px;
