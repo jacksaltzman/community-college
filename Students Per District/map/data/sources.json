@@ -1,0 +1,205 @@
+{
+  "sources": {
+    "ipeds_hd2023": {
+      "name": "Institutional Characteristics (HD2023)",
+      "provider": "IPEDS / NCES, U.S. Department of Education",
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/HD2023.zip",
+      "vintage": "2022-23",
+      "retrieved": "2026-03-02",
+      "description": "Campus name, city, state, coordinates, sector, locale code, highest level of offering"
+    },
+    "ipeds_effy2023": {
+      "name": "12-Month Enrollment (EFFY2023)",
+      "provider": "IPEDS / NCES, U.S. Department of Education",
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/EFFY2023.zip",
+      "vintage": "2022-23",
+      "retrieved": "2026-03-02",
+      "description": "Unduplicated 12-month headcount enrollment (EFFYLEV=1, LSTUDY=999)"
+    },
+    "census_cd118": {
+      "name": "Congressional District Boundaries (CD118)",
+      "provider": "U.S. Census Bureau",
+      "url": "https://www2.census.gov/geo/tiger/GENZ2023/shp/cb_2023_us_cd118_500k.zip",
+      "vintage": "2023",
+      "retrieved": "2026-03-02",
+      "description": "118th Congress cartographic boundary shapefiles, coast-clipped, 1:500k resolution"
+    },
+    "npsas20": {
+      "name": "Student-to-Campus Distance (NPSAS:20)",
+      "provider": "NCES PowerStats",
+      "url": "https://nces.ed.gov/datalab/powerstats/",
+      "vintage": "2019-20",
+      "retrieved": "2026-03-02",
+      "description": "75th-percentile student-to-campus crow-flies distance by NCES locale code (retrieval code: swopse)"
+    },
+    "cook_pvi_2024": {
+      "name": "Cook Partisan Voter Index",
+      "provider": "The Cook Political Report",
+      "url": "https://www.cookpolitical.com/cook-pvi",
+      "vintage": "2024",
+      "retrieved": "2026-03-02",
+      "description": "Partisan lean of each congressional district based on the two most recent presidential elections"
+    },
+    "house_members_119": {
+      "name": "U.S. House Representatives (119th Congress)",
+      "provider": "Office of the Clerk, U.S. House of Representatives",
+      "url": "https://clerk.house.gov/members",
+      "vintage": "January 2025",
+      "retrieved": "2026-03-02",
+      "description": "Current representative name and party affiliation for each congressional district"
+    },
+    "acs5_2023_b19013": {
+      "name": "Median Household Income (B19013)",
+      "provider": "U.S. Census Bureau, American Community Survey 5-Year Estimates",
+      "url": "https://api.census.gov/data/2023/acs/acs5",
+      "vintage": "2023 (2019-2023)",
+      "retrieved": "2026-03-05",
+      "variable": "B19013_001E",
+      "geography": "Congressional District (118th Congress)",
+      "description": "Median household income in the past 12 months, inflation-adjusted to survey-year dollars"
+    },
+    "acs5_2023_b17001": {
+      "name": "Poverty Status (B17001)",
+      "provider": "U.S. Census Bureau, American Community Survey 5-Year Estimates",
+      "url": "https://api.census.gov/data/2023/acs/acs5",
+      "vintage": "2023 (2019-2023)",
+      "retrieved": "2026-03-05",
+      "variable": "B17001_001E (total), B17001_002E (below poverty)",
+      "geography": "Congressional District (118th Congress)",
+      "description": "Poverty rate computed as population below poverty level / total population for whom poverty status is determined"
+    },
+    "acs5_2023_b15003": {
+      "name": "Educational Attainment (B15003)",
+      "provider": "U.S. Census Bureau, American Community Survey 5-Year Estimates",
+      "url": "https://api.census.gov/data/2023/acs/acs5",
+      "vintage": "2023 (2019-2023)",
+      "retrieved": "2026-03-05",
+      "variable": "B15003_001E (total 25+), B15003_021E-025E (associate's through doctorate)",
+      "geography": "Congressional District (118th Congress)",
+      "description": "Percentage of population 25+ with an associate's degree or higher"
+    },
+    "acs5_2023_b01001": {
+      "name": "Age Distribution (B01001)",
+      "provider": "U.S. Census Bureau, American Community Survey 5-Year Estimates",
+      "url": "https://api.census.gov/data/2023/acs/acs5",
+      "vintage": "2023 (2019-2023)",
+      "retrieved": "2026-03-05",
+      "variable": "B01001_001E (total), B01001_007E-010E + B01001_031E-034E (male + female 18-24)",
+      "geography": "Congressional District (118th Congress)",
+      "description": "Percentage of total population aged 18-24"
+    },
+    "derived_campus_aggregation": {
+      "name": "Derived: Aggregated from Campuses Tab",
+      "provider": "Computed from IPEDS campus-level data",
+      "vintage": "2022-23",
+      "description": "Sum or count aggregated across all community college campuses in each state. Campus enrollment from IPEDS EFFY2023; district reach from Census CD118 intersection analysis."
+    },
+    "us_elections_project_2022": {
+      "name": "2022 Midterm Voter Turnout",
+      "provider": "United States Elections Project / UF Election Lab",
+      "url": "https://www.electproject.org/2022g",
+      "vintage": "2022",
+      "retrieved": "2026-03-02",
+      "description": "Voting Eligible Population (VEP) turnout rate for the 2022 midterm elections by state"
+    },
+    "senate_gov_119": {
+      "name": "U.S. Senators (119th Congress)",
+      "provider": "U.S. Senate / Accountable 50-State Analysis v43.6",
+      "url": "https://www.senate.gov/senators/",
+      "vintage": "January 2025",
+      "retrieved": "2026-03-02",
+      "description": "Senator name, party, next election year, last election margin, and tax-relevant committee assignments"
+    },
+    "accountable_50state_eitc": {
+      "name": "EITC & Federal Tax Statistics",
+      "provider": "Accountable 50-State Analysis v43.6 (compiled from IRS Statistics of Income)",
+      "url": "https://www.irs.gov/statistics/soi-tax-stats-individual-income-tax-statistics",
+      "vintage": "2022 tax year",
+      "retrieved": "2026-03-02",
+      "description": "State-level EITC claims, participation rates, unclaimed rates, total filers, and total federal tax paid"
+    },
+    "accountable_50state_pop": {
+      "name": "Adult Population & Urbanization",
+      "provider": "Accountable 50-State Analysis v43.6 (compiled from U.S. Census Bureau)",
+      "vintage": "2020-2023",
+      "retrieved": "2026-03-02",
+      "description": "State-level adult population (18+) and urban population percentage"
+    },
+    "house_committees_119": {
+      "name": "House Committee Assignments (119th Congress)",
+      "provider": "Office of the Clerk, U.S. House of Representatives",
+      "url": "https://clerk.house.gov/xml/lists/MemberData.xml",
+      "vintage": "119th Congress (2025-2027)",
+      "retrieved": "2026-03-05",
+      "description": "Standing committee assignments for each House member"
+    },
+    "medsl_house_2022": {
+      "name": "U.S. House Returns 2022 (MEDSL)",
+      "provider": "MIT Election Data + Science Lab (MEDSL), Harvard Dataverse",
+      "url": "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/IG0UN2",
+      "vintage": "2022",
+      "retrieved": "2026-03-05",
+      "description": "Total votes cast in 2022 U.S. House general elections by congressional district"
+    },
+    "medsl_house_2024": {
+      "name": "U.S. House Returns 2024 (MEDSL)",
+      "provider": "MIT Election Data + Science Lab (MEDSL), Harvard Dataverse",
+      "url": "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/IG0UN2",
+      "vintage": "2024",
+      "retrieved": "2026-03-05",
+      "description": "Total votes cast in 2024 U.S. House general elections by congressional district"
+    },
+    "acs5_2023_b29001": {
+      "name": "Citizen Voting-Age Population (B29001)",
+      "provider": "U.S. Census Bureau, American Community Survey 5-Year Estimates",
+      "url": "https://api.census.gov/data/2023/acs/acs5",
+      "vintage": "2023 (2019-2023)",
+      "retrieved": "2026-03-05",
+      "variable": "B29001_001E",
+      "geography": "Congressional District (118th Congress)",
+      "description": "Total citizen voting-age population (18+) used as the denominator for district-level turnout rates"
+    }
+  },
+  "fieldMap": {
+    "institution_name": "ipeds_hd2023",
+    "campus_city": "ipeds_hd2023",
+    "campus_state": "ipeds_hd2023",
+    "campus_lat": "ipeds_hd2023",
+    "campus_lon": "ipeds_hd2023",
+    "locale_code": "ipeds_hd2023",
+    "campus_type": "npsas20",
+    "radius_miles": "npsas20",
+    "enrollment": "ipeds_effy2023",
+    "districts_reached": "census_cd118",
+    "primary_district": "census_cd118",
+    "primary_district_coverage": "census_cd118",
+    "all_districts": "census_cd118",
+    "cook_pvi": "cook_pvi_2024",
+    "member": "house_members_119",
+    "party": "house_members_119",
+    "median_income": "acs5_2023_b19013",
+    "poverty_rate": "acs5_2023_b17001",
+    "pct_associates_plus": "acs5_2023_b15003",
+    "pct_18_24": "acs5_2023_b01001",
+    "state_enrollment": "derived_campus_aggregation",
+    "state_campus_count": "derived_campus_aggregation",
+    "state_district_count": "derived_campus_aggregation",
+    "state_avg_districts_reached": "derived_campus_aggregation",
+    "state_cook_pvi": "cook_pvi_2024",
+    "midterm_turnout_2022": "us_elections_project_2022",
+    "senator_name": "senate_gov_119",
+    "senator_party": "senate_gov_119",
+    "senator_next_election": "senate_gov_119",
+    "senator_last_margin": "senate_gov_119",
+    "senator_tax_committees": "senate_gov_119",
+    "adult_pop_18": "accountable_50state_pop",
+    "total_fed_tax_paid": "accountable_50state_eitc",
+    "eitc_claims": "accountable_50state_eitc",
+    "eitc_unclaimed_rate": "accountable_50state_eitc",
+    "house_committees": "house_committees_119",
+    "total_votes_2022": "medsl_house_2022",
+    "total_votes_2024": "medsl_house_2024",
+    "turnout_rate_2022": "medsl_house_2022",
+    "turnout_rate_2024": "medsl_house_2024"
+  }
+}
