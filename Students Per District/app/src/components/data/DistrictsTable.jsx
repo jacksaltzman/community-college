@@ -10,6 +10,17 @@ import TableControls from './TableControls'
 import SourceFootnote from './SourceFootnote'
 import { numericRangeFilter, makeGlobalSearchFilter } from './tableFilters'
 import Toast from '../Toast'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import { arrayMove, SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
+import DraggableHeader from './DraggableHeader'
 
 /* ── Constants ── */
 
@@ -29,6 +40,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
   const [columnFilters, setColumnFilters] = useState([])
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE)
   const [columnVisibility, setColumnVisibility] = useState({})
+  const [columnOrder, setColumnOrder] = useState([])
   const [toast, setToast] = useState(null)
 
   /* ── Sync global filter from URL params ── */
@@ -230,6 +242,10 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
     [navigate],
   )
 
+  useEffect(() => {
+    setColumnOrder(columns.map(c => c.id))
+  }, [columns])
+
   /* ── TanStack Table instance ── */
   const table = useReactTable({
     data,
@@ -239,11 +255,13 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
       columnFilters,
       globalFilter,
       columnVisibility,
+      columnOrder,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnOrderChange: setColumnOrder,
     globalFilterFn: globalSearchFilter,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -344,6 +362,23 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
     return <span className="sort-icon">{dir === 'asc' ? ' \u25B2' : ' \u25BC'}</span>
   }
 
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
+    useSensor(KeyboardSensor),
+  )
+
+  function handleDragEnd(event) {
+    const { active, over } = event
+    if (active && over && active.id !== over.id) {
+      setColumnOrder(prev => {
+        const oldIndex = prev.indexOf(active.id)
+        const newIndex = prev.indexOf(over.id)
+        return arrayMove(prev, oldIndex, newIndex)
+      })
+    }
+  }
+
   /* ── Header columns (for rendering) ── */
   const headerGroups = table.getHeaderGroups()
 
@@ -368,54 +403,58 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
       />
 
       <div className="data-table-wrap">
-        <table className="data-table">
-          <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header, idx) => {
-                  const isNum = header.column.columnDef.meta?.isNumeric
-                  const fieldKey = header.column.columnDef.meta?.fieldKey
-                  const alignRight = idx >= headerGroup.headers.length - 3
-                  return (
-                    <th
-                      key={header.id}
-                      className={isNum ? 'num' : ''}
-                      onClick={header.column.getToggleSortingHandler()}
-                    >
-                      <span className="th-content">
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                        {sortIcon(header.column)}
-                        {fieldKey && <SourceFootnote fieldKey={fieldKey} sources={sources} />}
-                      </span>
-                    </th>
-                  )
-                })}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {visibleRows.map((row) => (
-              <tr
-                key={row.id}
-                className="data-row-clickable"
-                onClick={() => navigate('map', 'districts', { district: row.original.district })}
-              >
-                {row.getVisibleCells().map((cell) => {
-                  const isNum = cell.column.columnDef.meta?.isNumeric
-                  return (
-                    <td
-                      key={cell.id}
-                      className={isNum ? 'num' : ''}
-                      data-label={cell.column.columnDef.header}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  )
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <table className="data-table">
+            <thead>
+              <SortableContext items={columnOrder} strategy={horizontalListSortingStrategy}>
+                {headerGroups.map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header, idx) => {
+                      const isNum = header.column.columnDef.meta?.isNumeric
+                      const fieldKey = header.column.columnDef.meta?.fieldKey
+                      const alignRight = idx >= headerGroup.headers.length - 3
+                      return (
+                        <DraggableHeader
+                          key={header.id}
+                          header={header}
+                          className={isNum ? 'num' : ''}
+                        >
+                          <span className="th-content" onClick={header.column.getToggleSortingHandler()}>
+                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            {sortIcon(header.column)}
+                            {fieldKey && <SourceFootnote fieldKey={fieldKey} sources={sources} />}
+                          </span>
+                        </DraggableHeader>
+                      )
+                    })}
+                  </tr>
+                ))}
+              </SortableContext>
+            </thead>
+            <tbody>
+              {visibleRows.map((row) => (
+                <tr
+                  key={row.id}
+                  className="data-row-clickable"
+                  onClick={() => navigate('map', 'districts', { district: row.original.district })}
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    const isNum = cell.column.columnDef.meta?.isNumeric
+                    return (
+                      <td
+                        key={cell.id}
+                        className={isNum ? 'num' : ''}
+                        data-label={cell.column.columnDef.header}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    )
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </DndContext>
       </div>
 
       {hasMore && (

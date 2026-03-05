@@ -9,6 +9,17 @@ import {
 import TableControls from './TableControls'
 import { numericRangeFilter, makeGlobalSearchFilter } from './tableFilters'
 import Toast from '../Toast'
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import { arrayMove, SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
+import DraggableHeader from './DraggableHeader'
 
 /* ── Constants ── */
 
@@ -27,6 +38,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
   const [columnFilters, setColumnFilters] = useState([])
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE)
   const [columnVisibility, setColumnVisibility] = useState({})
+  const [columnOrder, setColumnOrder] = useState([])
   const [toast, setToast] = useState(null)
   const [expandedGroups, setExpandedGroups] = useState(new Set())
 
@@ -384,6 +396,10 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
     [navigate, expandedGroups],
   )
 
+  useEffect(() => {
+    setColumnOrder(columns.flatMap(c => c.columns ? c.columns.map(sc => sc.id) : [c.id]))
+  }, [columns])
+
   /* ── TanStack Table instance ── */
   const table = useReactTable({
     data,
@@ -393,11 +409,13 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
       columnFilters,
       globalFilter,
       columnVisibility,
+      columnOrder,
     },
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
     onColumnVisibilityChange: setColumnVisibility,
+    onColumnOrderChange: setColumnOrder,
     globalFilterFn: globalSearchFilter,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -537,6 +555,23 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
     return <span className="sort-icon">{dir === 'asc' ? ' \u25B2' : ' \u25BC'}</span>
   }
 
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 250, tolerance: 5 } }),
+    useSensor(KeyboardSensor),
+  )
+
+  function handleDragEnd(event) {
+    const { active, over } = event
+    if (active && over && active.id !== over.id) {
+      setColumnOrder(prev => {
+        const oldIndex = prev.indexOf(active.id)
+        const newIndex = prev.indexOf(over.id)
+        return arrayMove(prev, oldIndex, newIndex)
+      })
+    }
+  }
+
   /* ── Header columns (for rendering) ── */
   const headerGroups = table.getHeaderGroups()
 
@@ -561,160 +596,164 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
       />
 
       <div className="data-table-wrap">
-        <table className="data-table">
-          <thead>
-            {headerGroups.map((headerGroup, groupIdx) => {
-              const isGroupRow = groupIdx === 0 && headerGroups.length > 1
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <table className="data-table">
+            <thead>
+              <SortableContext items={columnOrder} strategy={horizontalListSortingStrategy}>
+                {headerGroups.map((headerGroup, groupIdx) => {
+                  const isGroupRow = groupIdx === 0 && headerGroups.length > 1
 
-              return (
-                <tr key={headerGroup.id} className={isGroupRow ? 'col-group-header-row' : ''}>
-                  {headerGroup.headers.map((header) => {
-                    const isGroupHeader = !header.isPlaceholder && header.colSpan > 1
-                    const isPlaceholder = header.isPlaceholder
+                  return (
+                    <tr key={headerGroup.id} className={isGroupRow ? 'col-group-header-row' : ''}>
+                      {headerGroup.headers.map((header) => {
+                        const isGroupHeader = !header.isPlaceholder && header.colSpan > 1
+                        const isPlaceholder = header.isPlaceholder
 
-                    /* Row 0 placeholder: render non-grouped column with rowSpan
-                       so it spans both the group-header and leaf-header rows */
-                    if (isPlaceholder && isGroupRow) {
-                      const leafHeader = header.subHeaders?.[0]
-                      if (leafHeader) {
-                        const isLeafNum = leafHeader.column.columnDef.meta?.isNumeric
-                        const placeholderCollapsedId = leafHeader.column.columnDef.meta?.collapsedGroup
+                        /* Row 0 placeholder: render non-grouped column with rowSpan
+                           so it spans both the group-header and leaf-header rows */
+                        if (isPlaceholder && isGroupRow) {
+                          const leafHeader = header.subHeaders?.[0]
+                          if (leafHeader) {
+                            const isLeafNum = leafHeader.column.columnDef.meta?.isNumeric
+                            const placeholderCollapsedId = leafHeader.column.columnDef.meta?.collapsedGroup
 
-                        /* Collapsed senator column appearing as placeholder in group row */
-                        if (placeholderCollapsedId) {
+                            /* Collapsed senator column appearing as placeholder in group row */
+                            if (placeholderCollapsedId) {
+                              return (
+                                <DraggableHeader
+                                  key={header.id}
+                                  header={header}
+                                  rowSpan={headerGroups.length}
+                                  className="col-group-collapsed"
+                                >
+                                  <span className="th-content" onClick={leafHeader.column.getToggleSortingHandler()}>
+                                    <span
+                                      className="col-group-expand-trigger"
+                                      onClick={(e) => { e.stopPropagation(); toggleGroup(placeholderCollapsedId) }}
+                                      title="Expand columns"
+                                    >
+                                      {flexRender(leafHeader.column.columnDef.header, leafHeader.getContext())}
+                                      <span className="col-group-toggle-icon">+</span>
+                                    </span>
+                                    {sortIcon(leafHeader.column)}
+                                  </span>
+                                </DraggableHeader>
+                              )
+                            }
+
+                            return (
+                              <DraggableHeader
+                                key={header.id}
+                                header={header}
+                                rowSpan={headerGroups.length}
+                                className={isLeafNum ? 'num' : ''}
+                              >
+                                <span className="th-content" onClick={leafHeader.column.getToggleSortingHandler()}>
+                                  {flexRender(leafHeader.column.columnDef.header, leafHeader.getContext())}
+                                  {sortIcon(leafHeader.column)}
+                                </span>
+                              </DraggableHeader>
+                            )
+                          }
+                          return <th key={header.id} rowSpan={headerGroups.length} />
+                        }
+
+                        /* Row 1: skip non-grouped columns already rendered via rowSpan */
+                        if (!isGroupRow && headerGroups.length > 1 && !header.column.parent) {
+                          return null
+                        }
+
+                        /* Group header: Senator 1, Senator 2 (expanded) */
+                        if (isGroupHeader) {
+                          const groupId = header.column.id
                           return (
                             <th
                               key={header.id}
-                              rowSpan={headerGroups.length}
-                              className="col-group-collapsed"
-                              onClick={leafHeader.column.getToggleSortingHandler()}
+                              colSpan={header.colSpan}
+                              className="col-group-th col-group-expandable"
+                              onClick={() => toggleGroup(groupId)}
                             >
-                              <span className="th-content">
-                                <span
-                                  className="col-group-expand-trigger"
-                                  onClick={(e) => { e.stopPropagation(); toggleGroup(placeholderCollapsedId) }}
-                                  title="Expand columns"
-                                >
-                                  {flexRender(leafHeader.column.columnDef.header, leafHeader.getContext())}
-                                  <span className="col-group-toggle-icon">+</span>
-                                </span>
-                                {sortIcon(leafHeader.column)}
-                              </span>
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                              <span className="col-group-toggle-icon">&minus;</span>
                             </th>
                           )
                         }
 
-                        return (
-                          <th
-                            key={header.id}
-                            rowSpan={headerGroups.length}
-                            className={isLeafNum ? 'num' : ''}
-                            onClick={leafHeader.column.getToggleSortingHandler()}
-                          >
-                            <span className="th-content">
-                              {flexRender(leafHeader.column.columnDef.header, leafHeader.getContext())}
-                              {sortIcon(leafHeader.column)}
-                            </span>
-                          </th>
-                        )
-                      }
-                      return <th key={header.id} rowSpan={headerGroups.length} />
-                    }
-
-                    /* Row 1: skip non-grouped columns already rendered via rowSpan */
-                    if (!isGroupRow && headerGroups.length > 1 && !header.column.parent) {
-                      return null
-                    }
-
-                    /* Group header: Senator 1, Senator 2 (expanded) */
-                    if (isGroupHeader) {
-                      const groupId = header.column.id
-                      return (
-                        <th
-                          key={header.id}
-                          colSpan={header.colSpan}
-                          className="col-group-th col-group-expandable"
-                          onClick={() => toggleGroup(groupId)}
-                        >
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          <span className="col-group-toggle-icon">&minus;</span>
-                        </th>
-                      )
-                    }
-
-                    /* Collapsed senator column — show as leaf header with expand chevron */
-                    const collapsedGroupId = header.column.columnDef.meta?.collapsedGroup
-                    if (collapsedGroupId) {
-                      const isNum = header.column.columnDef.meta?.isNumeric
-                      return (
-                        <th
-                          key={header.id}
-                          className={`col-group-collapsed ${isNum ? 'num' : ''}`}
-                          onClick={header.column.getToggleSortingHandler()}
-                        >
-                          <span className="th-content">
-                            <span
-                              className="col-group-expand-trigger"
-                              onClick={(e) => { e.stopPropagation(); toggleGroup(collapsedGroupId) }}
-                              title="Expand columns"
+                        /* Collapsed senator column — show as leaf header with expand chevron */
+                        const collapsedGroupId = header.column.columnDef.meta?.collapsedGroup
+                        if (collapsedGroupId) {
+                          const isNum = header.column.columnDef.meta?.isNumeric
+                          return (
+                            <DraggableHeader
+                              key={header.id}
+                              header={header}
+                              className={`col-group-collapsed ${isNum ? 'num' : ''}`}
                             >
+                              <span className="th-content" onClick={header.column.getToggleSortingHandler()}>
+                                <span
+                                  className="col-group-expand-trigger"
+                                  onClick={(e) => { e.stopPropagation(); toggleGroup(collapsedGroupId) }}
+                                  title="Expand columns"
+                                >
+                                  {flexRender(header.column.columnDef.header, header.getContext())}
+                                  <span className="col-group-toggle-icon">+</span>
+                                </span>
+                                {sortIcon(header.column)}
+                              </span>
+                            </DraggableHeader>
+                          )
+                        }
+
+                        /* Leaf header — sortable, filterable */
+                        const isNum = header.column.columnDef.meta?.isNumeric
+                        const allLeafHeaders = headerGroups
+                          .flatMap(hg => hg.headers)
+                          .filter(h => !h.isPlaceholder && h.colSpan === 1)
+                        const leafIdx = allLeafHeaders.indexOf(header)
+                        const alignRight = leafIdx >= allLeafHeaders.length - 3
+
+                        return (
+                          <DraggableHeader
+                            key={header.id}
+                            header={header}
+                            className={isNum ? 'num' : ''}
+                          >
+                            <span className="th-content" onClick={header.column.getToggleSortingHandler()}>
                               {flexRender(header.column.columnDef.header, header.getContext())}
-                              <span className="col-group-toggle-icon">+</span>
+                              {sortIcon(header.column)}
                             </span>
-                            {sortIcon(header.column)}
-                          </span>
-                        </th>
-                      )
-                    }
-
-                    /* Leaf header — sortable, filterable */
-                    const isNum = header.column.columnDef.meta?.isNumeric
-                    const allLeafHeaders = headerGroups
-                      .flatMap(hg => hg.headers)
-                      .filter(h => !h.isPlaceholder && h.colSpan === 1)
-                    const leafIdx = allLeafHeaders.indexOf(header)
-                    const alignRight = leafIdx >= allLeafHeaders.length - 3
-
+                          </DraggableHeader>
+                        )
+                      })}
+                    </tr>
+                  )
+                })}
+              </SortableContext>
+            </thead>
+            <tbody>
+              {visibleRows.map((row) => (
+                <tr
+                  key={row.id}
+                  className="data-row-clickable"
+                  onClick={() => navigate('map', 'states', { state: row.original.state })}
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    const isNum = cell.column.columnDef.meta?.isNumeric
                     return (
-                      <th
-                        key={header.id}
+                      <td
+                        key={cell.id}
                         className={isNum ? 'num' : ''}
-                        onClick={header.column.getToggleSortingHandler()}
+                        data-label={cell.column.columnDef.header}
                       >
-                        <span className="th-content">
-                          {flexRender(header.column.columnDef.header, header.getContext())}
-                          {sortIcon(header.column)}
-                        </span>
-                      </th>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
                     )
                   })}
                 </tr>
-              )
-            })}
-          </thead>
-          <tbody>
-            {visibleRows.map((row) => (
-              <tr
-                key={row.id}
-                className="data-row-clickable"
-                onClick={() => navigate('map', 'states', { state: row.original.state })}
-              >
-                {row.getVisibleCells().map((cell) => {
-                  const isNum = cell.column.columnDef.meta?.isNumeric
-                  return (
-                    <td
-                      key={cell.id}
-                      className={isNum ? 'num' : ''}
-                      data-label={cell.column.columnDef.header}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  )
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+              ))}
+            </tbody>
+          </table>
+        </DndContext>
       </div>
 
       {hasMore && (
