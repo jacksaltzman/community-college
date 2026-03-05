@@ -55,7 +55,7 @@ const INITIAL_VIEW = {
   zoom: 3.5,
 }
 
-export default function TargetMap({ rankedStates, hoveredState, onHoverState }) {
+export default function TargetMap({ rankedStates, hoveredState, onHoverState, campuses }) {
   const mapRef = useRef(null)
   const [viewState, setViewState] = useState(INITIAL_VIEW)
   const [tooltip, setTooltip] = useState(null)
@@ -280,6 +280,73 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState }) 
             }}
           />
         </Source>
+
+        {/* ── Campus dots (clustered, sized by enrollment) ── */}
+        {campuses && (
+          <Source
+            id="target-campuses"
+            type="geojson"
+            data={campuses}
+            cluster={true}
+            clusterMaxZoom={9}
+            clusterRadius={50}
+          >
+            {/* Cluster circles */}
+            <Layer
+              id="target-campus-clusters"
+              type="circle"
+              filter={['has', 'point_count']}
+              paint={{
+                'circle-color': '#4C6971',
+                'circle-radius': [
+                  'step', ['get', 'point_count'],
+                  12, 10,
+                  16, 30,
+                  20, 100,
+                  24,
+                ],
+                'circle-stroke-width': 1.5,
+                'circle-stroke-color': 'rgba(255,255,255,0.7)',
+                'circle-opacity': 0.75,
+              }}
+            />
+            {/* Cluster count labels */}
+            <Layer
+              id="target-campus-cluster-count"
+              type="symbol"
+              filter={['has', 'point_count']}
+              layout={{
+                'text-field': '{point_count_abbreviated}',
+                'text-font': ['DIN Pro Medium', 'Arial Unicode MS Bold'],
+                'text-size': 10,
+                'text-allow-overlap': true,
+              }}
+              paint={{
+                'text-color': '#ffffff',
+              }}
+            />
+            {/* Individual campus points */}
+            <Layer
+              id="target-campus-points"
+              type="circle"
+              filter={['!', ['has', 'point_count']]}
+              paint={{
+                'circle-color': '#4C6971',
+                'circle-radius': [
+                  'interpolate', ['linear'], ['get', 'enrollment'],
+                  0, 2.5,
+                  2000, 3.5,
+                  5000, 5,
+                  15000, 7,
+                  50000, 10,
+                ],
+                'circle-stroke-width': 1,
+                'circle-stroke-color': '#ffffff',
+                'circle-opacity': 0.8,
+              }}
+            />
+          </Source>
+        )}
 
         {/* ── T1 state label markers ── */}
         {t1Markers.map((m) => {

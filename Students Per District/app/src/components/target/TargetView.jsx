@@ -250,6 +250,7 @@ export default function TargetView({ data, navigate, params }) {
               rankedStates={filteredStates}
               hoveredState={hoveredState}
               onHoverState={setHoveredState}
+              campuses={data?.campuses}
             />
           </div>
         </div>
