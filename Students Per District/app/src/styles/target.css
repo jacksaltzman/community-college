@@ -979,16 +979,58 @@
   position: relative;
 }
 
+/* ── T1 state markers on map ── */
+.target-map-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.target-map-marker.hovered {
+  transform: scale(1.15);
+}
+.target-map-marker-code {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: #0F3D47;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.9), 0 0 6px rgba(255, 255, 255, 0.7);
+  line-height: 1;
+}
+.target-map-marker-score {
+  font-family: var(--font-body);
+  font-size: 8px;
+  font-weight: 600;
+  color: #0F3D47;
+  text-shadow: 0 0 3px rgba(255, 255, 255, 0.9), 0 0 6px rgba(255, 255, 255, 0.7);
+  line-height: 1;
+  opacity: 0.7;
+}
+.target-map-marker.hovered .target-map-marker-code,
+.target-map-marker.hovered .target-map-marker-score {
+  color: #111;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 1), 0 0 8px rgba(255, 255, 255, 0.9);
+}
+.target-map-marker.hovered .target-map-marker-score {
+  opacity: 1;
+}
+
+/* ── Legend ── */
 .target-map-legend {
   position: absolute;
   bottom: 24px;
   left: 12px;
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   border: 1px solid var(--border-light);
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 8px 12px 6px;
   z-index: 5;
   pointer-events: none;
+  backdrop-filter: blur(4px);
 }
 
 .target-map-legend-label {
@@ -1005,7 +1047,6 @@
   width: 100px;
   height: 8px;
   border-radius: 4px;
-  background: linear-gradient(to right, rgb(253, 251, 249), rgb(76, 105, 113));
 }
 
 .target-map-legend-range {
@@ -1015,8 +1056,39 @@
   font-size: 9px;
   color: var(--gray-muted);
   margin-top: 2px;
+  font-variant-numeric: tabular-nums;
 }
 
+.target-map-legend-tiers {
+  display: flex;
+  gap: 6px;
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px solid var(--border-light);
+}
+.target-map-legend-tier {
+  font-family: var(--font-heading);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 3px;
+}
+.target-map-legend-tier.t1 {
+  background: #164F5D;
+  color: white;
+}
+.target-map-legend-tier.t2 {
+  background: #C8D5D8;
+  color: #44403C;
+}
+.target-map-legend-tier.t3 {
+  background: #EDE9E3;
+  color: #78716C;
+}
+
+/* ── Tooltip ── */
 .target-map-tooltip {
   position: fixed;
   pointer-events: none;
@@ -1025,10 +1097,50 @@
   color: white;
   font-family: var(--font-body);
   font-size: 12px;
-  font-weight: 600;
-  padding: 5px 10px;
+  font-weight: 500;
+  padding: 6px 10px;
   border-radius: 6px;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.target-map-tooltip-code {
+  font-weight: 700;
+  font-family: var(--font-heading);
+  letter-spacing: 0.04em;
+  font-size: 13px;
+}
+.target-map-tooltip-tier {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+.target-map-tooltip-tier.t1 {
+  background: rgba(76, 105, 113, 0.5);
+  color: #B8E0E6;
+}
+.target-map-tooltip-tier.t2 {
+  background: rgba(255, 255, 255, 0.15);
+  color: #C8C1B6;
+}
+.target-map-tooltip-tier.t3 {
+  background: rgba(255, 255, 255, 0.1);
+  color: #9CA3AF;
+}
+.target-map-tooltip-divider {
+  width: 1px;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.2);
+}
+.target-map-tooltip-score {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.75);
+  font-variant-numeric: tabular-nums;
 }
 
 /* ================================================================

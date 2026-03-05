@@ -124,6 +124,7 @@ export default function TargetView({ data, navigate, params }) {
         </div>
         <div className="target-dashboard-right">
           <div className="target-dashboard-chart">
+            <span className="target-panel-label">Quadrant Map</span>
             <QuadrantChart
               rankedStates={filteredStates}
               medians={medians}
@@ -132,6 +133,7 @@ export default function TargetView({ data, navigate, params }) {
             />
           </div>
           <div className="target-dashboard-map">
+            <span className="target-panel-label">Geographic View</span>
             <TargetMap
               rankedStates={filteredStates}
               hoveredState={hoveredState}
