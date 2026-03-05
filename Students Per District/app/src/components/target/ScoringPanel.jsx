@@ -301,6 +301,19 @@ export default function ScoringPanel({ config, onConfigChange, collapsed, onTogg
               />
             </div>
           </div>
+
+          {/* ── Collapse bar at bottom ── */}
+          <button
+            className="scoring-collapse-bar"
+            onClick={onToggleCollapsed}
+            type="button"
+            title="Collapse scoring model"
+          >
+            <span className="scoring-collapse-chevrons">
+              <span>&#x2303;</span>
+              <span>&#x2303;</span>
+            </span>
+          </button>
         </div>
       )}
     </div>

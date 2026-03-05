@@ -142,6 +142,36 @@
   color: var(--teal);
 }
 
+/* ── Collapse bar at bottom of panel ── */
+.scoring-collapse-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 12px;
+  padding: 6px 0;
+  background: none;
+  border: none;
+  border-top: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.scoring-collapse-bar:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+.scoring-collapse-chevrons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 14px;
+  line-height: 0.55;
+  color: var(--gray-muted);
+  transition: color 0.12s;
+}
+.scoring-collapse-bar:hover .scoring-collapse-chevrons {
+  color: var(--teal);
+}
+
 /* Collapse animation */
 .scoring-body {
   max-height: 800px;
