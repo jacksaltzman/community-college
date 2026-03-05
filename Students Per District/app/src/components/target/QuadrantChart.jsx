@@ -110,17 +110,7 @@ export default function QuadrantChart({ rankedStates, medians, hoveredState, onH
     ]
   }, [plotW, plotH, mxPx, myPx])
 
-  /* ── Region label positions (in quadrant corners) ── */
-  const regionLabels = useMemo(() => {
-    if (plotW <= 0 || plotH <= 0) return []
-    const inset = 8
-    return [
-      { label: 'Civic Beachhead', x: PAD.left + inset, y: PAD.top + inset + 11, anchor: 'start', key: 'Civic Beachhead' },
-      { label: 'Launch Priority', x: PAD.left + plotW - inset, y: PAD.top + inset + 11, anchor: 'end', key: 'Launch Priority' },
-      { label: 'Deprioritize', x: PAD.left + inset, y: PAD.top + plotH - inset, anchor: 'start', key: 'Deprioritize' },
-      { label: 'Revenue Opp.', x: PAD.left + plotW - inset, y: PAD.top + plotH - inset, anchor: 'end', key: 'Revenue Opportunity' },
-    ]
-  }, [plotW, plotH])
+  /* ── Region labels removed per design request ── */
 
   /* ── Determine which dots should show labels (avoid overlap) ── */
   const labelledDots = useMemo(() => {
@@ -282,28 +272,6 @@ export default function QuadrantChart({ rankedStates, medians, hoveredState, onH
                   {Math.round(v)}
                 </text>
               </g>
-            )
-          })}
-
-          {/* Region labels with colored indicator */}
-          {regionLabels.map((rl) => {
-            const color = QUADRANT_COLORS[rl.key] || '#9CA3AF'
-            return (
-              <text
-                key={rl.label}
-                x={rl.x}
-                y={rl.y}
-                textAnchor={rl.anchor}
-                fill={color}
-                fontSize={9}
-                fontWeight={700}
-                fontFamily="var(--font-heading, 'Oswald', sans-serif)"
-                letterSpacing="0.04em"
-                opacity={0.65}
-                style={{ textTransform: 'uppercase' }}
-              >
-                {rl.label}
-              </text>
             )
           })}
 
