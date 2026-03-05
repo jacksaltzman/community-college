@@ -124,6 +124,14 @@
       "vintage": "2020-2023",
       "retrieved": "2026-03-02",
       "description": "State-level adult population (18+) and urban population percentage"
+    },
+    "house_committees_119": {
+      "name": "House Committee Assignments (119th Congress)",
+      "provider": "Office of the Clerk, U.S. House of Representatives",
+      "url": "https://clerk.house.gov/xml/lists/MemberData.xml",
+      "vintage": "119th Congress (2025-2027)",
+      "retrieved": "2026-03-05",
+      "description": "Standing committee assignments for each House member"
     }
   },
   "fieldMap": {
@@ -161,6 +169,7 @@
     "adult_pop_18": "accountable_50state_pop",
     "total_fed_tax_paid": "accountable_50state_eitc",
     "eitc_claims": "accountable_50state_eitc",
-    "eitc_unclaimed_rate": "accountable_50state_eitc"
+    "eitc_unclaimed_rate": "accountable_50state_eitc",
+    "house_committees": "house_committees_119"
   }
 }

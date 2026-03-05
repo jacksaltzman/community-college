@@ -30,7 +30,7 @@ const LOAD_MORE_COUNT = 50
 const numFmt = new Intl.NumberFormat('en-US')
 const dollarFmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 
-const globalSearchFilter = makeGlobalSearchFilter(['district', 'state', 'member', 'party', 'cookPVI'])
+const globalSearchFilter = makeGlobalSearchFilter(['district', 'state', 'member', 'party', 'cookPVI', 'committees'])
 
 /* ── Main Component ── */
 
@@ -67,6 +67,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         poverty_rate: d.poverty_rate ?? null,
         pct_associates_plus: d.pct_associates_plus ?? null,
         pct_18_24: d.pct_18_24 ?? null,
+        committees: d.committees || '',
       }
     })
     return lookup
@@ -104,6 +105,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         povertyRate: info.poverty_rate,
         pctAssociatesPlus: info.pct_associates_plus,
         pct1824: info.pct_18_24,
+        committees: info.committees || '',
       }
     })
   }, [campuses, districtLookup])
@@ -137,6 +139,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         id: 'state',
         accessorKey: 'state',
         header: 'State',
+        size: 60,
         filterFn: 'includesString',
       },
       {
@@ -186,9 +189,19 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         id: 'party',
         header: 'Party',
         accessorKey: 'party',
+        size: 60,
         meta: { fieldKey: 'party' },
         filterFn: 'includesString',
         cell: ({ getValue }) => getValue() || '\u2014',
+      },
+      {
+        id: 'committees',
+        header: 'Committees',
+        accessorKey: 'committees',
+        meta: { fieldKey: 'house_committees' },
+        filterFn: 'includesString',
+        cell: ({ getValue }) => getValue() || '\u2014',
+        size: 260,
       },
       {
         id: 'medianIncome',
@@ -289,6 +302,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
       'Cook PVI',
       'Representative',
       'Party',
+      'Committees',
       'Median Income',
       'Poverty Rate (%)',
       "% Associate's+",
@@ -302,6 +316,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
       '2022 Cook Partisan Voter Index',
       'Current U.S. Representative',
       'Party affiliation (R/D)',
+      'House committee assignments (119th Congress)',
       'Median household income (ACS 2023 5-Year)',
       'Poverty rate (ACS 2023 5-Year)',
       "Pct of adults 25+ with associate's degree or higher (ACS 2023 5-Year)",
@@ -334,6 +349,7 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
           d.cookPVI,
           d.member,
           d.party,
+          d.committees,
           d.medianIncome != null ? d.medianIncome : '',
           d.povertyRate != null ? d.povertyRate : '',
           d.pctAssociatesPlus != null ? d.pctAssociatesPlus : '',
@@ -413,11 +429,13 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
                       const isNum = header.column.columnDef.meta?.isNumeric
                       const fieldKey = header.column.columnDef.meta?.fieldKey
                       const alignRight = idx >= headerGroup.headers.length - 3
+                      const colSize = header.column.columnDef.size
                       return (
                         <DraggableHeader
                           key={header.id}
                           header={header}
                           className={isNum ? 'num' : ''}
+                          style={colSize ? { width: colSize } : {}}
                         >
                           <span className="th-content" onClick={header.column.getToggleSortingHandler()}>
                             {flexRender(header.column.columnDef.header, header.getContext())}
