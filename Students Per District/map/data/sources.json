@@ -149,6 +149,12 @@
       "retrieved": "2026-03-05",
       "description": "Total votes cast in 2024 U.S. House general elections by congressional district"
     },
+    "derived_coalition_threshold": {
+      "name": "Derived: Coalition Threshold",
+      "provider": "Accountable (computed from MEDSL election returns)",
+      "vintage": "2024 (2022 fallback)",
+      "description": "Estimated number of organized users needed to influence a district's representative. Computed as winner_margin × coefficient (0.05–0.20 based on competitiveness), with a floor of 500."
+    },
     "acs5_2023_b29001": {
       "name": "Citizen Voting-Age Population (B29001)",
       "provider": "U.S. Census Bureau, American Community Survey 5-Year Estimates",
@@ -200,6 +206,11 @@
     "total_votes_2022": "medsl_house_2022",
     "total_votes_2024": "medsl_house_2024",
     "turnout_rate_2022": "medsl_house_2022",
-    "turnout_rate_2024": "medsl_house_2024"
+    "turnout_rate_2024": "medsl_house_2024",
+    "winner_margin_2022": "medsl_house_2022",
+    "winner_margin_pct_2022": "medsl_house_2022",
+    "winner_margin_2024": "medsl_house_2024",
+    "winner_margin_pct_2024": "medsl_house_2024",
+    "coalition_threshold": "derived_coalition_threshold"
   }
 }

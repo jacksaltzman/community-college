@@ -96,7 +96,7 @@ function DistrictMethodology({ sources }) {
       <p>This page describes the data sources and derivations behind the congressional district-level fields.</p>
 
       {(() => {
-        const districtFieldKeys = ['cook_pvi', 'member', 'party', 'enrollment', 'median_income', 'poverty_rate', 'pct_associates_plus', 'pct_18_24']
+        const districtFieldKeys = ['cook_pvi', 'member', 'party', 'enrollment', 'median_income', 'poverty_rate', 'pct_associates_plus', 'pct_18_24', 'house_committees', 'total_votes_2022', 'total_votes_2024', 'turnout_rate_2022', 'turnout_rate_2024', 'winner_margin_2022', 'winner_margin_2024', 'coalition_threshold']
         const districtSources = []
         const seen = new Set()
         if (sources?.fieldMap && sources?.sources) {
@@ -186,6 +186,53 @@ function DistrictMethodology({ sources }) {
         </tbody>
       </table>
       <p>Census API values that are negative (sentinel codes for suppressed or unavailable data) are treated as null and displayed as {'\u201C'}{'\u2014'}{'\u201D'} in the table.</p>
+
+      <h2>House Committee Assignments</h2>
+      <p>Standing committee assignments for each House member are sourced from the Office of the Clerk{'\u2019'}s MemberData XML feed, updated for the 119th Congress (2025{'\u2013'}2027). Committees are displayed as a comma-separated list (e.g., {'\u201C'}Appropriations, Ways and Means{'\u201D'}).</p>
+
+      <h2>Election Results (2022 &amp; 2024)</h2>
+      <p>District-level election data is derived from the MIT Election Data + Science Lab (MEDSL) U.S. House Returns dataset, which covers general election results from 1976{'\u2013'}2024. Only general elections are included (no specials or runoffs), and write-in candidates are excluded.</p>
+
+      <table>
+        <thead>
+          <tr><th>Field</th><th>Computation</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Votes 2022 / 2024</strong></td>
+            <td>Total votes cast in the district{'\u2019'}s U.S. House general election, sourced directly from the MEDSL <code>totalvotes</code> field</td>
+          </tr>
+          <tr>
+            <td><strong>Turnout 2022 / 2024</strong></td>
+            <td>Total votes cast / citizen voting-age population (CVAP). CVAP is from ACS 2023 5-Year table B29001 (<code>B29001_001E</code>), pulled at the congressional district level via the Census API</td>
+          </tr>
+          <tr>
+            <td><strong>Margin 2022 / 2024</strong></td>
+            <td>Vote difference between 1st and 2nd place finishers. For uncontested races, margin equals total winner votes</td>
+          </tr>
+          <tr>
+            <td><strong>Margin % 2022 / 2024</strong></td>
+            <td>Winner margin as a percentage of total votes cast: <code>margin_votes / total_votes &times; 100</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Coalition Threshold</h2>
+      <p>An estimated number of organized users needed to influence the district{'\u2019'}s representative. This is a derived metric computed from MEDSL election returns:</p>
+      <p><code>threshold = winner_margin &times; coefficient</code></p>
+      <p>The coefficient scales with competitiveness:</p>
+      <table>
+        <thead>
+          <tr><th>Margin %</th><th>Coefficient</th><th>Interpretation</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>&lt; 5%</td><td>0.05</td><td>Very competitive {'\u2014'} a small bloc matters</td></tr>
+          <tr><td>5{'\u2013'}15%</td><td>0.10</td><td>Competitive</td></tr>
+          <tr><td>15{'\u2013'}30%</td><td>0.15</td><td>Leaning safe</td></tr>
+          <tr><td>&gt; 30%</td><td>0.20</td><td>Safe {'\u2014'} need a larger bloc</td></tr>
+        </tbody>
+      </table>
+      <p>The result is rounded to the nearest 100 with a floor of 500 users (the minimum to be taken seriously by a representative{'\u2019'}s office). The 2024 election is used as the primary data source, with 2022 as a fallback for districts missing 2024 results.</p>
 
       <h2>Map Coloring</h2>
       <p>On the map, districts are colored along a blue-to-red gradient based on their Cook PVI score. Strongly Democratic districts appear blue, strongly Republican districts appear red, and swing districts appear in neutral tones. This coloring uses a continuous interpolation rather than discrete buckets, so the color intensity reflects the magnitude of the partisan lean.</p>
