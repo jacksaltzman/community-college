@@ -51,19 +51,21 @@ export default function MapView({ subView, data, navigate, params, isVisible }) 
   }, [isVisible])
 
   /* Reset view when switching subViews so all tabs start centered on the US.
-     Uses fitBounds so the continental US fills the available viewport
-     consistently regardless of whether the sidebar is present.
-     The 50ms timeout lets the sidebar fully mount/unmount before we
-     resize the map and compute bounds for the correct container width. */
+     Uses fitBounds so the continental US fills the available viewport.
+     We resize first, wait for the container to settle (sidebar mount/unmount
+     changes the map container width), then resize again and fit bounds. */
   useEffect(() => {
     const map = mapRef.current?.getMap()
     if (!map) return
+    // Immediate resize so the container starts adjusting
+    try { map.resize() } catch (_) {}
+    // Then wait for layout to fully settle before fitting bounds
     const timer = setTimeout(() => {
       try {
         map.resize()
         map.fitBounds(US_BOUNDS, { duration: 0, padding: 20 })
       } catch (_) {}
-    }, 50)
+    }, 150)
     return () => clearTimeout(timer)
   }, [subView])
 
