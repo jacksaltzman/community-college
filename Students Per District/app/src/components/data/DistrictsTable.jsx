@@ -67,6 +67,10 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         poverty_rate: d.poverty_rate ?? null,
         pct_associates_plus: d.pct_associates_plus ?? null,
         pct_18_24: d.pct_18_24 ?? null,
+        total_votes_2022: d.total_votes_2022 ?? null,
+        total_votes_2024: d.total_votes_2024 ?? null,
+        turnout_rate_2022: d.turnout_rate_2022 ?? null,
+        turnout_rate_2024: d.turnout_rate_2024 ?? null,
         committees: d.committees || '',
       }
     })
@@ -105,6 +109,10 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         povertyRate: info.poverty_rate,
         pctAssociatesPlus: info.pct_associates_plus,
         pct1824: info.pct_18_24,
+        totalVotes2022: info.total_votes_2022,
+        totalVotes2024: info.total_votes_2024,
+        turnoutRate2022: info.turnout_rate_2022,
+        turnoutRate2024: info.turnout_rate_2024,
         committees: info.committees || '',
       }
     })
@@ -251,6 +259,54 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         },
         sortDescFirst: true,
       },
+      {
+        id: 'totalVotes2022',
+        accessorKey: 'totalVotes2022',
+        header: 'Votes 2022',
+        meta: { isNumeric: true, fieldKey: 'total_votes_2022' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? numFmt.format(v) : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'totalVotes2024',
+        accessorKey: 'totalVotes2024',
+        header: 'Votes 2024',
+        meta: { isNumeric: true, fieldKey: 'total_votes_2024' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? numFmt.format(v) : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'turnoutRate2022',
+        accessorKey: 'turnoutRate2022',
+        header: 'Turnout 2022',
+        meta: { isNumeric: true, fieldKey: 'turnout_rate_2022' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? `${v.toFixed(1)}%` : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'turnoutRate2024',
+        accessorKey: 'turnoutRate2024',
+        header: 'Turnout 2024',
+        meta: { isNumeric: true, fieldKey: 'turnout_rate_2024' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? `${v.toFixed(1)}%` : '\u2014'
+        },
+        sortDescFirst: true,
+      },
     ],
     [navigate],
   )
@@ -307,6 +363,10 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
       'Poverty Rate (%)',
       "% Associate's+",
       '% Age 18-24',
+      'Votes 2022',
+      'Votes 2024',
+      'Turnout 2022 (%)',
+      'Turnout 2024 (%)',
     ]
     const notes = [
       'Congressional district code',
@@ -321,6 +381,10 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
       'Poverty rate (ACS 2023 5-Year)',
       "Pct of adults 25+ with associate's degree or higher (ACS 2023 5-Year)",
       'Pct of population aged 18-24 (ACS 2023 5-Year)',
+      'Total votes cast in 2022 House general election (MEDSL)',
+      'Total votes cast in 2024 House general election (MEDSL)',
+      'Turnout rate: votes / citizen voting-age population (ACS 2023 CVAP)',
+      'Turnout rate: votes / citizen voting-age population (ACS 2023 CVAP)',
     ]
 
     function csvEscape(val) {
@@ -354,6 +418,10 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
           d.povertyRate != null ? d.povertyRate : '',
           d.pctAssociatesPlus != null ? d.pctAssociatesPlus : '',
           d.pct1824 != null ? d.pct1824 : '',
+          d.totalVotes2022 != null ? d.totalVotes2022 : '',
+          d.totalVotes2024 != null ? d.totalVotes2024 : '',
+          d.turnoutRate2022 != null ? d.turnoutRate2022 : '',
+          d.turnoutRate2024 != null ? d.turnoutRate2024 : '',
         ]
           .map(csvEscape)
           .join(','),
