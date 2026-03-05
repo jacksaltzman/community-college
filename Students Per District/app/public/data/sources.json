@@ -132,6 +132,32 @@
       "vintage": "119th Congress (2025-2027)",
       "retrieved": "2026-03-05",
       "description": "Standing committee assignments for each House member"
+    },
+    "medsl_house_2022": {
+      "name": "U.S. House Returns 2022 (MEDSL)",
+      "provider": "MIT Election Data + Science Lab (MEDSL), Harvard Dataverse",
+      "url": "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/IG0UN2",
+      "vintage": "2022",
+      "retrieved": "2026-03-05",
+      "description": "Total votes cast in 2022 U.S. House general elections by congressional district"
+    },
+    "medsl_house_2024": {
+      "name": "U.S. House Returns 2024 (MEDSL)",
+      "provider": "MIT Election Data + Science Lab (MEDSL), Harvard Dataverse",
+      "url": "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/IG0UN2",
+      "vintage": "2024",
+      "retrieved": "2026-03-05",
+      "description": "Total votes cast in 2024 U.S. House general elections by congressional district"
+    },
+    "acs5_2023_b29001": {
+      "name": "Citizen Voting-Age Population (B29001)",
+      "provider": "U.S. Census Bureau, American Community Survey 5-Year Estimates",
+      "url": "https://api.census.gov/data/2023/acs/acs5",
+      "vintage": "2023 (2019-2023)",
+      "retrieved": "2026-03-05",
+      "variable": "B29001_001E",
+      "geography": "Congressional District (118th Congress)",
+      "description": "Total citizen voting-age population (18+) used as the denominator for district-level turnout rates"
     }
   },
   "fieldMap": {
@@ -170,6 +196,10 @@
     "total_fed_tax_paid": "accountable_50state_eitc",
     "eitc_claims": "accountable_50state_eitc",
     "eitc_unclaimed_rate": "accountable_50state_eitc",
-    "house_committees": "house_committees_119"
+    "house_committees": "house_committees_119",
+    "total_votes_2022": "medsl_house_2022",
+    "total_votes_2024": "medsl_house_2024",
+    "turnout_rate_2022": "medsl_house_2022",
+    "turnout_rate_2024": "medsl_house_2024"
   }
 }
