@@ -63,6 +63,7 @@ export default function TargetFiltersBar({
   resultCount,
   totalCount,
   onExport,
+  selectedState,
 }) {
   const activeCount = useMemo(() => {
     let c = 0
@@ -165,7 +166,9 @@ export default function TargetFiltersBar({
         </span>
         {onExport && (
           <button className="toolbar-btn" onClick={onExport} type="button">
-            <span className="toolbar-btn-label">Export</span>
+            <span className="toolbar-btn-label">
+              {selectedState ? `Export ${selectedState}` : 'Export'}
+            </span>
           </button>
         )}
       </div>

@@ -974,6 +974,268 @@
 }
 
 /* ================================================================
+   STATE DRILL-DOWN (in-tab)
+   ================================================================ */
+.drilldown-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Back button ── */
+.drilldown-header {
+  flex-shrink: 0;
+  padding: 12px 14px 10px;
+  border-bottom: 1px solid var(--border-light);
+  background: white;
+}
+
+.drilldown-back-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--teal);
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 8px;
+  transition: opacity 0.12s;
+}
+.drilldown-back-btn:hover {
+  text-decoration: underline;
+}
+
+/* ── State title ── */
+.drilldown-state-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.drilldown-state-code {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--black);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.drilldown-state-name {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--gray-muted);
+}
+
+/* ── Stats row ── */
+.drilldown-stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+.drilldown-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.drilldown-stat-label {
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray-muted);
+}
+.drilldown-stat-value {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--black);
+}
+
+/* ── Scrollable district list ── */
+.drilldown-districts-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0;
+}
+
+.drilldown-section-label {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-muted);
+  padding: 6px 14px 4px;
+}
+
+.drilldown-empty {
+  padding: 24px 14px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--gray-muted);
+  text-align: center;
+}
+
+/* ── District accordion row ── */
+.drilldown-district {
+  border-bottom: 1px solid #F0EDE8;
+}
+.drilldown-district.expanded {
+  background: #FAFAF8;
+}
+
+.drilldown-district-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.drilldown-district-row:hover {
+  background: rgba(76, 105, 113, 0.05);
+}
+
+.drilldown-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 8px;
+  color: var(--gray-muted);
+  flex-shrink: 0;
+  transition: transform 0.15s, color 0.15s;
+}
+.drilldown-chevron.open {
+  transform: rotate(90deg);
+  color: var(--teal);
+}
+
+.drilldown-district-code {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--black);
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+  min-width: 36px;
+}
+
+.drilldown-district-member {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--gray-body);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.drilldown-district-pvi {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--gray-muted);
+  flex-shrink: 0;
+}
+
+.drilldown-district-campuses {
+  font-family: var(--font-body);
+  font-size: 10px;
+  color: var(--gray-muted);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+/* ── Campus list (expanded) ── */
+.drilldown-campus-list {
+  padding: 2px 14px 8px 38px;
+  border-left: 2px solid var(--teal);
+  margin-left: 21px;
+}
+
+.drilldown-campus-empty {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--gray-muted);
+  padding: 6px 0;
+  font-style: italic;
+}
+
+.drilldown-campus-header {
+  display: flex;
+  gap: 8px;
+  padding: 4px 0 3px;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 2px;
+}
+.drilldown-campus-hcol {
+  font-family: var(--font-heading);
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gray-muted);
+}
+.drilldown-campus-hcol.name { flex: 2; min-width: 0; }
+.drilldown-campus-hcol.city { flex: 1; min-width: 0; }
+.drilldown-campus-hcol.num { width: 56px; text-align: right; flex-shrink: 0; }
+.drilldown-campus-hcol.type { width: 50px; flex-shrink: 0; }
+
+.drilldown-campus-row {
+  display: flex;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid #F5F3EF;
+  transition: background 0.1s;
+}
+.drilldown-campus-row:last-child {
+  border-bottom: none;
+}
+.drilldown-campus-row:hover {
+  background: rgba(76, 105, 113, 0.04);
+}
+
+.drilldown-campus-col {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--gray-body);
+}
+.drilldown-campus-col.name {
+  flex: 2;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+  color: var(--black);
+}
+.drilldown-campus-col.city {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.drilldown-campus-col.num {
+  width: 56px;
+  text-align: right;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.drilldown-campus-col.type {
+  width: 50px;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--gray-muted);
+}
+
+/* ================================================================
    QUADRANT CHART
    ================================================================ */
 .quadrant-chart-wrap {
