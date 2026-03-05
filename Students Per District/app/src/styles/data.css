@@ -383,6 +383,21 @@
 .data-table th .sort-icon { font-size: 8px; color: var(--gray-muted); margin-left: 2px; }
 .data-table th.num { text-align: right; }
 
+/* ── Active Sort / Filter Indicators ── */
+.data-table th.th-sorted {
+  background: rgba(76, 105, 113, 0.08);
+}
+.data-table th.th-filtered {
+  background: rgba(76, 105, 113, 0.08);
+}
+.data-table th.th-sorted.th-filtered {
+  background: rgba(76, 105, 113, 0.14);
+}
+.data-table th.th-sorted .sort-icon,
+.data-table th.th-filtered .sort-icon {
+  color: var(--teal);
+}
+
 /* ── Column Group Headers ── */
 .data-table .col-group-th {
   text-align: center;
@@ -466,6 +481,40 @@
 }
 .data-table tbody tr:hover {
   background: #FAFAF8;
+}
+
+/* ── Footer Summary Row ── */
+.data-table tfoot {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+}
+.data-table tfoot td {
+  background: #FAFAF8;
+  border-top: 2px solid var(--border-light);
+  border-bottom: none;
+  padding: 8px 12px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  vertical-align: top;
+}
+.data-table tfoot td.num {
+  text-align: right;
+}
+.data-table tfoot .footer-label {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-muted);
+  margin-bottom: 2px;
+}
+.data-table tfoot .footer-value {
+  color: var(--black);
+  font-weight: 600;
 }
 .data-table .campus-link {
   color: var(--teal);
@@ -595,6 +644,9 @@
     margin: 0 8px 8px;
     border-radius: 8px;
   }
+
+  /* Hide footer on mobile */
+  .data-table tfoot { display: none; }
 
   /* Card layout for data table */
   .data-table { min-width: 0; }
