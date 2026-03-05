@@ -12,26 +12,26 @@ export const DIMENSIONS = [
 
 export const DEFAULT_ACQ_WEIGHTS = {
   senatorResponsiveness: 5,
-  civicEngagement: 20,
+  civicEngagement: 10,
   senatorInfluence: 3,
-  taxDensity: 7,
-  eitcOpportunity: 0,
+  taxDensity: 8,
+  eitcOpportunity: 7,
   urbanConcentration: 15,
-  youngProfConcentration: 30,
-  competitiveDistrictDensity: 0,
-  ccEnrollment: 20,
+  youngProfConcentration: 25,
+  competitiveDistrictDensity: 2,
+  ccEnrollment: 25,
 }
 
 export const DEFAULT_CIVIC_WEIGHTS = {
-  senatorResponsiveness: 35,
-  civicEngagement: 30,
+  senatorResponsiveness: 30,
+  civicEngagement: 25,
   senatorInfluence: 18,
-  taxDensity: 3,
-  eitcOpportunity: 2,
+  taxDensity: 4,
+  eitcOpportunity: 5,
   urbanConcentration: 2,
-  youngProfConcentration: 0,
-  competitiveDistrictDensity: 10,
-  ccEnrollment: 0,
+  youngProfConcentration: 1,
+  competitiveDistrictDensity: 12,
+  ccEnrollment: 3,
 }
 
 export const QUADRANT_COLORS = {
