@@ -1,114 +1,171 @@
 import { useMemo } from 'react'
 
-const ELECTION_OPTIONS = [
-  { value: '', label: 'Any cycle' },
-  { value: '2026', label: '2026' },
-  { value: '2028', label: '2028' },
-  { value: '2030', label: '2030' },
+const CATEGORICAL_FILTERS = [
+  {
+    key: 'electionCycle',
+    label: 'Cycle',
+    options: [
+      { value: '', label: 'Any' },
+      { value: '2026', label: '2026' },
+      { value: '2028', label: '2028' },
+      { value: '2030', label: '2030' },
+    ],
+  },
+  {
+    key: 'senatorParty',
+    label: 'Party',
+    options: [
+      { value: '', label: 'Any' },
+      { value: 'D', label: 'Dem' },
+      { value: 'R', label: 'Rep' },
+    ],
+  },
+  {
+    key: 'tier',
+    label: 'Tier',
+    options: [
+      { value: '', label: 'Any' },
+      { value: 'T1', label: 'T1' },
+      { value: 'T2', label: 'T2' },
+      { value: 'T3', label: 'T3' },
+    ],
+  },
+  {
+    key: 'quadrant',
+    label: 'Quad',
+    options: [
+      { value: '', label: 'Any' },
+      { value: 'Launch Priority', label: 'Launch' },
+      { value: 'Revenue Opportunity', label: 'Revenue' },
+      { value: 'Civic Beachhead', label: 'Civic' },
+      { value: 'Deprioritize', label: 'Depri' },
+    ],
+  },
 ]
 
-const PARTY_OPTIONS = [
-  { value: '', label: 'Any party' },
-  { value: 'D', label: 'Democrat' },
-  { value: 'R', label: 'Republican' },
+const NUMERIC_FILTERS = [
+  { key: 'ccEnrollment', label: 'Enrollment', field: 'ccEnrollment' },
+  { key: 'districtCount', label: 'Districts', field: 'districtCount' },
+  { key: 'composite', label: 'SVS', field: 'composite' },
+  { key: 'youngProfessionalPop', label: 'YP Pop', field: 'youngProfessionalPop' },
 ]
 
-const TIER_OPTIONS = [
-  { value: '', label: 'Any tier' },
-  { value: 'T1', label: 'T1 (Top 12)' },
-  { value: 'T2', label: 'T2 (13-30)' },
-  { value: 'T3', label: 'T3 (31+)' },
-]
+function formatCompact(n) {
+  if (n >= 1000000) return `${(n / 1000000).toFixed(1)}m`
+  if (n >= 1000) return `${Math.round(n / 1000)}k`
+  return String(Math.round(n))
+}
 
-const QUADRANT_OPTIONS = [
-  { value: '', label: 'Any quadrant' },
-  { value: 'Launch Priority', label: 'Launch Priority' },
-  { value: 'Revenue Opportunity', label: 'Revenue Opportunity' },
-  { value: 'Civic Beachhead', label: 'Civic Beachhead' },
-  { value: 'Deprioritize', label: 'Deprioritize' },
-]
-
-export default function TargetFiltersBar({ filters, onFiltersChange, resultCount, totalCount, onExport }) {
+export default function TargetFiltersBar({
+  filters,
+  onFiltersChange,
+  rankedStates,
+  resultCount,
+  totalCount,
+  onExport,
+}) {
   const activeCount = useMemo(() => {
     let c = 0
     if (filters.electionCycle) c++
     if (filters.senatorParty) c++
     if (filters.tier) c++
     if (filters.quadrant) c++
+    NUMERIC_FILTERS.forEach(({ key }) => {
+      if (filters[`${key}Min`] !== '') c++
+      if (filters[`${key}Max`] !== '') c++
+    })
     return c
   }, [filters])
+
+  /* Compute data ranges for placeholders */
+  const ranges = useMemo(() => {
+    const r = {}
+    NUMERIC_FILTERS.forEach(({ key, field }) => {
+      const vals = (rankedStates || []).map((s) => s[field] || 0).filter((v) => v != null)
+      r[key] = {
+        min: vals.length ? Math.min(...vals) : 0,
+        max: vals.length ? Math.max(...vals) : 0,
+      }
+    })
+    return r
+  }, [rankedStates])
 
   const handleChange = (key, value) => {
     onFiltersChange({ ...filters, [key]: value })
   }
 
   const handleClear = () => {
-    onFiltersChange({ electionCycle: '', senatorParty: '', tier: '', quadrant: '' })
+    const cleared = { ...filters }
+    Object.keys(cleared).forEach((k) => (cleared[k] = ''))
+    onFiltersChange(cleared)
   }
 
   return (
     <div className="target-filters-bar">
-      <div className="target-filters-left">
-        <span className="target-filters-label">Filters</span>
+      <span className="target-filters-label">Filters</span>
+
+      {/* ── Categorical pills ── */}
+      {CATEGORICAL_FILTERS.map(({ key, label, options }) => (
+        <div key={key} className={`filter-pill${filters[key] ? ' active' : ''}`}>
+          <span className="filter-pill-label">{label}</span>
+          <select value={filters[key]} onChange={(e) => handleChange(key, e.target.value)}>
+            {options.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      ))}
+
+      <div className="target-filters-divider" />
+
+      {/* ── Numeric pills ── */}
+      {NUMERIC_FILTERS.map(({ key, label }) => {
+        const minKey = `${key}Min`
+        const maxKey = `${key}Max`
+        const isActive = filters[minKey] !== '' || filters[maxKey] !== ''
+        const range = ranges[key] || { min: 0, max: 0 }
+        return (
+          <div key={key} className={`filter-pill${isActive ? ' active' : ''}`}>
+            <span className="filter-pill-label">{label}</span>
+            <input
+              type="number"
+              placeholder={formatCompact(range.min)}
+              value={filters[minKey]}
+              onChange={(e) => handleChange(minKey, e.target.value)}
+            />
+            <span className="filter-pill-dash">–</span>
+            <input
+              type="number"
+              placeholder={formatCompact(range.max)}
+              value={filters[maxKey]}
+              onChange={(e) => handleChange(maxKey, e.target.value)}
+            />
+          </div>
+        )
+      })}
+
+      {/* ── Right controls ── */}
+      <div className="target-filters-right-controls">
+        {activeCount > 0 && (
+          <button
+            className="target-filters-clear-btn"
+            onClick={handleClear}
+            title="Clear all filters"
+            type="button"
+          >
+            ✕
+          </button>
+        )}
         <span className="target-filters-count">
           {resultCount === totalCount
             ? `${totalCount} states`
-            : `${resultCount} of ${totalCount} states`}
+            : `${resultCount} of ${totalCount}`}
         </span>
-        {activeCount > 0 && (
-          <span className="target-filters-badge">{activeCount}</span>
-        )}
-      </div>
-
-      <div className="target-filters-right">
-        <select
-          className="styled-select"
-          value={filters.electionCycle}
-          onChange={(e) => handleChange('electionCycle', e.target.value)}
-        >
-          {ELECTION_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
-
-        <select
-          className="styled-select"
-          value={filters.senatorParty}
-          onChange={(e) => handleChange('senatorParty', e.target.value)}
-        >
-          {PARTY_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
-
-        <select
-          className="styled-select"
-          value={filters.tier}
-          onChange={(e) => handleChange('tier', e.target.value)}
-        >
-          {TIER_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
-
-        <select
-          className="styled-select"
-          value={filters.quadrant}
-          onChange={(e) => handleChange('quadrant', e.target.value)}
-        >
-          {QUADRANT_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
-
-        {activeCount > 0 && (
-          <button className="target-filters-clear" onClick={handleClear}>
-            Clear all
-          </button>
-        )}
         {onExport && (
           <button className="toolbar-btn" onClick={onExport} type="button">
-            <span className="toolbar-btn-label">Export CSV</span>
+            <span className="toolbar-btn-label">Export</span>
           </button>
         )}
       </div>
