@@ -14,6 +14,9 @@ const INITIAL_VIEW = {
   zoom: 4,
 }
 
+// Continental US bounding box for consistent framing across all views
+const US_BOUNDS = [[-125, 24], [-66, 50]]
+
 export default function MapView({ subView, data, navigate, params, isVisible }) {
   const mapRef = useRef(null)
   const [viewState, setViewState] = useState(INITIAL_VIEW)
@@ -48,21 +51,18 @@ export default function MapView({ subView, data, navigate, params, isVisible }) 
   }, [isVisible])
 
   /* Reset view when switching subViews so all tabs start centered on the US.
-     The sidebar appearing/disappearing changes the viewport width, which
-     shifts the visible center if we don't re-center. */
+     Uses fitBounds instead of flyTo so the continental US fills the available
+     viewport consistently regardless of whether the sidebar is present. */
   useEffect(() => {
     const map = mapRef.current?.getMap()
     if (!map) return
-    // Resize first (sidebar may have just appeared/disappeared)
     const id = requestAnimationFrame(() => {
-      try {
-        map.resize()
-        map.flyTo({
-          center: [INITIAL_VIEW.longitude, INITIAL_VIEW.latitude],
-          zoom: INITIAL_VIEW.zoom,
-          duration: 500,
-        })
-      } catch (_) {}
+      requestAnimationFrame(() => {
+        try {
+          map.resize()
+          map.fitBounds(US_BOUNDS, { duration: 500, padding: 20 })
+        } catch (_) {}
+      })
     })
     return () => cancelAnimationFrame(id)
   }, [subView])
@@ -115,13 +115,9 @@ export default function MapView({ subView, data, navigate, params, isVisible }) 
       districtsMin: '',
       districtsMax: '',
     })
-    setViewState(INITIAL_VIEW)
     const map = mapRef.current?.getMap()
     if (map) {
-      map.flyTo({
-        center: [INITIAL_VIEW.longitude, INITIAL_VIEW.latitude],
-        zoom: INITIAL_VIEW.zoom,
-      })
+      map.fitBounds(US_BOUNDS, { duration: 500, padding: 20 })
     }
   }, [])
 
