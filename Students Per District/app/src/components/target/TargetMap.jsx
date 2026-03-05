@@ -1,18 +1,52 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react'
-import Map, { Source, Layer, NavigationControl } from 'react-map-gl/mapbox'
+import Map, { Source, Layer, Marker, NavigationControl } from 'react-map-gl/mapbox'
 import { DISTRICTS_TILESET_URL, DISTRICTS_SOURCE_LAYER } from '../../config'
 
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
-/* ── Color ramp: paper white → teal ── */
-const PAPER = [253, 251, 249]
-const TEAL = [76, 105, 113]
+/* ── 3-stop color ramp: warm gray → sage → deep teal ── */
+const RAMP = [
+  { t: 0.0, r: 230, g: 225, b: 218 }, // warm light gray — clearly "low"
+  { t: 0.45, r: 124, g: 175, b: 157 }, // sage green — middle
+  { t: 1.0, r: 22, g: 75, b: 90 },     // deep dark teal — clearly "high"
+]
 
-function lerpColor(t) {
-  const r = Math.round(PAPER[0] + (TEAL[0] - PAPER[0]) * t)
-  const g = Math.round(PAPER[1] + (TEAL[1] - PAPER[1]) * t)
-  const b = Math.round(PAPER[2] + (TEAL[2] - PAPER[2]) * t)
+function rampColor(t) {
+  t = Math.max(0, Math.min(1, t))
+  let lo = RAMP[0]
+  let hi = RAMP[RAMP.length - 1]
+  for (let i = 0; i < RAMP.length - 1; i++) {
+    if (t >= RAMP[i].t && t <= RAMP[i + 1].t) {
+      lo = RAMP[i]
+      hi = RAMP[i + 1]
+      break
+    }
+  }
+  const f = (t - lo.t) / (hi.t - lo.t || 1)
+  const r = Math.round(lo.r + (hi.r - lo.r) * f)
+  const g = Math.round(lo.g + (hi.g - lo.g) * f)
+  const b = Math.round(lo.b + (hi.b - lo.b) * f)
   return `rgb(${r},${g},${b})`
+}
+
+/* CSS color for the legend gradient */
+const LEGEND_GRADIENT = `linear-gradient(to right, rgb(${RAMP[0].r},${RAMP[0].g},${RAMP[0].b}), rgb(${RAMP[1].r},${RAMP[1].g},${RAMP[1].b}), rgb(${RAMP[2].r},${RAMP[2].g},${RAMP[2].b}))`
+
+/* ── Approximate US state centroids for label placement ── */
+const STATE_CENTROIDS = {
+  AL: [-86.8, 32.8], AK: [-153.5, 64.2], AZ: [-111.7, 34.3], AR: [-92.4, 34.8],
+  CA: [-119.7, 37.2], CO: [-105.5, 39.0], CT: [-72.7, 41.6], DE: [-75.5, 39.0],
+  FL: [-81.7, 28.7], GA: [-83.4, 32.7], HI: [-155.5, 20.0], ID: [-114.5, 44.4],
+  IL: [-89.2, 40.0], IN: [-86.3, 39.8], IA: [-93.5, 42.0], KS: [-98.3, 38.5],
+  KY: [-85.3, 37.8], LA: [-91.9, 31.0], ME: [-69.2, 45.4], MD: [-76.6, 39.0],
+  MA: [-71.8, 42.3], MI: [-84.7, 44.3], MN: [-94.3, 46.3], MS: [-89.7, 32.7],
+  MO: [-92.5, 38.4], MT: [-109.6, 47.0], NE: [-99.8, 41.5], NV: [-116.6, 39.3],
+  NH: [-71.6, 43.7], NJ: [-74.7, 40.1], NM: [-106.0, 34.4], NY: [-75.5, 43.0],
+  NC: [-79.4, 35.6], ND: [-100.5, 47.4], OH: [-82.8, 40.4], OK: [-97.5, 35.6],
+  OR: [-120.5, 43.9], PA: [-77.6, 41.0], RI: [-71.5, 41.7], SC: [-80.9, 33.9],
+  SD: [-100.2, 44.4], TN: [-86.3, 35.9], TX: [-99.0, 31.5], UT: [-111.7, 39.3],
+  VT: [-72.6, 44.1], VA: [-79.4, 37.5], WA: [-120.5, 47.4], WV: [-80.6, 38.6],
+  WI: [-89.8, 44.6], WY: [-107.6, 43.0],
 }
 
 const INITIAL_VIEW = {
@@ -26,12 +60,12 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState }) 
   const [viewState, setViewState] = useState(INITIAL_VIEW)
   const [tooltip, setTooltip] = useState(null)
 
-  /* ── Build state → score lookup ── */
-  const stateScoreMap = useMemo(() => {
+  /* ── Build state → data lookup ── */
+  const stateDataMap = useMemo(() => {
     const map = {}
     if (!rankedStates) return map
     rankedStates.forEach((s) => {
-      map[s.code] = s.composite
+      map[s.code] = s
     })
     return map
   }, [rankedStates])
@@ -48,16 +82,41 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState }) 
 
   /* ── Build Mapbox fill-color match expression ── */
   const fillColorExpr = useMemo(() => {
-    if (!rankedStates || rankedStates.length === 0) return '#FDFBF9'
+    if (!rankedStates || rankedStates.length === 0) return '#EDE9E3'
     const range = maxScore - minScore || 1
     const expr = ['match', ['get', 'state']]
     rankedStates.forEach((s) => {
       const t = (s.composite - minScore) / range
-      expr.push(s.code, lerpColor(t))
+      expr.push(s.code, rampColor(t))
     })
-    expr.push('#FDFBF9') // fallback
+    expr.push('#EDE9E3') // fallback
     return expr
   }, [rankedStates, minScore, maxScore])
+
+  /* ── Border color: T1 darker, others lighter ── */
+  const borderColorExpr = useMemo(() => {
+    if (!rankedStates || rankedStates.length === 0) return '#C8C1B6'
+    const t1Codes = rankedStates.filter((s) => s.tier === 'T1').map((s) => s.code)
+    if (t1Codes.length === 0) return '#C8C1B6'
+    const expr = ['match', ['get', 'state']]
+    t1Codes.forEach((c) => expr.push(c, '#16505D'))
+    expr.push('#B8B2A8') // fallback
+    return expr
+  }, [rankedStates])
+
+  /* ── T1 states for label markers ── */
+  const t1Markers = useMemo(() => {
+    if (!rankedStates) return []
+    return rankedStates
+      .filter((s) => s.tier === 'T1' && STATE_CENTROIDS[s.code])
+      .map((s) => ({
+        code: s.code,
+        rank: s.rank,
+        score: Math.round(s.composite),
+        lng: STATE_CENTROIDS[s.code][0],
+        lat: STATE_CENTROIDS[s.code][1],
+      }))
+  }, [rankedStates])
 
   /* ── Hover filter ── */
   const hoverFilter = useMemo(() => {
@@ -67,8 +126,6 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState }) 
 
   /* ── Clear internal tooltip when hoveredState changes externally ── */
   useEffect(() => {
-    // External hover (from scatter/table) does not have mouse coords,
-    // so we clear any existing tooltip to avoid stale positioning.
     setTooltip(null)
   }, [hoveredState])
 
@@ -87,19 +144,24 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState }) 
         map.getCanvas().style.cursor = 'pointer'
         onHoverState(stCode)
 
-        const score = stateScoreMap[stCode]
-        setTooltip({
-          text: `${stCode}: ${score != null ? Math.round(score) : 'N/A'}`,
-          x: e.originalEvent.clientX + 12,
-          y: e.originalEvent.clientY - 12,
-        })
+        const stData = stateDataMap[stCode]
+        if (stData) {
+          setTooltip({
+            code: stCode,
+            rank: stData.rank,
+            tier: stData.tier,
+            score: Math.round(stData.composite),
+            x: e.originalEvent.clientX + 14,
+            y: e.originalEvent.clientY - 14,
+          })
+        }
       } else {
         map.getCanvas().style.cursor = ''
         onHoverState(null)
         setTooltip(null)
       }
     },
-    [onHoverState, stateScoreMap],
+    [onHoverState, stateDataMap],
   )
 
   /* ── Mouse leave handler ── */
@@ -130,7 +192,18 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState }) 
       'road-rail',
     ].forEach((id) => {
       try {
-        map.setPaintProperty(id, 'line-opacity', 0.2)
+        map.setPaintProperty(id, 'line-opacity', 0.15)
+      } catch (_) {}
+    })
+
+    // Dim default place labels so our markers stand out
+    ;[
+      'settlement-major-label',
+      'settlement-minor-label',
+      'settlement-subdivision-label',
+    ].forEach((id) => {
+      try {
+        map.setPaintProperty(id, 'text-opacity', 0.3)
       } catch (_) {}
     })
   }, [])
@@ -143,6 +216,7 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState }) 
         onMove={(evt) => setViewState(evt.viewState)}
         mapboxAccessToken={MAPBOX_TOKEN}
         mapStyle="mapbox://styles/mapbox/light-v11"
+        projection="mercator"
         onLoad={handleStyleLoad}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
@@ -159,7 +233,7 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState }) 
             source-layer={DISTRICTS_SOURCE_LAYER}
             paint={{
               'fill-color': fillColorExpr,
-              'fill-opacity': 0.75,
+              'fill-opacity': 0.85,
             }}
           />
           <Layer
@@ -167,13 +241,9 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState }) 
             type="line"
             source-layer={DISTRICTS_SOURCE_LAYER}
             paint={{
-              'line-color': '#9CA3AF',
-              'line-width': [
-                'interpolate', ['linear'], ['zoom'],
-                3, 0.3,
-                10, 1,
-              ],
-              'line-opacity': 0.5,
+              'line-color': borderColorExpr,
+              'line-width': 0.5,
+              'line-opacity': 0.7,
             }}
           />
           <Layer
@@ -181,8 +251,8 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState }) 
             type="fill"
             source-layer={DISTRICTS_SOURCE_LAYER}
             paint={{
-              'fill-color': '#4C6971',
-              'fill-opacity': 0.2,
+              'fill-color': '#111111',
+              'fill-opacity': 0.12,
             }}
             filter={hoverFilter}
           />
@@ -205,24 +275,50 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState }) 
             ]}
             paint={{
               'line-color': '#111111',
-              'line-width': [
-                'interpolate', ['linear'], ['zoom'],
-                3, 0.8,
-                10, 1.8,
-              ],
-              'line-opacity': 0.85,
+              'line-width': 0.8,
+              'line-opacity': 0.7,
             }}
           />
         </Source>
+
+        {/* ── T1 state label markers ── */}
+        {t1Markers.map((m) => {
+          const isHovered = hoveredState === m.code
+          return (
+            <Marker
+              key={m.code}
+              longitude={m.lng}
+              latitude={m.lat}
+              anchor="center"
+            >
+              <div
+                className={`target-map-marker${isHovered ? ' hovered' : ''}`}
+                onMouseEnter={() => onHoverState(m.code)}
+                onMouseLeave={() => onHoverState(null)}
+              >
+                <span className="target-map-marker-code">{m.code}</span>
+                <span className="target-map-marker-score">{m.score}</span>
+              </div>
+            </Marker>
+          )
+        })}
       </Map>
 
       {/* ── Legend ── */}
       <div className="target-map-legend">
-        <div className="target-map-legend-label">Composite SVS</div>
-        <div className="target-map-legend-bar" />
+        <div className="target-map-legend-label">SVS Score</div>
+        <div
+          className="target-map-legend-bar"
+          style={{ background: LEGEND_GRADIENT }}
+        />
         <div className="target-map-legend-range">
-          <span>Low</span>
-          <span>High</span>
+          <span>{Math.round(minScore)}</span>
+          <span>{Math.round(maxScore)}</span>
+        </div>
+        <div className="target-map-legend-tiers">
+          <span className="target-map-legend-tier t1">T1</span>
+          <span className="target-map-legend-tier t2">T2</span>
+          <span className="target-map-legend-tier t3">T3</span>
         </div>
       </div>
 
@@ -232,7 +328,14 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState }) 
           className="target-map-tooltip"
           style={{ left: tooltip.x + 'px', top: tooltip.y + 'px' }}
         >
-          {tooltip.text}
+          <span className="target-map-tooltip-code">{tooltip.code}</span>
+          <span className={`target-map-tooltip-tier ${tooltip.tier?.toLowerCase()}`}>
+            {tooltip.tier}
+          </span>
+          <span className="target-map-tooltip-divider" />
+          <span className="target-map-tooltip-score">
+            #{tooltip.rank} &middot; SVS {tooltip.score}
+          </span>
         </div>
       )}
     </div>

@@ -125,14 +125,14 @@ export default function TargetResultsTable({ rankedStates, navigate, districtsMe
           <tr>
             <th className="target-ranked-th">Rank</th>
             <th className="target-ranked-th">State</th>
-            <th className="target-ranked-th">Tier</th>
             <th className="target-ranked-th">Quadrant</th>
             <th className="target-ranked-th">Acquisition Score</th>
             <th className="target-ranked-th">Political Change Score</th>
             <th className="target-ranked-th">Composite SVS</th>
-            <th className="target-ranked-th num">CC Enrollment</th>
+            <th className="target-ranked-th num">Campuses</th>
+            <th className="target-ranked-th num">Students</th>
+            <th className="target-ranked-th num">Districts Reached</th>
             <th className="target-ranked-th num">Young Professionals</th>
-            <th className="target-ranked-th num">Districts</th>
           </tr>
         </thead>
         <tbody>
@@ -151,9 +151,6 @@ export default function TargetResultsTable({ rankedStates, navigate, districtsMe
                   <td className="target-ranked-td target-ranked-state">
                     <span className="target-ranked-state-code">{s.code}</span>
                     <span className="target-ranked-state-name">{fullName}</span>
-                  </td>
-                  <td className={`target-ranked-td target-ranked-tier target-ranked-tier-${s.tier}`}>
-                    {s.tier}
                   </td>
                   <td className="target-ranked-td target-ranked-quadrant">
                     <span
@@ -193,11 +190,12 @@ export default function TargetResultsTable({ rankedStates, navigate, districtsMe
                   <td className="target-ranked-td target-ranked-composite">
                     {Math.round(s.composite)}
                   </td>
+                  <td className="target-ranked-td num">{numFmt(s.campusCount)}</td>
                   <td className="target-ranked-td num">{numFmt(s.ccEnrollment)}</td>
+                  <td className="target-ranked-td num">{s.districtCount}</td>
                   <td className="target-ranked-td num">
                     {numFmt(s.youngProfessionalPop || 0)}
                   </td>
-                  <td className="target-ranked-td num">{s.districtCount}</td>
                 </tr>
                 {isExpanded && (
                   <DistrictDrillDown

@@ -726,11 +726,12 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 .target-dashboard-chart {
-  flex: 1;
-  min-height: 200px;
+  flex: 1 0 300px;
+  min-height: 300px;
   border-bottom: 1px solid var(--border-main);
   overflow: hidden;
   position: relative;
@@ -738,8 +739,8 @@
 }
 
 .target-dashboard-map {
-  flex: 1;
-  min-height: 200px;
+  flex: 1 0 280px;
+  min-height: 280px;
   overflow: hidden;
   position: relative;
 }

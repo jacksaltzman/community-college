@@ -51,7 +51,7 @@ export default function CompactRankedList({
             <tr>
               <th className="compact-list-th num">#</th>
               <th className="compact-list-th">State</th>
-              <th className="compact-list-th num">Camp.</th>
+              <th className="compact-list-th num">#CCs</th>
               <th className="compact-list-th num">Students</th>
               <th className="compact-list-th num">Dist.</th>
               <th className="compact-list-th">SVS</th>
