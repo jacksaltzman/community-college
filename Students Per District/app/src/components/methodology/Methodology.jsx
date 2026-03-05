@@ -16,9 +16,22 @@ function StateMethodology() {
       <h1>Methodology: State-Level Data</h1>
       <p>This page describes the data sources and derivations behind the state-level fields used throughout the application.</p>
 
+      <h2>Derived Campus Metrics</h2>
+      <p>Four fields are aggregated from the campus-level dataset (see Campus methodology for how campuses are identified and intersected with districts):</p>
+      <table>
+        <thead>
+          <tr><th>Field</th><th>Computation</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>CC Enrollment</strong></td><td>Sum of 12-month unduplicated headcount enrollment (EFFY2023) across all community college campuses in the state</td></tr>
+          <tr><td><strong>Campus Count</strong></td><td>Count of community college campuses in the state</td></tr>
+          <tr><td><strong>District Count</strong></td><td>Count of unique congressional districts reached by at least one campus{'\u2019'}s commute shed in the state</td></tr>
+          <tr><td><strong>Avg Districts Reached</strong></td><td>Average number of districts reached per campus (total districts reached / campus count)</td></tr>
+        </tbody>
+      </table>
+
       <h2>Cook Partisan Voter Index (PVI)</h2>
       <p>State-level Cook PVI scores are sourced from the Cook Political Report{'\u2019'}s 2024 Partisan Voter Index. The PVI compares a state{'\u2019'}s average Democratic and Republican vote share in the two most recent presidential elections to the national average. A score of D+5 means the state voted 5 points more Democratic than the nation; R+3 means 3 points more Republican. EVEN indicates the state matched the national average.</p>
-      <p>For filtering purposes, states are classified into three categories:</p>
       <table>
         <thead>
           <tr><th>Category</th><th>PVI Range</th></tr>
@@ -30,18 +43,48 @@ function StateMethodology() {
         </tbody>
       </table>
 
-      <h2>U.S. Senators</h2>
-      <p>Senator data includes the name, party affiliation, and next election year for each of a state{'\u2019'}s two U.S. Senators. This data is sourced from official Senate records and updated as of the 119th Congress (January 2025).</p>
-      <p>Election years follow the staggered Senate schedule: one-third of the Senate stands for election every two years. The application tracks the next election year for each seat (2026, 2028, or 2030), enabling users to filter states by upcoming Senate races.</p>
-
       <h2>Midterm Turnout (2022)</h2>
       <p>The 2022 midterm voter turnout percentage represents the share of the voting-eligible population (VEP) that cast ballots in the 2022 general election. This data is sourced from the United States Elections Project.</p>
 
-      <h2>EITC Unclaimed Rate</h2>
-      <p>The Earned Income Tax Credit (EITC) unclaimed rate represents the estimated percentage of eligible tax filers in each state who did not claim the EITC. This data is sourced from IRS Statistics of Income and Brookings Institution analyses. Higher unclaimed rates may indicate populations that could benefit from tax assistance and outreach programs.</p>
+      <h2>U.S. Senators</h2>
+      <p>Senator data is sourced from official Senate records and the Accountable 50-State Analysis v43.6, updated as of the 119th Congress (January 2025). Five fields are tracked for each of a state{'\u2019'}s two senators:</p>
+      <table>
+        <thead>
+          <tr><th>Field</th><th>Description</th><th>Source</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Name</strong></td><td>Senator{'\u2019'}s full name</td><td>U.S. Senate</td></tr>
+          <tr><td><strong>Party</strong></td><td>Party affiliation (D, R, or I)</td><td>U.S. Senate</td></tr>
+          <tr><td><strong>Next Election</strong></td><td>Year of the senator{'\u2019'}s next election (2026, 2028, or 2030)</td><td>U.S. Senate</td></tr>
+          <tr><td><strong>Last Margin</strong></td><td>Victory margin (%) in the senator{'\u2019'}s most recent election</td><td>Accountable 50-State Analysis v43.6</td></tr>
+          <tr><td><strong>Tax Committees</strong></td><td>Count of tax- and finance-relevant Senate committee assignments (Finance, Budget, Banking, Small Business)</td><td>senate.gov committee listings</td></tr>
+        </tbody>
+      </table>
 
-      <h2>Aggregate Enrollment</h2>
-      <p>State-level enrollment totals are computed by summing the 12-month unduplicated headcount enrollment (from EFFY2023) across all community college campuses in the state that pass the current filter criteria. This is a derived metric{' \u2014 '}it reflects the filtered dataset, not a fixed state-level figure.</p>
+      <h2>Federal Tax &amp; EITC Data</h2>
+      <p>Tax and EITC fields are compiled from IRS Statistics of Income via the Accountable 50-State Analysis v43.6 (2022 tax year):</p>
+      <table>
+        <thead>
+          <tr><th>Field</th><th>Description</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Adult Pop (18+)</strong></td><td>Adult population age 18 and over (U.S. Census Bureau)</td></tr>
+          <tr><td><strong>Total Filers</strong></td><td>Total individual income tax returns filed in the state</td></tr>
+          <tr><td><strong>Fed Tax Paid ($B)</strong></td><td>Total federal income tax paid, in billions</td></tr>
+          <tr><td><strong>EITC Claims (K)</strong></td><td>Number of EITC claims in thousands</td></tr>
+          <tr><td><strong>EITC Participation Rate</strong></td><td>Estimated share of eligible filers who claimed the EITC</td></tr>
+          <tr><td><strong>EITC Unclaimed Rate</strong></td><td>Estimated share of eligible filers who did not claim the EITC. Higher rates indicate populations that may benefit from tax assistance outreach.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Young Professionals (18{'\u2013'}34)</h2>
+      <p>State-level young professional population is pulled from the U.S. Census Bureau{'\u2019'}s American Community Survey (ACS) 5-Year Estimates, 2023 vintage. It sums male and female population ages 18{'\u2013'}34 from the B01001 (Sex by Age) table: ages 18{'\u2013'}19, 20, 21, 22{'\u2013'}24, 25{'\u2013'}29, and 30{'\u2013'}34 for both sexes.</p>
+
+      <h2>College Enrollment</h2>
+      <p>Total state-level college/university enrollment is pulled from ACS 2023 5-Year table B14001 (School Enrollment by Level of School). It sums <code>B14001_008E</code> (enrolled in college, undergraduate) and <code>B14001_009E</code> (enrolled in graduate or professional school). This represents all college enrollment in the state, not just community colleges.</p>
+
+      <h2>Urban Population %</h2>
+      <p>The percentage of the state{'\u2019'}s population living in urban areas, sourced from the U.S. Census Bureau{'\u2019'}s 2020 Census urbanized area delineations via the Accountable 50-State Analysis v43.6.</p>
     </>
   )
 }

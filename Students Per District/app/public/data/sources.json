@@ -164,6 +164,26 @@
       "provider": "Accountable (computed from MEDSL election returns)",
       "vintage": "2024 (2022 fallback)",
       "description": "Estimated number of organized users needed to influence a district's representative. Computed as winner_margin \u00d7 coefficient (0.05\u20130.20 based on competitiveness), with a floor of 500."
+    },
+    "acs5_2023_state_age": {
+      "name": "Young Professional Population (B01001)",
+      "provider": "U.S. Census Bureau, American Community Survey 5-Year Estimates",
+      "url": "https://api.census.gov/data/2023/acs/acs5",
+      "vintage": "2023 (2019-2023)",
+      "variable": "B01001 (Sex by Age): sum of ages 18-34 (male + female)",
+      "geography": "State",
+      "retrieved": "2026-03-02",
+      "description": "State-level population aged 18-34, summed from B01001 age-by-sex breakdowns"
+    },
+    "acs5_2023_state_enrollment": {
+      "name": "College Enrollment (B14001)",
+      "provider": "U.S. Census Bureau, American Community Survey 5-Year Estimates",
+      "url": "https://api.census.gov/data/2023/acs/acs5",
+      "vintage": "2023 (2019-2023)",
+      "variable": "B14001_008E (undergraduate) + B14001_009E (graduate/professional)",
+      "geography": "State",
+      "retrieved": "2026-03-02",
+      "description": "State-level total college and university enrollment (undergraduate + graduate/professional)"
     }
   },
   "fieldMap": {
@@ -211,6 +231,11 @@
     "winner_margin_pct_2022": "medsl_house_2022",
     "winner_margin_2024": "medsl_house_2024",
     "winner_margin_pct_2024": "medsl_house_2024",
-    "coalition_threshold": "derived_coalition_threshold"
+    "coalition_threshold": "derived_coalition_threshold",
+    "young_professional_pop": "acs5_2023_state_age",
+    "college_enrollment": "acs5_2023_state_enrollment",
+    "urban_pop_pct": "accountable_50state_pop",
+    "eitc_participation_rate": "accountable_50state_eitc",
+    "total_filers": "accountable_50state_eitc"
   }
 }
