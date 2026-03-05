@@ -152,18 +152,15 @@ export default function TargetResultsTable({ rankedStates, navigate, districtsMe
                     <span className="target-ranked-state-code">{s.code}</span>
                     <span className="target-ranked-state-name">{fullName}</span>
                   </td>
-                  <td className="target-ranked-td">
-                    <span className={`target-ranked-tier-badge target-ranked-tier-${s.tier}`}>
-                      {s.tier}
-                    </span>
+                  <td className={`target-ranked-td target-ranked-tier target-ranked-tier-${s.tier}`}>
+                    {s.tier}
                   </td>
-                  <td className="target-ranked-td">
+                  <td className="target-ranked-td target-ranked-quadrant">
                     <span
-                      className="target-ranked-quadrant-pill"
+                      className="target-quadrant-dot"
                       style={{ backgroundColor: quadColor }}
-                    >
-                      {s.quadrant}
-                    </span>
+                    />
+                    <span className="target-quadrant-label">{s.quadrant}</span>
                   </td>
                   <td className="target-ranked-td target-ranked-score-cell">
                     <span className="target-ranked-score-num">

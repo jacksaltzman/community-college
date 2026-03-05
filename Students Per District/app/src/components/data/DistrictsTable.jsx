@@ -30,7 +30,7 @@ const LOAD_MORE_COUNT = 50
 const numFmt = new Intl.NumberFormat('en-US')
 const dollarFmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 
-const globalSearchFilter = makeGlobalSearchFilter(['district', 'state', 'member', 'party', 'cookPVI', 'committees'])
+const globalSearchFilter = makeGlobalSearchFilter(['district', 'state', 'member', 'party', 'cookPVI', 'committees', 'coalitionThreshold'])
 
 /* ── Main Component ── */
 
@@ -71,6 +71,11 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         total_votes_2024: d.total_votes_2024 ?? null,
         turnout_rate_2022: d.turnout_rate_2022 ?? null,
         turnout_rate_2024: d.turnout_rate_2024 ?? null,
+        winner_margin_2022: d.winner_margin_2022 ?? null,
+        winner_margin_pct_2022: d.winner_margin_pct_2022 ?? null,
+        winner_margin_2024: d.winner_margin_2024 ?? null,
+        winner_margin_pct_2024: d.winner_margin_pct_2024 ?? null,
+        coalition_threshold: d.coalition_threshold ?? null,
         committees: d.committees || '',
       }
     })
@@ -113,6 +118,11 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         totalVotes2024: info.total_votes_2024,
         turnoutRate2022: info.turnout_rate_2022,
         turnoutRate2024: info.turnout_rate_2024,
+        winnerMargin2022: info.winner_margin_2022,
+        winnerMarginPct2022: info.winner_margin_pct_2022,
+        winnerMargin2024: info.winner_margin_2024,
+        winnerMarginPct2024: info.winner_margin_pct_2024,
+        coalitionThreshold: info.coalition_threshold,
         committees: info.committees || '',
       }
     })
@@ -307,6 +317,66 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         },
         sortDescFirst: true,
       },
+      {
+        id: 'winnerMargin2022',
+        accessorKey: 'winnerMargin2022',
+        header: 'Margin 2022',
+        meta: { isNumeric: true, fieldKey: 'winner_margin_2022' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? numFmt.format(v) : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'winnerMarginPct2022',
+        accessorKey: 'winnerMarginPct2022',
+        header: 'Margin % 2022',
+        meta: { isNumeric: true, fieldKey: 'winner_margin_pct_2022', aggregate: 'avg' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? `${v.toFixed(1)}%` : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'winnerMargin2024',
+        accessorKey: 'winnerMargin2024',
+        header: 'Margin 2024',
+        meta: { isNumeric: true, fieldKey: 'winner_margin_2024' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? numFmt.format(v) : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'winnerMarginPct2024',
+        accessorKey: 'winnerMarginPct2024',
+        header: 'Margin % 2024',
+        meta: { isNumeric: true, fieldKey: 'winner_margin_pct_2024', aggregate: 'avg' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? `${v.toFixed(1)}%` : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'coalitionThreshold',
+        accessorKey: 'coalitionThreshold',
+        header: 'Coalition Threshold',
+        meta: { isNumeric: true, fieldKey: 'coalition_threshold', aggregate: 'avg' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? numFmt.format(v) : '\u2014'
+        },
+        sortDescFirst: true,
+      },
     ],
     [navigate],
   )
@@ -392,6 +462,11 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
       'Votes 2024',
       'Turnout 2022 (%)',
       'Turnout 2024 (%)',
+      'Winner Margin 2022',
+      'Winner Margin % 2022',
+      'Winner Margin 2024',
+      'Winner Margin % 2024',
+      'Coalition Threshold',
     ]
     const notes = [
       'Congressional district code',
@@ -410,6 +485,11 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
       'Total votes cast in 2024 House general election (MEDSL)',
       'Turnout rate: votes / citizen voting-age population (ACS 2023 CVAP)',
       'Turnout rate: votes / citizen voting-age population (ACS 2023 CVAP)',
+      'Vote difference between 1st and 2nd place in 2022 House race (MEDSL)',
+      'Winner margin as % of total votes in 2022 House race (MEDSL)',
+      'Vote difference between 1st and 2nd place in 2024 House race (MEDSL)',
+      'Winner margin as % of total votes in 2024 House race (MEDSL)',
+      'Estimated # of organized users needed to influence the representative',
     ]
 
     function csvEscape(val) {
@@ -447,6 +527,11 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
           d.totalVotes2024 != null ? d.totalVotes2024 : '',
           d.turnoutRate2022 != null ? d.turnoutRate2022 : '',
           d.turnoutRate2024 != null ? d.turnoutRate2024 : '',
+          d.winnerMargin2022 != null ? d.winnerMargin2022 : '',
+          d.winnerMarginPct2022 != null ? d.winnerMarginPct2022 : '',
+          d.winnerMargin2024 != null ? d.winnerMargin2024 : '',
+          d.winnerMarginPct2024 != null ? d.winnerMarginPct2024 : '',
+          d.coalitionThreshold != null ? d.coalitionThreshold : '',
         ]
           .map(csvEscape)
           .join(','),

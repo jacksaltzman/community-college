@@ -28,7 +28,7 @@ const QUADRANT_OPTIONS = [
   { value: 'Deprioritize', label: 'Deprioritize' },
 ]
 
-export default function TargetFiltersBar({ filters, onFiltersChange, resultCount, totalCount }) {
+export default function TargetFiltersBar({ filters, onFiltersChange, resultCount, totalCount, onExport }) {
   const activeCount = useMemo(() => {
     let c = 0
     if (filters.electionCycle) c++
@@ -49,6 +49,7 @@ export default function TargetFiltersBar({ filters, onFiltersChange, resultCount
   return (
     <div className="target-filters-bar">
       <div className="target-filters-left">
+        <span className="target-filters-label">Filters</span>
         <span className="target-filters-count">
           {resultCount === totalCount
             ? `${totalCount} states`
@@ -103,6 +104,11 @@ export default function TargetFiltersBar({ filters, onFiltersChange, resultCount
         {activeCount > 0 && (
           <button className="target-filters-clear" onClick={handleClear}>
             Clear all
+          </button>
+        )}
+        {onExport && (
+          <button className="toolbar-btn" onClick={onExport} type="button">
+            <span className="toolbar-btn-label">Export CSV</span>
           </button>
         )}
       </div>

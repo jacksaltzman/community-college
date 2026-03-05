@@ -158,6 +158,12 @@
       "variable": "B29001_001E",
       "geography": "Congressional District (118th Congress)",
       "description": "Total citizen voting-age population (18+) used as the denominator for district-level turnout rates"
+    },
+    "derived_coalition_threshold": {
+      "name": "Derived: Coalition Threshold",
+      "provider": "Accountable (computed from MEDSL election returns)",
+      "vintage": "2024 (2022 fallback)",
+      "description": "Estimated number of organized users needed to influence a district's representative. Computed as winner_margin \u00d7 coefficient (0.05\u20130.20 based on competitiveness), with a floor of 500."
     }
   },
   "fieldMap": {
@@ -200,6 +206,11 @@
     "total_votes_2022": "medsl_house_2022",
     "total_votes_2024": "medsl_house_2024",
     "turnout_rate_2022": "medsl_house_2022",
-    "turnout_rate_2024": "medsl_house_2024"
+    "turnout_rate_2024": "medsl_house_2024",
+    "winner_margin_2022": "medsl_house_2022",
+    "winner_margin_pct_2022": "medsl_house_2022",
+    "winner_margin_2024": "medsl_house_2024",
+    "winner_margin_pct_2024": "medsl_house_2024",
+    "coalition_threshold": "derived_coalition_threshold"
   }
 }

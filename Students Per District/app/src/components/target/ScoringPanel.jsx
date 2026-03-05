@@ -4,12 +4,14 @@ import {
   DEFAULT_ACQ_WEIGHTS,
   DEFAULT_CIVIC_WEIGHTS,
   AVAILABLE_RAW_FIELDS,
+  FIELD_LABELS,
 } from './scoringDefaults'
 
-/* ── Dimension row: toggle + label + slider + value + expand chevron ── */
+/* ── Dimension row: toggle + label + info tooltip + subfield count + slider + value ── */
 function DimensionRow({ dim, weight, defaultWeight, onChange }) {
   const enabled = weight > 0
   const prevWeightRef = useRef(defaultWeight)
+  const [showFields, setShowFields] = useState(false)
 
   // Track the last non-zero weight so we can restore it on re-toggle
   if (weight > 0) {
@@ -31,26 +33,58 @@ function DimensionRow({ dim, weight, defaultWeight, onChange }) {
     [dim.id, onChange]
   )
 
+  const hasFields = dim.fields && dim.fields.length > 0
+
   return (
-    <div className={`scoring-dimension-row${enabled ? '' : ' scoring-disabled'}`}>
-      <input
-        type="checkbox"
-        className="scoring-dimension-toggle"
-        checked={enabled}
-        onChange={handleToggle}
-      />
-      <span className="scoring-dimension-label">{dim.label}</span>
-      <input
-        type="range"
-        className="scoring-dimension-slider"
-        min={0}
-        max={100}
-        value={weight}
-        onChange={handleSlider}
-        disabled={!enabled}
-      />
-      <span className="scoring-dimension-value">{weight}</span>
-      <span className="scoring-dimension-expand target-chevron">&#9654;</span>
+    <div className="scoring-dimension-wrap">
+      <div className={`scoring-dimension-row${enabled ? '' : ' scoring-disabled'}`}>
+        <input
+          type="checkbox"
+          className="scoring-dimension-toggle"
+          checked={enabled}
+          onChange={handleToggle}
+        />
+        <span className="scoring-dimension-label">
+          {dim.label}
+          {dim.desc && (
+            <span className="scoring-info-tip" data-tip={dim.desc}>
+              &#9432;
+            </span>
+          )}
+          {hasFields && (
+            <button
+              className={`scoring-subfield-count${showFields ? ' active' : ''}`}
+              onClick={(e) => {
+                e.stopPropagation()
+                setShowFields((s) => !s)
+              }}
+              type="button"
+              title={`${dim.fields.length} component fields`}
+            >
+              {dim.fields.length}
+            </button>
+          )}
+        </span>
+        <input
+          type="range"
+          className="scoring-dimension-slider"
+          min={0}
+          max={100}
+          value={weight}
+          onChange={handleSlider}
+          disabled={!enabled}
+        />
+        <span className="scoring-dimension-value">{weight}</span>
+      </div>
+      {showFields && hasFields && (
+        <div className="scoring-field-detail">
+          {dim.fields.map((f) => (
+            <span key={f} className="scoring-field-detail-tag">
+              {FIELD_LABELS[f] || f}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

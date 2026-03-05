@@ -20,7 +20,7 @@ export default function TargetView({ data, navigate, params }) {
     tier: '',
     quadrant: '',
   })
-  const [scoringCollapsed, setScoringCollapsed] = useState(false)
+  const [scoringCollapsed, setScoringCollapsed] = useState(true)
   const [toast, setToast] = useState(null)
 
   const { rankedStates, medians } = useTargetScoring(data?.statesData, data?.campuses, config)
@@ -116,6 +116,7 @@ export default function TargetView({ data, navigate, params }) {
         onFiltersChange={setFilters}
         resultCount={filteredStates.length}
         totalCount={rankedStates.length}
+        onExport={handleExport}
       />
       <TargetResultsTable
         rankedStates={filteredStates}
