@@ -9,13 +9,10 @@ import '../../styles/map.css'
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN
 
 const INITIAL_VIEW = {
-  longitude: -98.5,
-  latitude: 39.8,
-  zoom: 4,
+  longitude: -96,
+  latitude: 39,
+  zoom: 4.2,
 }
-
-// Continental US bounding box — tighter for a closer initial zoom
-const US_BOUNDS = [[-120, 25], [-72, 49]]
 
 export default function MapView({ subView, data, navigate, params, isVisible }) {
   const mapRef = useRef(null)
@@ -50,23 +47,22 @@ export default function MapView({ subView, data, navigate, params, isVisible }) 
     return () => cancelAnimationFrame(id)
   }, [isVisible])
 
-  /* Reset view when switching subViews so all tabs start centered on the US.
-     Uses fitBounds so the continental US fills the available viewport.
-     We resize first, wait for the container to settle (sidebar mount/unmount
-     changes the map container width), then resize again and fit bounds. */
+  /* Reset view when switching subViews.
+     Uses jumpTo with a fixed center/zoom so all three tabs land on
+     the exact same lat/long regardless of sidebar presence. */
   useEffect(() => {
     const map = mapRef.current?.getMap()
     if (!map) return
-    // Immediate resize so the container starts adjusting
-    try { map.resize() } catch (_) {}
-    // Then wait for layout to fully settle before fitting bounds
-    const timer = setTimeout(() => {
+    const id = requestAnimationFrame(() => {
       try {
         map.resize()
-        map.fitBounds(US_BOUNDS, { duration: 0, padding: 20 })
+        map.jumpTo({
+          center: [INITIAL_VIEW.longitude, INITIAL_VIEW.latitude],
+          zoom: INITIAL_VIEW.zoom,
+        })
       } catch (_) {}
-    }, 150)
-    return () => clearTimeout(timer)
+    })
+    return () => cancelAnimationFrame(id)
   }, [subView])
 
   const handleStyleLoad = useCallback(() => {
@@ -119,7 +115,11 @@ export default function MapView({ subView, data, navigate, params, isVisible }) 
     })
     const map = mapRef.current?.getMap()
     if (map) {
-      map.fitBounds(US_BOUNDS, { duration: 500, padding: 20 })
+      map.flyTo({
+        center: [INITIAL_VIEW.longitude, INITIAL_VIEW.latitude],
+        zoom: INITIAL_VIEW.zoom,
+        duration: 500,
+      })
     }
   }, [])
 
