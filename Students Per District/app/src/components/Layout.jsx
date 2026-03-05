@@ -19,14 +19,14 @@ export default function Layout({ page, subView, params, navigate, data }) {
 
   const handleTabClick = (tabKey) => {
     setMenuOpen(false)
-    if (tabKey === 'methodology' || tabKey === 'target') {
+    if (tabKey === 'target') {
       navigate(tabKey)
     } else {
       navigate(tabKey, subView)
     }
   }
 
-  const hasSubNav = page === 'map' || page === 'data'
+  const hasSubNav = page === 'map' || page === 'data' || page === 'methodology'
 
   return (
     <>
@@ -130,7 +130,7 @@ export default function Layout({ page, subView, params, navigate, data }) {
                   params={params}
                 />
               )}
-              {page === 'methodology' && <Methodology />}
+              {page === 'methodology' && <Methodology subView={subView} />}
               {page === 'target' && (
                 <TargetView data={data} navigate={navigate} params={params} />
               )}

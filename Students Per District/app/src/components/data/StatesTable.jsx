@@ -18,7 +18,7 @@ const LOAD_MORE_COUNT = 50
 
 const numFmt = new Intl.NumberFormat('en-US')
 
-const globalSearchFilter = makeGlobalSearchFilter(['state', 'cookPVI', 'senator1', 'senator2'])
+const globalSearchFilter = makeGlobalSearchFilter(['state', 'cookPVI', 'senator1', 'senator2', 'senator1Party', 'senator2Party'])
 
 /* ── Main Component ── */
 
@@ -90,6 +90,8 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         senator2Party: stInfo.senator2Party || '',
         senator2NextElection: stInfo.senator2NextElection ?? null,
         senator2LastMargin: stInfo.senator2LastMargin ?? null,
+        senator1TaxCommittees: stInfo.senator1TaxCommittees ?? null,
+        senator2TaxCommittees: stInfo.senator2TaxCommittees ?? null,
         adultPop18: stInfo.adultPop18 ?? null,
         totalFilers: stInfo.totalFilers ?? null,
         totalFedTaxPaidB: stInfo.totalFedTaxPaidB ?? null,
@@ -190,32 +192,116 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         sortDescFirst: true,
       },
       {
-        id: 'senator1',
-        accessorKey: 'senator1',
+        id: 'senator1Group',
         header: 'Senator 1',
-        filterFn: 'includesString',
-        cell: ({ row }) => {
-          const d = row.original
-          if (!d.senator1) return '\u2014'
-          const party = d.senator1Party ? ` (${d.senator1Party})` : ''
-          const margin = d.senator1LastMargin != null ? `, +${d.senator1LastMargin}%` : ''
-          const election = d.senator1NextElection ? ` \u00B7 ${d.senator1NextElection}` : ''
-          return `${d.senator1}${party}${margin}${election}`
-        },
+        columns: [
+          {
+            id: 'senator1Name',
+            accessorKey: 'senator1',
+            header: 'Name',
+            filterFn: 'includesString',
+            cell: ({ getValue }) => getValue() || '\u2014',
+          },
+          {
+            id: 'senator1Party',
+            accessorKey: 'senator1Party',
+            header: 'Party',
+            filterFn: 'includesString',
+            cell: ({ getValue }) => getValue() || '\u2014',
+            size: 60,
+          },
+          {
+            id: 'senator1LastMargin',
+            accessorKey: 'senator1LastMargin',
+            header: 'Margin',
+            meta: { isNumeric: true },
+            filterFn: numericRangeFilter,
+            cell: ({ getValue }) => {
+              const v = getValue()
+              return v != null ? `+${v}%` : '\u2014'
+            },
+            sortDescFirst: true,
+            size: 80,
+          },
+          {
+            id: 'senator1NextElection',
+            accessorKey: 'senator1NextElection',
+            header: 'Election',
+            meta: { isNumeric: true },
+            filterFn: numericRangeFilter,
+            cell: ({ getValue }) => getValue() ?? '\u2014',
+            size: 80,
+          },
+          {
+            id: 'senator1TaxCommittees',
+            accessorKey: 'senator1TaxCommittees',
+            header: 'Tax Cmte',
+            meta: { isNumeric: true },
+            filterFn: numericRangeFilter,
+            cell: ({ getValue }) => {
+              const v = getValue()
+              return v != null ? v : '\u2014'
+            },
+            sortDescFirst: true,
+            size: 80,
+          },
+        ],
       },
       {
-        id: 'senator2',
-        accessorKey: 'senator2',
+        id: 'senator2Group',
         header: 'Senator 2',
-        filterFn: 'includesString',
-        cell: ({ row }) => {
-          const d = row.original
-          if (!d.senator2) return '\u2014'
-          const party = d.senator2Party ? ` (${d.senator2Party})` : ''
-          const margin = d.senator2LastMargin != null ? `, +${d.senator2LastMargin}%` : ''
-          const election = d.senator2NextElection ? ` \u00B7 ${d.senator2NextElection}` : ''
-          return `${d.senator2}${party}${margin}${election}`
-        },
+        columns: [
+          {
+            id: 'senator2Name',
+            accessorKey: 'senator2',
+            header: 'Name',
+            filterFn: 'includesString',
+            cell: ({ getValue }) => getValue() || '\u2014',
+          },
+          {
+            id: 'senator2Party',
+            accessorKey: 'senator2Party',
+            header: 'Party',
+            filterFn: 'includesString',
+            cell: ({ getValue }) => getValue() || '\u2014',
+            size: 60,
+          },
+          {
+            id: 'senator2LastMargin',
+            accessorKey: 'senator2LastMargin',
+            header: 'Margin',
+            meta: { isNumeric: true },
+            filterFn: numericRangeFilter,
+            cell: ({ getValue }) => {
+              const v = getValue()
+              return v != null ? `+${v}%` : '\u2014'
+            },
+            sortDescFirst: true,
+            size: 80,
+          },
+          {
+            id: 'senator2NextElection',
+            accessorKey: 'senator2NextElection',
+            header: 'Election',
+            meta: { isNumeric: true },
+            filterFn: numericRangeFilter,
+            cell: ({ getValue }) => getValue() ?? '\u2014',
+            size: 80,
+          },
+          {
+            id: 'senator2TaxCommittees',
+            accessorKey: 'senator2TaxCommittees',
+            header: 'Tax Cmte',
+            meta: { isNumeric: true },
+            filterFn: numericRangeFilter,
+            cell: ({ getValue }) => {
+              const v = getValue()
+              return v != null ? v : '\u2014'
+            },
+            sortDescFirst: true,
+            size: 80,
+          },
+        ],
       },
       {
         id: 'adultPop18',
@@ -314,10 +400,12 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
       'Senator 1 Party',
       'S1 Next Election',
       'S1 Last Margin (%)',
+      'S1 Tax Committees',
       'Senator 2',
       'Senator 2 Party',
       'S2 Next Election',
       'S2 Last Margin (%)',
+      'S2 Tax Committees',
       'Adult Pop (18+)',
       'Total Filers',
       'Fed Tax Paid ($B)',
@@ -338,10 +426,12 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
       'Party affiliation',
       'Next election year',
       'Last election margin percentage',
+      'Number of tax-relevant Senate committees (source: senate.gov)',
       'U.S. Senator (119th Congress)',
       'Party affiliation',
       'Next election year',
       'Last election margin percentage',
+      'Number of tax-relevant Senate committees (source: senate.gov)',
       'Adult population age 18+',
       'Total tax filers in state',
       'Total federal tax paid in billions',
@@ -381,10 +471,12 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
           d.senator1Party,
           d.senator1NextElection ?? '',
           d.senator1LastMargin ?? '',
+          d.senator1TaxCommittees ?? '',
           d.senator2,
           d.senator2Party,
           d.senator2NextElection ?? '',
           d.senator2LastMargin ?? '',
+          d.senator2TaxCommittees ?? '',
           d.adultPop18 ?? '',
           d.totalFilers ?? '',
           d.totalFedTaxPaidB ?? '',
@@ -438,31 +530,90 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
       <div className="data-table-wrap">
         <table className="data-table">
           <thead>
-            {headerGroups.map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header, idx) => {
-                  const isNum = header.column.columnDef.meta?.isNumeric
-                  const alignRight = idx >= headerGroup.headers.length - 3
-                  return (
-                    <th
-                      key={header.id}
-                      className={isNum ? 'num' : ''}
-                      onClick={header.column.getToggleSortingHandler()}
-                    >
-                      <span className="th-content">
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                        {sortIcon(header.column)}
-                        <ColumnFilterPopover
-                          column={header.column}
-                          isNumeric={!!isNum}
-                          alignRight={alignRight}
-                        />
-                      </span>
-                    </th>
-                  )
-                })}
-              </tr>
-            ))}
+            {headerGroups.map((headerGroup, groupIdx) => {
+              const isGroupRow = groupIdx === 0 && headerGroups.length > 1
+
+              return (
+                <tr key={headerGroup.id} className={isGroupRow ? 'col-group-header-row' : ''}>
+                  {headerGroup.headers.map((header) => {
+                    const isGroupHeader = !header.isPlaceholder && header.colSpan > 1
+                    const isPlaceholder = header.isPlaceholder
+
+                    /* Row 0 placeholder: render non-grouped column with rowSpan
+                       so it spans both the group-header and leaf-header rows */
+                    if (isPlaceholder && isGroupRow) {
+                      const leafHeader = header.subHeaders?.[0]
+                      if (leafHeader) {
+                        const isLeafNum = leafHeader.column.columnDef.meta?.isNumeric
+                        return (
+                          <th
+                            key={header.id}
+                            rowSpan={headerGroups.length}
+                            className={isLeafNum ? 'num' : ''}
+                            onClick={leafHeader.column.getToggleSortingHandler()}
+                          >
+                            <span className="th-content">
+                              {flexRender(leafHeader.column.columnDef.header, leafHeader.getContext())}
+                              {sortIcon(leafHeader.column)}
+                              <ColumnFilterPopover
+                                column={leafHeader.column}
+                                isNumeric={!!isLeafNum}
+                                alignRight={false}
+                              />
+                            </span>
+                          </th>
+                        )
+                      }
+                      return <th key={header.id} rowSpan={headerGroups.length} />
+                    }
+
+                    /* Row 1: skip non-grouped columns already rendered via rowSpan */
+                    if (!isGroupRow && headerGroups.length > 1 && !header.column.parent) {
+                      return null
+                    }
+
+                    /* Group header: Senator 1, Senator 2 */
+                    if (isGroupHeader) {
+                      return (
+                        <th
+                          key={header.id}
+                          colSpan={header.colSpan}
+                          className="col-group-th"
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                        </th>
+                      )
+                    }
+
+                    /* Leaf header — sortable, filterable */
+                    const isNum = header.column.columnDef.meta?.isNumeric
+                    const allLeafHeaders = headerGroups
+                      .flatMap(hg => hg.headers)
+                      .filter(h => !h.isPlaceholder && h.colSpan === 1)
+                    const leafIdx = allLeafHeaders.indexOf(header)
+                    const alignRight = leafIdx >= allLeafHeaders.length - 3
+
+                    return (
+                      <th
+                        key={header.id}
+                        className={isNum ? 'num' : ''}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        <span className="th-content">
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {sortIcon(header.column)}
+                          <ColumnFilterPopover
+                            column={header.column}
+                            isNumeric={!!isNum}
+                            alignRight={alignRight}
+                          />
+                        </span>
+                      </th>
+                    )
+                  })}
+                </tr>
+              )
+            })}
           </thead>
           <tbody>
             {visibleRows.map((row) => (

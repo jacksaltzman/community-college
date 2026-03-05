@@ -319,6 +319,7 @@ export default function TargetView({ data, navigate, params }) {
         filteredStates={filteredStates}
         summary={summary}
         navigate={navigate}
+        onExport={handleExport}
       />
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>

@@ -42,7 +42,7 @@ export default function App() {
 
   const navigate = useCallback((newPage, newSubView, newParams) => {
     let hash = `#${newPage}`
-    if (newSubView && (newPage === 'map' || newPage === 'data')) {
+    if (newSubView && (newPage === 'map' || newPage === 'data' || newPage === 'methodology')) {
       hash += `/${newSubView}`
     }
     if (newParams && Object.keys(newParams).length > 0) {
