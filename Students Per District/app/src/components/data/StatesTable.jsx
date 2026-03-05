@@ -7,7 +7,6 @@ import {
   flexRender,
 } from '@tanstack/react-table'
 import TableControls from './TableControls'
-import ColumnFilterPopover from './ColumnFilterPopover'
 import { numericRangeFilter, makeGlobalSearchFilter } from './tableFilters'
 import Toast from '../Toast'
 
@@ -555,6 +554,10 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         searchPlaceholder="Search by state, PVI, or senator..."
         entityName="states"
         columns={table.getAllLeafColumns()}
+        sorting={sorting}
+        onSortingChange={setSorting}
+        columnFilters={columnFilters}
+        onColumnFiltersChange={setColumnFilters}
       />
 
       <div className="data-table-wrap">
@@ -596,11 +599,6 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                                   <span className="col-group-toggle-icon">+</span>
                                 </span>
                                 {sortIcon(leafHeader.column)}
-                                <ColumnFilterPopover
-                                  column={leafHeader.column}
-                                  isNumeric={!!isLeafNum}
-                                  alignRight={false}
-                                />
                               </span>
                             </th>
                           )
@@ -616,11 +614,6 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                             <span className="th-content">
                               {flexRender(leafHeader.column.columnDef.header, leafHeader.getContext())}
                               {sortIcon(leafHeader.column)}
-                              <ColumnFilterPopover
-                                column={leafHeader.column}
-                                isNumeric={!!isLeafNum}
-                                alignRight={false}
-                              />
                             </span>
                           </th>
                         )
@@ -669,11 +662,6 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                               <span className="col-group-toggle-icon">+</span>
                             </span>
                             {sortIcon(header.column)}
-                            <ColumnFilterPopover
-                              column={header.column}
-                              isNumeric={!!isNum}
-                              alignRight={false}
-                            />
                           </span>
                         </th>
                       )
@@ -696,11 +684,6 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                         <span className="th-content">
                           {flexRender(header.column.columnDef.header, header.getContext())}
                           {sortIcon(header.column)}
-                          <ColumnFilterPopover
-                            column={header.column}
-                            isNumeric={!!isNum}
-                            alignRight={alignRight}
-                          />
                         </span>
                       </th>
                     )

@@ -7,7 +7,6 @@ import {
   flexRender,
 } from '@tanstack/react-table'
 import TableControls from './TableControls'
-import ColumnFilterPopover from './ColumnFilterPopover'
 import SourceFootnote from './SourceFootnote'
 import { numericRangeFilter, makeGlobalSearchFilter } from './tableFilters'
 import Toast from '../Toast'
@@ -362,6 +361,10 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
         searchPlaceholder="Search by district or state..."
         entityName="districts"
         columns={table.getAllLeafColumns()}
+        sorting={sorting}
+        onSortingChange={setSorting}
+        columnFilters={columnFilters}
+        onColumnFiltersChange={setColumnFilters}
       />
 
       <div className="data-table-wrap">
@@ -383,11 +386,6 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         {sortIcon(header.column)}
                         {fieldKey && <SourceFootnote fieldKey={fieldKey} sources={sources} />}
-                        <ColumnFilterPopover
-                          column={header.column}
-                          isNumeric={!!isNum}
-                          alignRight={alignRight}
-                        />
                       </span>
                     </th>
                   )

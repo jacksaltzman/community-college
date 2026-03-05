@@ -7,7 +7,6 @@ import {
   flexRender,
 } from '@tanstack/react-table'
 import TableControls from './TableControls'
-import ColumnFilterPopover from './ColumnFilterPopover'
 import { numericRangeFilter, makeGlobalSearchFilter } from './tableFilters'
 import Toast from '../Toast'
 
@@ -418,6 +417,10 @@ export default function CampusesTable({ campuses, navigate, params }) {
         onExport={handleExport}
         searchPlaceholder="Search campuses..."
         columns={table.getAllLeafColumns()}
+        sorting={sorting}
+        onSortingChange={setSorting}
+        columnFilters={columnFilters}
+        onColumnFiltersChange={setColumnFilters}
       />
 
       <div className="data-table-wrap">
@@ -437,11 +440,6 @@ export default function CampusesTable({ campuses, navigate, params }) {
                       <span className="th-content">
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         {sortIcon(header.column)}
-                        <ColumnFilterPopover
-                          column={header.column}
-                          isNumeric={!!isNum}
-                          alignRight={alignRight}
-                        />
                       </span>
                     </th>
                   )

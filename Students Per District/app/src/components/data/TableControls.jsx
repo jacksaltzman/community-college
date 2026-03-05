@@ -1,4 +1,8 @@
-import { useState, useRef, useEffect } from 'react'
+import HideFieldsDropdown from './toolbar/HideFieldsDropdown'
+import FilterDropdown from './toolbar/FilterDropdown'
+import SortDropdown from './toolbar/SortDropdown'
+import GroupDropdown from './toolbar/GroupDropdown'
+import ShareDropdown from './toolbar/ShareDropdown'
 
 export default function TableControls({
   globalFilter,
@@ -12,84 +16,55 @@ export default function TableControls({
   searchPlaceholder = 'Search...',
   entityName = 'campuses',
   columns,
+  sorting,
+  onSortingChange,
+  columnFilters,
+  onColumnFiltersChange,
 }) {
-  const [colPickerOpen, setColPickerOpen] = useState(false)
-  const colPickerRef = useRef(null)
-
-  useEffect(() => {
-    if (!colPickerOpen) return
-    function handleClick(e) {
-      if (colPickerRef.current && !colPickerRef.current.contains(e.target)) {
-        setColPickerOpen(false)
-      }
-    }
-    document.addEventListener('mousedown', handleClick)
-    return () => document.removeEventListener('mousedown', handleClick)
-  }, [colPickerOpen])
-
   return (
-    <div className="data-filter-bar">
-      <input
-        className="search-input"
-        type="text"
-        placeholder={searchPlaceholder}
-        value={globalFilter}
-        onChange={(e) => onGlobalFilterChange(e.target.value)}
-      />
+    <div className="data-toolbar">
+      <div className="data-toolbar-left">
+        <HideFieldsDropdown columns={columns} />
 
-      <select
-        className="styled-select"
-        value={groupBy}
-        onChange={(e) => onGroupByChange(e.target.value)}
-      >
-        <option value="">No grouping</option>
-        {groupByOptions.map(({ value, label }) => (
-          <option key={value} value={value}>
-            {label}
-          </option>
-        ))}
-      </select>
+        <FilterDropdown
+          columns={columns}
+          columnFilters={columnFilters}
+          onColumnFiltersChange={onColumnFiltersChange}
+        />
 
-      <span className="data-row-count">
-        {rowCount === totalCount
-          ? `${totalCount.toLocaleString()} ${entityName}`
-          : `${rowCount.toLocaleString()} of ${totalCount.toLocaleString()} ${entityName}`}
-      </span>
+        <GroupDropdown
+          groupBy={groupBy}
+          onGroupByChange={onGroupByChange}
+          groupByOptions={groupByOptions}
+        />
 
-      <button className="data-export-btn" onClick={onExport}>
-        Export CSV
-      </button>
+        <SortDropdown
+          columns={columns}
+          sorting={sorting}
+          onSortingChange={onSortingChange}
+        />
 
-      {columns && columns.length > 0 && (
-        <div className="col-picker" ref={colPickerRef}>
-          <button
-            className="col-picker-btn"
-            onClick={() => setColPickerOpen((o) => !o)}
-            title="Toggle columns"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="7" height="7"/>
-              <rect x="14" y="3" width="7" height="7"/>
-              <rect x="3" y="14" width="7" height="7"/>
-              <rect x="14" y="14" width="7" height="7"/>
-            </svg>
-          </button>
-          {colPickerOpen && (
-            <div className="col-picker-dropdown">
-              {columns.map((column) => (
-                <label key={column.id} className="col-picker-item">
-                  <input
-                    type="checkbox"
-                    checked={column.getIsVisible()}
-                    onChange={column.getToggleVisibilityHandler()}
-                  />
-                  {typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id}
-                </label>
-              ))}
-            </div>
-          )}
+        <ShareDropdown onExport={onExport} />
+      </div>
+
+      <div className="data-toolbar-right">
+        <span className="data-row-count">
+          {rowCount === totalCount
+            ? `${totalCount.toLocaleString()} ${entityName}`
+            : `${rowCount.toLocaleString()} of ${totalCount.toLocaleString()} ${entityName}`}
+        </span>
+
+        <div className="toolbar-search">
+          <svg className="toolbar-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input
+            className="toolbar-search-input"
+            type="text"
+            placeholder={searchPlaceholder}
+            value={globalFilter}
+            onChange={(e) => onGlobalFilterChange(e.target.value)}
+          />
         </div>
-      )}
+      </div>
     </div>
   )
 }
