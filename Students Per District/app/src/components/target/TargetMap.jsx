@@ -55,10 +55,39 @@ const INITIAL_VIEW = {
   zoom: 3.5,
 }
 
-export default function TargetMap({ rankedStates, hoveredState, onHoverState, campuses }) {
+export default function TargetMap({ rankedStates, hoveredState, onHoverState, campuses, selectedState, districtsMeta }) {
   const mapRef = useRef(null)
   const [viewState, setViewState] = useState(INITIAL_VIEW)
   const [tooltip, setTooltip] = useState(null)
+
+  /* ── Zoom to selected state ── */
+  useEffect(() => {
+    const map = mapRef.current?.getMap()
+    if (!map) return
+
+    if (!selectedState) {
+      // Reset to initial US view
+      map.flyTo({
+        center: [INITIAL_VIEW.longitude, INITIAL_VIEW.latitude],
+        zoom: INITIAL_VIEW.zoom,
+        duration: 800,
+      })
+      return
+    }
+
+    // Try stateBounds from districtsMeta first
+    const bounds = districtsMeta?.stateBounds?.[selectedState]
+    if (bounds && bounds.length === 4) {
+      map.fitBounds(
+        [[bounds[0], bounds[1]], [bounds[2], bounds[3]]],
+        { padding: 40, duration: 800, maxZoom: 8 },
+      )
+    } else if (STATE_CENTROIDS[selectedState]) {
+      // Fallback to centroid with zoom
+      const [lng, lat] = STATE_CENTROIDS[selectedState]
+      map.flyTo({ center: [lng, lat], zoom: 5.5, duration: 800 })
+    }
+  }, [selectedState, districtsMeta])
 
   /* ── Build state → data lookup ── */
   const stateDataMap = useMemo(() => {

@@ -220,19 +220,14 @@ export default function TargetView({ data, navigate, params }) {
       />
       <div className="target-dashboard">
         <div className="target-dashboard-left">
-          {selectedState && selectedStateData ? (
-            <StateDrillDown
-              stateData={selectedStateData}
-              onBack={handleBackToList}
-            />
-          ) : (
-            <CompactRankedList
-              rankedStates={filteredStates}
-              hoveredState={hoveredState}
-              onHoverState={setHoveredState}
-              onSelectState={handleSelectState}
-            />
-          )}
+          <CompactRankedList
+            rankedStates={filteredStates}
+            hoveredState={hoveredState}
+            onHoverState={setHoveredState}
+            onSelectState={handleSelectState}
+            selectedState={selectedState}
+            selectedStateData={selectedStateData}
+          />
         </div>
         <div className="target-dashboard-right">
           <div className="target-dashboard-chart">
@@ -251,6 +246,8 @@ export default function TargetView({ data, navigate, params }) {
               hoveredState={hoveredState}
               onHoverState={setHoveredState}
               campuses={data?.campuses}
+              selectedState={selectedState}
+              districtsMeta={data?.districtsMeta}
             />
           </div>
         </div>
