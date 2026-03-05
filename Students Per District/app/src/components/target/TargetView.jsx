@@ -1,7 +1,9 @@
 import { useState, useMemo, useCallback } from 'react'
 import ScoringPanel from './ScoringPanel'
 import TargetFiltersBar from './TargetFiltersBar'
-import TargetResultsTable from './TargetResultsTable'
+import CompactRankedList from './CompactRankedList'
+import QuadrantChart from './QuadrantChart'
+import TargetMap from './TargetMap'
 import useTargetScoring from '../../hooks/useTargetScoring'
 import { DEFAULT_ACQ_WEIGHTS, DEFAULT_CIVIC_WEIGHTS } from './scoringDefaults'
 import Toast from '../Toast'
@@ -29,6 +31,7 @@ export default function TargetView({ data, navigate, params }) {
     youngProfessionalPopMax: '',
   })
   const [scoringCollapsed, setScoringCollapsed] = useState(true)
+  const [hoveredState, setHoveredState] = useState(null)
   const [toast, setToast] = useState(null)
 
   const { rankedStates, medians } = useTargetScoring(data?.statesData, data?.campuses, config)
@@ -38,14 +41,10 @@ export default function TargetView({ data, navigate, params }) {
     let result = rankedStates
     if (filters.electionCycle) {
       const year = parseInt(filters.electionCycle)
-      result = result.filter((s) => {
-        return s.senator1NextElection === year || s.senator2NextElection === year
-      })
+      result = result.filter((s) => s.senator1NextElection === year || s.senator2NextElection === year)
     }
     if (filters.senatorParty) {
-      result = result.filter((s) => {
-        return s.senator1Party === filters.senatorParty || s.senator2Party === filters.senatorParty
-      })
+      result = result.filter((s) => s.senator1Party === filters.senatorParty || s.senator2Party === filters.senatorParty)
     }
     if (filters.tier) {
       result = result.filter((s) => s.tier === filters.tier)
@@ -53,7 +52,6 @@ export default function TargetView({ data, navigate, params }) {
     if (filters.quadrant) {
       result = result.filter((s) => s.quadrant === filters.quadrant)
     }
-    // Numeric range filters
     const numericFilters = [
       { key: 'ccEnrollment', min: filters.ccEnrollmentMin, max: filters.ccEnrollmentMax },
       { key: 'districtCount', min: filters.districtCountMin, max: filters.districtCountMax },
@@ -67,49 +65,18 @@ export default function TargetView({ data, navigate, params }) {
     return result
   }, [rankedStates, filters])
 
-  /* ── CSV export with score columns ── */
+  /* ── CSV export ── */
   const handleExport = useCallback(() => {
-    const headers = [
-      'State',
-      'Rank',
-      'Tier',
-      'Quadrant',
-      'Acquisition Score',
-      'Civic Leverage Score',
-      'Composite SVS',
-      'CC Enrollment',
-      'Young Professionals',
-      'Districts',
-    ]
-
+    const headers = ['State', 'Rank', 'Tier', 'Quadrant', 'Acquisition Score', 'Political Change Score', 'Composite SVS', 'CC Enrollment', 'Young Professionals', 'Districts']
     function csvEscape(val) {
       if (val == null) return ''
       const s = String(val)
-      return s.includes(',') || s.includes('"') || s.includes('\n')
-        ? `"${s.replace(/"/g, '""')}"` : s
+      return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s.replace(/"/g, '""')}"` : s
     }
-
     const lines = [headers.map(csvEscape).join(',')]
-
     filteredStates.forEach((s) => {
-      lines.push(
-        [
-          s.code,
-          s.rank,
-          s.tier,
-          s.quadrant,
-          s.acqScore,
-          s.civicScore,
-          s.composite,
-          s.ccEnrollment,
-          s.youngProfessionalPop || 0,
-          s.districtCount,
-        ]
-          .map(csvEscape)
-          .join(',')
-      )
+      lines.push([s.code, s.rank, s.tier, s.quadrant, s.acqScore, s.civicScore, s.composite, s.ccEnrollment, s.youngProfessionalPop || 0, s.districtCount].map(csvEscape).join(','))
     })
-
     const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -119,6 +86,14 @@ export default function TargetView({ data, navigate, params }) {
     URL.revokeObjectURL(url)
     setToast('CSV exported')
   }, [filteredStates])
+
+  /* ── Select state → navigate to map ── */
+  const handleSelectState = useCallback(
+    (code) => {
+      navigate('map', 'states', { state: code })
+    },
+    [navigate],
+  )
 
   if (data?.loading) return null
 
@@ -138,12 +113,33 @@ export default function TargetView({ data, navigate, params }) {
         totalCount={rankedStates.length}
         onExport={handleExport}
       />
-      <TargetResultsTable
-        rankedStates={filteredStates}
-        navigate={navigate}
-        districtsMeta={data?.districtsMeta}
-        campuses={data?.campuses}
-      />
+      <div className="target-dashboard">
+        <div className="target-dashboard-left">
+          <CompactRankedList
+            rankedStates={filteredStates}
+            hoveredState={hoveredState}
+            onHoverState={setHoveredState}
+            onSelectState={handleSelectState}
+          />
+        </div>
+        <div className="target-dashboard-right">
+          <div className="target-dashboard-chart">
+            <QuadrantChart
+              rankedStates={filteredStates}
+              medians={medians}
+              hoveredState={hoveredState}
+              onHoverState={setHoveredState}
+            />
+          </div>
+          <div className="target-dashboard-map">
+            <TargetMap
+              rankedStates={filteredStates}
+              hoveredState={hoveredState}
+              onHoverState={setHoveredState}
+            />
+          </div>
+        </div>
+      </div>
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>
   )

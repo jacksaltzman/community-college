@@ -289,9 +289,9 @@ export default function ScoringPanel({ config, onConfigChange, collapsed, onTogg
               />
             </div>
 
-            {/* ── Civic Leverage Score column ── */}
+            {/* ── Political Change Score column ── */}
             <div className="scoring-column">
-              <h3 className="scoring-column-header">Civic Leverage Score</h3>
+              <h3 className="scoring-column-header">Political Change Score</h3>
               {DIMENSIONS.map((dim) => (
                 <DimensionRow
                   key={dim.id}

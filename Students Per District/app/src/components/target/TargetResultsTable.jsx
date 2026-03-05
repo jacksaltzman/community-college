@@ -128,7 +128,7 @@ export default function TargetResultsTable({ rankedStates, navigate, districtsMe
             <th className="target-ranked-th">Tier</th>
             <th className="target-ranked-th">Quadrant</th>
             <th className="target-ranked-th">Acquisition Score</th>
-            <th className="target-ranked-th">Civic Leverage Score</th>
+            <th className="target-ranked-th">Political Change Score</th>
             <th className="target-ranked-th">Composite SVS</th>
             <th className="target-ranked-th num">CC Enrollment</th>
             <th className="target-ranked-th num">Young Professionals</th>
