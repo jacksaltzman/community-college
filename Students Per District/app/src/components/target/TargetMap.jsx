@@ -62,30 +62,29 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState, ca
 
   /* ── Zoom to selected state ── */
   useEffect(() => {
-    const map = mapRef.current?.getMap()
-    if (!map) return
-
     if (!selectedState) {
-      // Reset to initial US view
-      map.flyTo({
-        center: [INITIAL_VIEW.longitude, INITIAL_VIEW.latitude],
-        zoom: INITIAL_VIEW.zoom,
-        duration: 800,
+      setViewState((prev) => {
+        // Only reset if we're not already at initial view
+        if (Math.abs(prev.zoom - INITIAL_VIEW.zoom) < 0.1) return prev
+        return { ...prev, longitude: INITIAL_VIEW.longitude, latitude: INITIAL_VIEW.latitude, zoom: INITIAL_VIEW.zoom }
       })
       return
     }
 
-    // Try stateBounds from districtsMeta first
     const bounds = districtsMeta?.stateBounds?.[selectedState]
     if (bounds && bounds.length === 4) {
-      map.fitBounds(
-        [[bounds[0], bounds[1]], [bounds[2], bounds[3]]],
-        { padding: 40, duration: 800, maxZoom: 8 },
-      )
+      // Compute center and zoom from bounds
+      const cLng = (bounds[0] + bounds[2]) / 2
+      const cLat = (bounds[1] + bounds[3]) / 2
+      // Rough zoom from bounds span
+      const lngSpan = bounds[2] - bounds[0]
+      const latSpan = bounds[3] - bounds[1]
+      const maxSpan = Math.max(lngSpan, latSpan)
+      const zoom = Math.min(8, Math.max(3, Math.log2(360 / maxSpan) - 0.5))
+      setViewState({ longitude: cLng, latitude: cLat, zoom })
     } else if (STATE_CENTROIDS[selectedState]) {
-      // Fallback to centroid with zoom
       const [lng, lat] = STATE_CENTROIDS[selectedState]
-      map.flyTo({ center: [lng, lat], zoom: 5.5, duration: 800 })
+      setViewState({ longitude: lng, latitude: lat, zoom: 5.5 })
     }
   }, [selectedState, districtsMeta])
 
@@ -310,55 +309,12 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState, ca
           />
         </Source>
 
-        {/* ── Campus dots (clustered, sized by enrollment) ── */}
+        {/* ── Campus dots (individual, sized by enrollment) ── */}
         {campuses && (
-          <Source
-            id="target-campuses"
-            type="geojson"
-            data={campuses}
-            cluster={true}
-            clusterMaxZoom={9}
-            clusterRadius={50}
-          >
-            {/* Cluster circles */}
-            <Layer
-              id="target-campus-clusters"
-              type="circle"
-              filter={['has', 'point_count']}
-              paint={{
-                'circle-color': '#4C6971',
-                'circle-radius': [
-                  'step', ['get', 'point_count'],
-                  12, 10,
-                  16, 30,
-                  20, 100,
-                  24,
-                ],
-                'circle-stroke-width': 1.5,
-                'circle-stroke-color': 'rgba(255,255,255,0.7)',
-                'circle-opacity': 0.75,
-              }}
-            />
-            {/* Cluster count labels */}
-            <Layer
-              id="target-campus-cluster-count"
-              type="symbol"
-              filter={['has', 'point_count']}
-              layout={{
-                'text-field': '{point_count_abbreviated}',
-                'text-font': ['DIN Pro Medium', 'Arial Unicode MS Bold'],
-                'text-size': 10,
-                'text-allow-overlap': true,
-              }}
-              paint={{
-                'text-color': '#ffffff',
-              }}
-            />
-            {/* Individual campus points */}
+          <Source id="target-campuses" type="geojson" data={campuses}>
             <Layer
               id="target-campus-points"
               type="circle"
-              filter={['!', ['has', 'point_count']]}
               paint={{
                 'circle-color': '#4C6971',
                 'circle-radius': [
