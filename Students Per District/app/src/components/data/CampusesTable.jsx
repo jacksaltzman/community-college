@@ -108,7 +108,7 @@ export default function CampusesTable({ campuses, navigate, params }) {
         id: 'enrollment',
         accessorKey: 'enrollment',
         header: 'Enrollment',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, aggregate: 'sum' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => numFmt.format(getValue()),
         sortDescFirst: true,
@@ -135,7 +135,7 @@ export default function CampusesTable({ campuses, navigate, params }) {
         id: 'radius_miles',
         accessorKey: 'radius_miles',
         header: 'Radius',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, aggregate: 'avg' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => `${getValue()} mi`,
         sortDescFirst: true,
@@ -144,7 +144,7 @@ export default function CampusesTable({ campuses, navigate, params }) {
         id: 'districts_reached',
         accessorKey: 'districts_reached',
         header: 'Districts',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, aggregate: 'avg' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => numFmt.format(getValue()),
         sortDescFirst: true,
@@ -159,7 +159,7 @@ export default function CampusesTable({ campuses, navigate, params }) {
         id: 'primary_district_coverage',
         accessorKey: 'primary_district_coverage',
         header: 'Coverage',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, aggregate: 'avg' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -246,6 +246,31 @@ export default function CampusesTable({ campuses, navigate, params }) {
     if (groupBy) return sortedRows
     return sortedRows.slice(0, visibleCount)
   }, [groupBy, sortedRows, visibleCount])
+
+  const footerSummary = useMemo(() => {
+    const cols = table.getAllLeafColumns()
+    const rows = filteredRows
+    if (!rows.length) return null
+
+    return cols.map((col) => {
+      const agg = col.columnDef.meta?.aggregate
+      if (!agg) return { id: col.id, value: null }
+
+      const values = rows
+        .map((r) => r.getValue(col.id))
+        .filter((v) => v != null && !isNaN(v))
+
+      if (!values.length) return { id: col.id, value: null }
+
+      if (agg === 'sum') {
+        return { id: col.id, label: 'Sum', value: values.reduce((a, b) => a + b, 0), agg }
+      }
+      if (agg === 'avg') {
+        return { id: col.id, label: 'Avg', value: values.reduce((a, b) => a + b, 0) / values.length, agg }
+      }
+      return { id: col.id, value: null }
+    })
+  }, [filteredRows, table])
 
   const hasMore = !groupBy && visibleCount < sortedRows.length
 
@@ -472,7 +497,11 @@ export default function CampusesTable({ campuses, navigate, params }) {
                         <DraggableHeader
                           key={header.id}
                           header={header}
-                          className={isNum ? 'num' : ''}
+                          className={[
+                            isNum ? 'num' : '',
+                            header.column.getIsSorted() ? 'th-sorted' : '',
+                            header.column.getIsFiltered() ? 'th-filtered' : '',
+                          ].filter(Boolean).join(' ')}
                         >
                           <span className="th-content" onClick={header.column.getToggleSortingHandler()}>
                             {flexRender(header.column.columnDef.header, header.getContext())}
@@ -486,6 +515,32 @@ export default function CampusesTable({ campuses, navigate, params }) {
               </SortableContext>
             </thead>
             {renderBody()}
+            {footerSummary && (
+              <tfoot>
+                <tr>
+                  {footerSummary.map((col) => {
+                    const colDef = table.getColumn(col.id)?.columnDef
+                    const isNum = colDef?.meta?.isNumeric
+                    return (
+                      <td key={col.id} className={isNum ? 'num' : ''}>
+                        {col.value != null && (
+                          <>
+                            <span className="footer-label">{col.label}</span>
+                            <span className="footer-value">
+                              {col.agg === 'sum'
+                                ? numFmt.format(Math.round(col.value))
+                                : col.id === 'primary_district_coverage'
+                                  ? `${(col.value * 100).toFixed(1)}%`
+                                  : col.value.toFixed(1)}
+                            </span>
+                          </>
+                        )}
+                      </td>
+                    )
+                  })}
+                </tr>
+              </tfoot>
+            )}
           </table>
         </DndContext>
       </div>
