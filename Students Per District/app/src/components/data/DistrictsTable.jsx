@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-table'
 import TableControls from './TableControls'
 import ColumnFilterPopover from './ColumnFilterPopover'
+import SourceFootnote from './SourceFootnote'
 import { numericRangeFilter, makeGlobalSearchFilter } from './tableFilters'
 import Toast from '../Toast'
 
@@ -17,12 +18,13 @@ const INITIAL_VISIBLE = 50
 const LOAD_MORE_COUNT = 50
 
 const numFmt = new Intl.NumberFormat('en-US')
+const dollarFmt = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 })
 
 const globalSearchFilter = makeGlobalSearchFilter(['district', 'state', 'member', 'party', 'cookPVI'])
 
 /* ── Main Component ── */
 
-export default function DistrictsTable({ campuses, districtsMeta, navigate, params }) {
+export default function DistrictsTable({ campuses, districtsMeta, sources, navigate, params }) {
   const [globalFilter, setGlobalFilter] = useState(params?.district || params?.state || '')
   const [sorting, setSorting] = useState([{ id: 'enrollment', desc: true }])
   const [columnFilters, setColumnFilters] = useState([])
@@ -50,6 +52,10 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
         cook_pvi: d.cook_pvi || '',
         member: d.member || '',
         party: d.party || '',
+        median_income: d.median_income ?? null,
+        poverty_rate: d.poverty_rate ?? null,
+        pct_associates_plus: d.pct_associates_plus ?? null,
+        pct_18_24: d.pct_18_24 ?? null,
       }
     })
     return lookup
@@ -83,6 +89,10 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
         cookPVI: info.cook_pvi || '',
         member: info.member || '',
         party: info.party || '',
+        medianIncome: info.median_income,
+        povertyRate: info.poverty_rate,
+        pctAssociatesPlus: info.pct_associates_plus,
+        pct1824: info.pct_18_24,
       }
     })
   }, [campuses, districtLookup])
@@ -94,6 +104,7 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
         id: 'district',
         accessorKey: 'district',
         header: 'District',
+        meta: { fieldKey: 'districts_reached' },
         filterFn: 'includesString',
         cell: ({ getValue }) => {
           const cd = getValue()
@@ -121,7 +132,7 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
         id: 'enrollment',
         accessorKey: 'enrollment',
         header: 'Enrollment',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, fieldKey: 'enrollment' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => numFmt.format(getValue()),
         sortDescFirst: true,
@@ -139,6 +150,7 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
         id: 'cookPVI',
         header: 'Cook PVI',
         accessorKey: 'cookPVI',
+        meta: { fieldKey: 'cook_pvi' },
         filterFn: 'includesString',
         cell: ({ getValue }) => getValue() || '\u2014',
         sortingFn: (rowA, rowB) => {
@@ -155,6 +167,7 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
         id: 'member',
         header: 'Representative',
         accessorKey: 'member',
+        meta: { fieldKey: 'member' },
         filterFn: 'includesString',
         cell: ({ getValue }) => getValue() || '\u2014',
       },
@@ -162,8 +175,57 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
         id: 'party',
         header: 'Party',
         accessorKey: 'party',
+        meta: { fieldKey: 'party' },
         filterFn: 'includesString',
         cell: ({ getValue }) => getValue() || '\u2014',
+      },
+      {
+        id: 'medianIncome',
+        accessorKey: 'medianIncome',
+        header: 'Median Income',
+        meta: { isNumeric: true, fieldKey: 'median_income' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? dollarFmt.format(v) : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'povertyRate',
+        accessorKey: 'povertyRate',
+        header: 'Poverty Rate',
+        meta: { isNumeric: true, fieldKey: 'poverty_rate' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? `${v.toFixed(1)}%` : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'pctAssociatesPlus',
+        accessorKey: 'pctAssociatesPlus',
+        header: "% Associate's+",
+        meta: { isNumeric: true, fieldKey: 'pct_associates_plus' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? `${v.toFixed(1)}%` : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'pct1824',
+        accessorKey: 'pct1824',
+        header: '% Age 18-24',
+        meta: { isNumeric: true, fieldKey: 'pct_18_24' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? `${v.toFixed(1)}%` : '\u2014'
+        },
+        sortDescFirst: true,
       },
     ],
     [navigate],
@@ -210,6 +272,10 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
       'Cook PVI',
       'Representative',
       'Party',
+      'Median Income',
+      'Poverty Rate (%)',
+      "% Associate's+",
+      '% Age 18-24',
     ]
     const notes = [
       'Congressional district code',
@@ -219,6 +285,10 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
       '2022 Cook Partisan Voter Index',
       'Current U.S. Representative',
       'Party affiliation (R/D)',
+      'Median household income (ACS 2023 5-Year)',
+      'Poverty rate (ACS 2023 5-Year)',
+      "Pct of adults 25+ with associate's degree or higher (ACS 2023 5-Year)",
+      'Pct of population aged 18-24 (ACS 2023 5-Year)',
     ]
 
     function csvEscape(val) {
@@ -247,6 +317,10 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
           d.cookPVI,
           d.member,
           d.party,
+          d.medianIncome != null ? d.medianIncome : '',
+          d.povertyRate != null ? d.povertyRate : '',
+          d.pctAssociatesPlus != null ? d.pctAssociatesPlus : '',
+          d.pct1824 != null ? d.pct1824 : '',
         ]
           .map(csvEscape)
           .join(','),
@@ -297,6 +371,7 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header, idx) => {
                   const isNum = header.column.columnDef.meta?.isNumeric
+                  const fieldKey = header.column.columnDef.meta?.fieldKey
                   const alignRight = idx >= headerGroup.headers.length - 3
                   return (
                     <th
@@ -307,6 +382,7 @@ export default function DistrictsTable({ campuses, districtsMeta, navigate, para
                       <span className="th-content">
                         {flexRender(header.column.columnDef.header, header.getContext())}
                         {sortIcon(header.column)}
+                        {fieldKey && <SourceFootnote fieldKey={fieldKey} sources={sources} />}
                         <ColumnFilterPopover
                           column={header.column}
                           isNumeric={!!isNum}

@@ -159,6 +159,11 @@
   color: var(--black);
 }
 
+/* ── Draggable Column Headers ── */
+.data-table th[style*="cursor: grab"] {
+  touch-action: none;
+}
+
 .data-table td {
   font-family: var(--font-body);
   font-size: 13px;
@@ -541,4 +546,73 @@
   accent-color: var(--teal);
   width: 14px;
   height: 14px;
+}
+
+/* ── Source Footnote ── */
+.source-footnote {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+.source-footnote-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  color: var(--gray-lighter);
+  border-radius: 50%;
+  transition: color 0.15s;
+  flex-shrink: 0;
+}
+.source-footnote-btn:hover {
+  color: var(--teal);
+}
+.source-footnote-pop {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 60;
+  background: white;
+  border: 1px solid var(--border-main);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+  padding: 12px 14px;
+  min-width: 240px;
+  max-width: 320px;
+  margin-top: 6px;
+}
+.source-footnote-name {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+.source-footnote-detail {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--gray-body);
+  margin-bottom: 3px;
+}
+.source-footnote-label {
+  font-weight: 600;
+  color: var(--gray-muted);
+}
+.source-footnote-link {
+  display: inline-block;
+  margin-top: 6px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--teal);
+  text-decoration: none;
+  font-weight: 500;
+}
+.source-footnote-link:hover {
+  text-decoration: underline;
 }

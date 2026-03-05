@@ -5,6 +5,7 @@ export function useMapData() {
     campuses: null,
     districtsMeta: null,
     statesData: null,
+    sources: null,
     loading: true,
     error: null,
   })
@@ -27,10 +28,21 @@ export function useMapData() {
           /* states.json optional */
         }
 
+        let sources = null
+        try {
+          sources = await fetch('/data/sources.json').then((r) => {
+            if (!r.ok) return null
+            return r.json()
+          })
+        } catch (e) {
+          /* sources.json optional */
+        }
+
         setData({
           campuses,
           districtsMeta,
           statesData,
+          sources,
           loading: false,
           error: null,
         })

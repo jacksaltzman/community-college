@@ -1,0 +1,114 @@
+{
+  "sources": {
+    "ipeds_hd2023": {
+      "name": "Institutional Characteristics (HD2023)",
+      "provider": "IPEDS / NCES, U.S. Department of Education",
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/HD2023.zip",
+      "vintage": "2022-23",
+      "retrieved": "2026-03-02",
+      "description": "Campus name, city, state, coordinates, sector, locale code, highest level of offering"
+    },
+    "ipeds_effy2023": {
+      "name": "12-Month Enrollment (EFFY2023)",
+      "provider": "IPEDS / NCES, U.S. Department of Education",
+      "url": "https://nces.ed.gov/ipeds/datacenter/data/EFFY2023.zip",
+      "vintage": "2022-23",
+      "retrieved": "2026-03-02",
+      "description": "Unduplicated 12-month headcount enrollment (EFFYLEV=1, LSTUDY=999)"
+    },
+    "census_cd118": {
+      "name": "Congressional District Boundaries (CD118)",
+      "provider": "U.S. Census Bureau",
+      "url": "https://www2.census.gov/geo/tiger/GENZ2023/shp/cb_2023_us_cd118_500k.zip",
+      "vintage": "2023",
+      "retrieved": "2026-03-02",
+      "description": "118th Congress cartographic boundary shapefiles, coast-clipped, 1:500k resolution"
+    },
+    "npsas20": {
+      "name": "Student-to-Campus Distance (NPSAS:20)",
+      "provider": "NCES PowerStats",
+      "url": "https://nces.ed.gov/datalab/powerstats/",
+      "vintage": "2019-20",
+      "retrieved": "2026-03-02",
+      "description": "75th-percentile student-to-campus crow-flies distance by NCES locale code (retrieval code: swopse)"
+    },
+    "cook_pvi_2024": {
+      "name": "Cook Partisan Voter Index",
+      "provider": "The Cook Political Report",
+      "url": "https://www.cookpolitical.com/cook-pvi",
+      "vintage": "2024",
+      "retrieved": "2026-03-02",
+      "description": "Partisan lean of each congressional district based on the two most recent presidential elections"
+    },
+    "house_members_119": {
+      "name": "U.S. House Representatives (119th Congress)",
+      "provider": "Office of the Clerk, U.S. House of Representatives",
+      "url": "https://clerk.house.gov/members",
+      "vintage": "January 2025",
+      "retrieved": "2026-03-02",
+      "description": "Current representative name and party affiliation for each congressional district"
+    },
+    "acs5_2023_b19013": {
+      "name": "Median Household Income (B19013)",
+      "provider": "U.S. Census Bureau, American Community Survey 5-Year Estimates",
+      "url": "https://api.census.gov/data/2023/acs/acs5",
+      "vintage": "2023 (2019-2023)",
+      "retrieved": "2026-03-05",
+      "variable": "B19013_001E",
+      "geography": "Congressional District (118th Congress)",
+      "description": "Median household income in the past 12 months, inflation-adjusted to survey-year dollars"
+    },
+    "acs5_2023_b17001": {
+      "name": "Poverty Status (B17001)",
+      "provider": "U.S. Census Bureau, American Community Survey 5-Year Estimates",
+      "url": "https://api.census.gov/data/2023/acs/acs5",
+      "vintage": "2023 (2019-2023)",
+      "retrieved": "2026-03-05",
+      "variable": "B17001_001E (total), B17001_002E (below poverty)",
+      "geography": "Congressional District (118th Congress)",
+      "description": "Poverty rate computed as population below poverty level / total population for whom poverty status is determined"
+    },
+    "acs5_2023_b15003": {
+      "name": "Educational Attainment (B15003)",
+      "provider": "U.S. Census Bureau, American Community Survey 5-Year Estimates",
+      "url": "https://api.census.gov/data/2023/acs/acs5",
+      "vintage": "2023 (2019-2023)",
+      "retrieved": "2026-03-05",
+      "variable": "B15003_001E (total 25+), B15003_021E-025E (associate's through doctorate)",
+      "geography": "Congressional District (118th Congress)",
+      "description": "Percentage of population 25+ with an associate's degree or higher"
+    },
+    "acs5_2023_b01001": {
+      "name": "Age Distribution (B01001)",
+      "provider": "U.S. Census Bureau, American Community Survey 5-Year Estimates",
+      "url": "https://api.census.gov/data/2023/acs/acs5",
+      "vintage": "2023 (2019-2023)",
+      "retrieved": "2026-03-05",
+      "variable": "B01001_001E (total), B01001_007E-010E + B01001_031E-034E (male + female 18-24)",
+      "geography": "Congressional District (118th Congress)",
+      "description": "Percentage of total population aged 18-24"
+    }
+  },
+  "fieldMap": {
+    "institution_name": "ipeds_hd2023",
+    "campus_city": "ipeds_hd2023",
+    "campus_state": "ipeds_hd2023",
+    "campus_lat": "ipeds_hd2023",
+    "campus_lon": "ipeds_hd2023",
+    "locale_code": "ipeds_hd2023",
+    "campus_type": "npsas20",
+    "radius_miles": "npsas20",
+    "enrollment": "ipeds_effy2023",
+    "districts_reached": "census_cd118",
+    "primary_district": "census_cd118",
+    "primary_district_coverage": "census_cd118",
+    "all_districts": "census_cd118",
+    "cook_pvi": "cook_pvi_2024",
+    "member": "house_members_119",
+    "party": "house_members_119",
+    "median_income": "acs5_2023_b19013",
+    "poverty_rate": "acs5_2023_b17001",
+    "pct_associates_plus": "acs5_2023_b15003",
+    "pct_18_24": "acs5_2023_b01001"
+  }
+}

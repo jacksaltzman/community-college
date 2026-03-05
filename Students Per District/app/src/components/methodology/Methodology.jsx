@@ -1,10 +1,10 @@
-export default function Methodology({ subView }) {
+export default function Methodology({ subView, sources }) {
   return (
     <div className="page-scroll">
       <div className="methodology-content">
-        {subView === 'states' && <StateMethodology />}
-        {subView === 'districts' && <DistrictMethodology />}
-        {subView === 'campuses' && <CampusMethodology />}
+        {subView === 'states' && <StateMethodology sources={sources} />}
+        {subView === 'districts' && <DistrictMethodology sources={sources} />}
+        {subView === 'campuses' && <CampusMethodology sources={sources} />}
       </div>
     </div>
   )
@@ -46,11 +46,47 @@ function StateMethodology() {
   )
 }
 
-function DistrictMethodology() {
+function DistrictMethodology({ sources }) {
   return (
     <>
       <h1>Methodology: District-Level Data</h1>
       <p>This page describes the data sources and derivations behind the congressional district-level fields.</p>
+
+      {(() => {
+        const districtFieldKeys = ['cook_pvi', 'member', 'party', 'enrollment', 'median_income', 'poverty_rate', 'pct_associates_plus', 'pct_18_24']
+        const districtSources = []
+        const seen = new Set()
+        if (sources?.fieldMap && sources?.sources) {
+          for (const fk of districtFieldKeys) {
+            const sk = sources.fieldMap[fk]
+            if (sk && sources.sources[sk] && !seen.has(sk)) {
+              seen.add(sk)
+              districtSources.push(sources.sources[sk])
+            }
+          }
+        }
+        if (districtSources.length === 0) return null
+        return (
+          <>
+            <h2>Data Sources</h2>
+            <table>
+              <thead>
+                <tr><th>Source</th><th>Provider</th><th>Vintage</th><th>Retrieved</th></tr>
+              </thead>
+              <tbody>
+                {districtSources.map((s, i) => (
+                  <tr key={i}>
+                    <td><strong>{s.url ? <a href={s.url} target="_blank" rel="noopener noreferrer">{s.name}</a> : s.name}</strong></td>
+                    <td>{s.provider}</td>
+                    <td>{s.vintage}</td>
+                    <td>{s.retrieved || '\u2014'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )
+      })()}
 
       <h2>Congressional District Boundaries</h2>
       <p>District boundaries are sourced from the U.S. Census Bureau{'\u2019'}s 118th Congress cartographic boundary files (CB 2023 CD118 500k). These are coast-clipped shapefiles at 1:500,000 resolution, suitable for nationwide thematic mapping. The boundaries cover all 435 House districts plus 6 non-voting delegates (DC, PR, GU, AS, VI, MP).</p>
@@ -75,6 +111,38 @@ function DistrictMethodology() {
       <h2>District Enrollment &amp; Campus Count</h2>
       <p>District-level enrollment and campus count are derived from the campus-district intersection analysis (see Campus methodology). A campus is counted toward a district if its commute-shed circle overlaps the district by at least 1% of the district{'\u2019'}s area. Enrollment figures represent the sum of all campuses whose commute sheds reach the district.</p>
       <p>Because a single campus can reach multiple districts, the same campus{'\u2019'}s enrollment may be counted in more than one district. This is intentional{' \u2014 '}it reflects the reality that a campus{'\u2019'}s students may live and vote in multiple congressional districts.</p>
+
+      <h2>Census ACS Demographic Fields</h2>
+      <p>Four demographic fields are sourced from the U.S. Census Bureau{'\u2019'}s American Community Survey (ACS) 5-Year Estimates, 2023 vintage (covering the 2019{'\u2013'}2023 period). All values are pulled at the congressional district level (118th Congress boundaries) via the Census API.</p>
+
+      <table>
+        <thead>
+          <tr><th>Field</th><th>ACS Table</th><th>Computation</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Median Income</strong></td>
+            <td>B19013</td>
+            <td>Direct value from <code>B19013_001E</code> (median household income, inflation-adjusted)</td>
+          </tr>
+          <tr>
+            <td><strong>Poverty Rate</strong></td>
+            <td>B17001</td>
+            <td><code>B17001_002E</code> (below poverty) / <code>B17001_001E</code> (total) &times; 100</td>
+          </tr>
+          <tr>
+            <td><strong>% Associate{'\u2019'}s+</strong></td>
+            <td>B15003</td>
+            <td>Sum of <code>B15003_021E</code> through <code>B15003_025E</code> (associate{'\u2019'}s through doctorate) / <code>B15003_001E</code> (total 25+) &times; 100</td>
+          </tr>
+          <tr>
+            <td><strong>% Age 18-24</strong></td>
+            <td>B01001</td>
+            <td>Sum of <code>B01001_007E</code>{'\u2013'}<code>010E</code> + <code>B01001_031E</code>{'\u2013'}<code>034E</code> (male + female 18{'\u2013'}24) / <code>B01001_001E</code> (total) &times; 100</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>Census API values that are negative (sentinel codes for suppressed or unavailable data) are treated as null and displayed as {'\u201C'}{'\u2014'}{'\u201D'} in the table.</p>
 
       <h2>Map Coloring</h2>
       <p>On the map, districts are colored along a blue-to-red gradient based on their Cook PVI score. Strongly Democratic districts appear blue, strongly Republican districts appear red, and swing districts appear in neutral tones. This coloring uses a continuous interpolation rather than discrete buckets, so the color intensity reflects the magnitude of the partisan lean.</p>

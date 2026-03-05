@@ -112,6 +112,7 @@ export default function Layout({ page, subView, params, navigate, data }) {
                   campuses={data?.campuses}
                   navigate={navigate}
                   params={params}
+                  sources={data?.sources}
                 />
               )}
               {page === 'data' && subView === 'states' && (
@@ -120,6 +121,7 @@ export default function Layout({ page, subView, params, navigate, data }) {
                   statesData={data?.statesData}
                   navigate={navigate}
                   params={params}
+                  sources={data?.sources}
                 />
               )}
               {page === 'data' && subView === 'districts' && (
@@ -128,9 +130,10 @@ export default function Layout({ page, subView, params, navigate, data }) {
                   districtsMeta={data?.districtsMeta}
                   navigate={navigate}
                   params={params}
+                  sources={data?.sources}
                 />
               )}
-              {page === 'methodology' && <Methodology subView={subView} />}
+              {page === 'methodology' && <Methodology subView={subView} sources={data?.sources} />}
               {page === 'target' && (
                 <TargetView data={data} navigate={navigate} params={params} />
               )}
