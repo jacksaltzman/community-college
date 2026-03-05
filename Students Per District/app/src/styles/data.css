@@ -116,6 +116,33 @@
   border-bottom: 1px solid var(--border-light);
 }
 
+/* ── Expandable Group Headers ── */
+.data-table .col-group-expandable {
+  cursor: pointer;
+  user-select: none;
+}
+.data-table .col-group-expandable:hover {
+  background: #E8E5E0;
+}
+.data-table .col-group-chevron {
+  display: inline-block;
+  margin-left: 4px;
+  font-size: 8px;
+  vertical-align: middle;
+  opacity: 0.6;
+}
+.data-table .col-group-collapsed {
+  background: #FAFAF8;
+}
+.data-table .col-group-expand-trigger {
+  cursor: pointer;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+.data-table .col-group-expand-trigger:hover {
+  background: #E8E5E0;
+}
+
 .data-table td {
   font-family: var(--font-body);
   font-size: 13px;

@@ -29,6 +29,16 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE)
   const [columnVisibility, setColumnVisibility] = useState({})
   const [toast, setToast] = useState(null)
+  const [expandedGroups, setExpandedGroups] = useState(new Set())
+
+  const toggleGroup = useCallback((groupId) => {
+    setExpandedGroups(prev => {
+      const next = new Set(prev)
+      if (next.has(groupId)) next.delete(groupId)
+      else next.add(groupId)
+      return next
+    })
+  }, [])
 
   /* ── Sync global filter from URL params ── */
   useEffect(() => {
@@ -191,118 +201,138 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         },
         sortDescFirst: true,
       },
-      {
-        id: 'senator1Group',
-        header: 'Senator 1',
-        columns: [
-          {
-            id: 'senator1Name',
+      ...(expandedGroups.has('senator1Group')
+        ? [{
+            id: 'senator1Group',
+            header: 'Senator 1',
+            columns: [
+              {
+                id: 'senator1Name',
+                accessorKey: 'senator1',
+                header: 'Name',
+                filterFn: 'includesString',
+                cell: ({ getValue }) => getValue() || '\u2014',
+              },
+              {
+                id: 'senator1Party',
+                accessorKey: 'senator1Party',
+                header: 'Party',
+                filterFn: 'includesString',
+                cell: ({ getValue }) => getValue() || '\u2014',
+                size: 60,
+              },
+              {
+                id: 'senator1LastMargin',
+                accessorKey: 'senator1LastMargin',
+                header: 'Margin',
+                meta: { isNumeric: true },
+                filterFn: numericRangeFilter,
+                cell: ({ getValue }) => {
+                  const v = getValue()
+                  return v != null ? `+${v}%` : '\u2014'
+                },
+                sortDescFirst: true,
+                size: 80,
+              },
+              {
+                id: 'senator1NextElection',
+                accessorKey: 'senator1NextElection',
+                header: 'Election',
+                meta: { isNumeric: true },
+                filterFn: numericRangeFilter,
+                cell: ({ getValue }) => getValue() ?? '\u2014',
+                size: 80,
+              },
+              {
+                id: 'senator1TaxCommittees',
+                accessorKey: 'senator1TaxCommittees',
+                header: 'Tax Cmte',
+                meta: { isNumeric: true },
+                filterFn: numericRangeFilter,
+                cell: ({ getValue }) => {
+                  const v = getValue()
+                  return v != null ? v : '\u2014'
+                },
+                sortDescFirst: true,
+                size: 80,
+              },
+            ],
+          }]
+        : [{
+            id: 'senator1Collapsed',
             accessorKey: 'senator1',
-            header: 'Name',
+            header: 'Senator 1',
             filterFn: 'includesString',
             cell: ({ getValue }) => getValue() || '\u2014',
-          },
-          {
-            id: 'senator1Party',
-            accessorKey: 'senator1Party',
-            header: 'Party',
-            filterFn: 'includesString',
-            cell: ({ getValue }) => getValue() || '\u2014',
-            size: 60,
-          },
-          {
-            id: 'senator1LastMargin',
-            accessorKey: 'senator1LastMargin',
-            header: 'Margin',
-            meta: { isNumeric: true },
-            filterFn: numericRangeFilter,
-            cell: ({ getValue }) => {
-              const v = getValue()
-              return v != null ? `+${v}%` : '\u2014'
-            },
-            sortDescFirst: true,
-            size: 80,
-          },
-          {
-            id: 'senator1NextElection',
-            accessorKey: 'senator1NextElection',
-            header: 'Election',
-            meta: { isNumeric: true },
-            filterFn: numericRangeFilter,
-            cell: ({ getValue }) => getValue() ?? '\u2014',
-            size: 80,
-          },
-          {
-            id: 'senator1TaxCommittees',
-            accessorKey: 'senator1TaxCommittees',
-            header: 'Tax Cmte',
-            meta: { isNumeric: true },
-            filterFn: numericRangeFilter,
-            cell: ({ getValue }) => {
-              const v = getValue()
-              return v != null ? v : '\u2014'
-            },
-            sortDescFirst: true,
-            size: 80,
-          },
-        ],
-      },
-      {
-        id: 'senator2Group',
-        header: 'Senator 2',
-        columns: [
-          {
-            id: 'senator2Name',
+            meta: { collapsedGroup: 'senator1Group' },
+          }]
+      ),
+      ...(expandedGroups.has('senator2Group')
+        ? [{
+            id: 'senator2Group',
+            header: 'Senator 2',
+            columns: [
+              {
+                id: 'senator2Name',
+                accessorKey: 'senator2',
+                header: 'Name',
+                filterFn: 'includesString',
+                cell: ({ getValue }) => getValue() || '\u2014',
+              },
+              {
+                id: 'senator2Party',
+                accessorKey: 'senator2Party',
+                header: 'Party',
+                filterFn: 'includesString',
+                cell: ({ getValue }) => getValue() || '\u2014',
+                size: 60,
+              },
+              {
+                id: 'senator2LastMargin',
+                accessorKey: 'senator2LastMargin',
+                header: 'Margin',
+                meta: { isNumeric: true },
+                filterFn: numericRangeFilter,
+                cell: ({ getValue }) => {
+                  const v = getValue()
+                  return v != null ? `+${v}%` : '\u2014'
+                },
+                sortDescFirst: true,
+                size: 80,
+              },
+              {
+                id: 'senator2NextElection',
+                accessorKey: 'senator2NextElection',
+                header: 'Election',
+                meta: { isNumeric: true },
+                filterFn: numericRangeFilter,
+                cell: ({ getValue }) => getValue() ?? '\u2014',
+                size: 80,
+              },
+              {
+                id: 'senator2TaxCommittees',
+                accessorKey: 'senator2TaxCommittees',
+                header: 'Tax Cmte',
+                meta: { isNumeric: true },
+                filterFn: numericRangeFilter,
+                cell: ({ getValue }) => {
+                  const v = getValue()
+                  return v != null ? v : '\u2014'
+                },
+                sortDescFirst: true,
+                size: 80,
+              },
+            ],
+          }]
+        : [{
+            id: 'senator2Collapsed',
             accessorKey: 'senator2',
-            header: 'Name',
+            header: 'Senator 2',
             filterFn: 'includesString',
             cell: ({ getValue }) => getValue() || '\u2014',
-          },
-          {
-            id: 'senator2Party',
-            accessorKey: 'senator2Party',
-            header: 'Party',
-            filterFn: 'includesString',
-            cell: ({ getValue }) => getValue() || '\u2014',
-            size: 60,
-          },
-          {
-            id: 'senator2LastMargin',
-            accessorKey: 'senator2LastMargin',
-            header: 'Margin',
-            meta: { isNumeric: true },
-            filterFn: numericRangeFilter,
-            cell: ({ getValue }) => {
-              const v = getValue()
-              return v != null ? `+${v}%` : '\u2014'
-            },
-            sortDescFirst: true,
-            size: 80,
-          },
-          {
-            id: 'senator2NextElection',
-            accessorKey: 'senator2NextElection',
-            header: 'Election',
-            meta: { isNumeric: true },
-            filterFn: numericRangeFilter,
-            cell: ({ getValue }) => getValue() ?? '\u2014',
-            size: 80,
-          },
-          {
-            id: 'senator2TaxCommittees',
-            accessorKey: 'senator2TaxCommittees',
-            header: 'Tax Cmte',
-            meta: { isNumeric: true },
-            filterFn: numericRangeFilter,
-            cell: ({ getValue }) => {
-              const v = getValue()
-              return v != null ? v : '\u2014'
-            },
-            sortDescFirst: true,
-            size: 80,
-          },
-        ],
-      },
+            meta: { collapsedGroup: 'senator2Group' },
+          }]
+      ),
       {
         id: 'adultPop18',
         accessorKey: 'adultPop18',
@@ -352,7 +382,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         sortDescFirst: true,
       },
     ],
-    [navigate],
+    [navigate, expandedGroups],
   )
 
   /* ── TanStack Table instance ── */
@@ -545,6 +575,37 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                       const leafHeader = header.subHeaders?.[0]
                       if (leafHeader) {
                         const isLeafNum = leafHeader.column.columnDef.meta?.isNumeric
+                        const placeholderCollapsedId = leafHeader.column.columnDef.meta?.collapsedGroup
+
+                        /* Collapsed senator column appearing as placeholder in group row */
+                        if (placeholderCollapsedId) {
+                          return (
+                            <th
+                              key={header.id}
+                              rowSpan={headerGroups.length}
+                              className="col-group-collapsed"
+                              onClick={leafHeader.column.getToggleSortingHandler()}
+                            >
+                              <span className="th-content">
+                                <span
+                                  className="col-group-expand-trigger"
+                                  onClick={(e) => { e.stopPropagation(); toggleGroup(placeholderCollapsedId) }}
+                                  title="Expand columns"
+                                >
+                                  {flexRender(leafHeader.column.columnDef.header, leafHeader.getContext())}
+                                  <span className="col-group-chevron">&#9656;</span>
+                                </span>
+                                {sortIcon(leafHeader.column)}
+                                <ColumnFilterPopover
+                                  column={leafHeader.column}
+                                  isNumeric={!!isLeafNum}
+                                  alignRight={false}
+                                />
+                              </span>
+                            </th>
+                          )
+                        }
+
                         return (
                           <th
                             key={header.id}
@@ -572,15 +633,48 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                       return null
                     }
 
-                    /* Group header: Senator 1, Senator 2 */
+                    /* Group header: Senator 1, Senator 2 (expanded) */
                     if (isGroupHeader) {
+                      const groupId = header.column.id
                       return (
                         <th
                           key={header.id}
                           colSpan={header.colSpan}
-                          className="col-group-th"
+                          className="col-group-th col-group-expandable"
+                          onClick={() => toggleGroup(groupId)}
                         >
                           {flexRender(header.column.columnDef.header, header.getContext())}
+                          <span className="col-group-chevron">&#9662;</span>
+                        </th>
+                      )
+                    }
+
+                    /* Collapsed senator column — show as leaf header with expand chevron */
+                    const collapsedGroupId = header.column.columnDef.meta?.collapsedGroup
+                    if (collapsedGroupId) {
+                      const isNum = header.column.columnDef.meta?.isNumeric
+                      return (
+                        <th
+                          key={header.id}
+                          className={`col-group-collapsed ${isNum ? 'num' : ''}`}
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          <span className="th-content">
+                            <span
+                              className="col-group-expand-trigger"
+                              onClick={(e) => { e.stopPropagation(); toggleGroup(collapsedGroupId) }}
+                              title="Expand columns"
+                            >
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                              <span className="col-group-chevron">&#9656;</span>
+                            </span>
+                            {sortIcon(header.column)}
+                            <ColumnFilterPopover
+                              column={header.column}
+                              isNumeric={!!isNum}
+                              alignRight={false}
+                            />
+                          </span>
                         </th>
                       )
                     }
