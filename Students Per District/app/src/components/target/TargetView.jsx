@@ -19,6 +19,14 @@ export default function TargetView({ data, navigate, params }) {
     senatorParty: '',
     tier: '',
     quadrant: '',
+    ccEnrollmentMin: '',
+    ccEnrollmentMax: '',
+    districtCountMin: '',
+    districtCountMax: '',
+    compositeMin: '',
+    compositeMax: '',
+    youngProfessionalPopMin: '',
+    youngProfessionalPopMax: '',
   })
   const [scoringCollapsed, setScoringCollapsed] = useState(true)
   const [toast, setToast] = useState(null)
@@ -45,6 +53,17 @@ export default function TargetView({ data, navigate, params }) {
     if (filters.quadrant) {
       result = result.filter((s) => s.quadrant === filters.quadrant)
     }
+    // Numeric range filters
+    const numericFilters = [
+      { key: 'ccEnrollment', min: filters.ccEnrollmentMin, max: filters.ccEnrollmentMax },
+      { key: 'districtCount', min: filters.districtCountMin, max: filters.districtCountMax },
+      { key: 'composite', min: filters.compositeMin, max: filters.compositeMax },
+      { key: 'youngProfessionalPop', min: filters.youngProfessionalPopMin, max: filters.youngProfessionalPopMax },
+    ]
+    numericFilters.forEach(({ key, min, max }) => {
+      if (min !== '') result = result.filter((s) => (s[key] || 0) >= Number(min))
+      if (max !== '') result = result.filter((s) => (s[key] || 0) <= Number(max))
+    })
     return result
   }, [rankedStates, filters])
 
@@ -114,6 +133,7 @@ export default function TargetView({ data, navigate, params }) {
       <TargetFiltersBar
         filters={filters}
         onFiltersChange={setFilters}
+        rankedStates={rankedStates}
         resultCount={filteredStates.length}
         totalCount={rankedStates.length}
         onExport={handleExport}
