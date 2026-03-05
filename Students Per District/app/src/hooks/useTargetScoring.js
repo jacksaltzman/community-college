@@ -98,9 +98,9 @@ export default function useTargetScoring(statesData, campuses, config) {
     const normAcq = normalizeWeights(acquisitionWeights)
     const normCivic = normalizeWeights(civicWeights)
 
-    /* ── 3. Collect state codes (skip _meta or non-state keys) ── */
+    /* ── 3. Collect state codes (skip _meta, non-state keys, and territories without scores) ── */
     const stateCodes = Object.keys(statesData).filter(
-      (k) => k !== '_meta' && k.length === 2
+      (k) => k !== '_meta' && k.length === 2 && statesData[k].civicEngagementScore !== undefined
     )
 
     /* ── 4. Compute custom field percentile ranks ── */

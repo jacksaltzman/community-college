@@ -172,7 +172,7 @@ export default function ScoringPanel({ config, onConfigChange, collapsed, onTogg
   }, [onConfigChange])
 
   return (
-    <div className="scoring-panel">
+    <div className={`scoring-panel${collapsed ? '' : ' open'}`}>
       {/* ── Header bar ── */}
       <div className="scoring-header" onClick={onToggleCollapsed}>
         <span className="scoring-title">Scoring Model</span>

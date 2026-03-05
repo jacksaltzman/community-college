@@ -432,6 +432,10 @@
   gap: 8px;
   flex-wrap: wrap;
 }
+.target-filters-right .styled-select {
+  width: auto;
+  min-width: 120px;
+}
 
 .target-filters-clear {
   background: none;
