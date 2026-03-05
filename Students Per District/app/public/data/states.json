@@ -47,7 +47,9 @@
     "eitcClaimsThousands": 422,
     "eitcParticipationRate": 79.2,
     "eitcUnclaimedRate": 20.8,
-    "urbanPopPct": 56.2
+    "urbanPopPct": 56.2,
+    "youngProfessionalPop": 1129287,
+    "collegeEnrollment": 314536
   },
   "AK": {
     "cookPVI": "R+9",
@@ -68,7 +70,9 @@
     "eitcClaimsThousands": 37,
     "eitcParticipationRate": 75.1,
     "eitcUnclaimedRate": 24.9,
-    "urbanPopPct": 65.5
+    "urbanPopPct": 65.5,
+    "youngProfessionalPop": 181846,
+    "collegeEnrollment": 36784
   },
   "AZ": {
     "cookPVI": "R+2",
@@ -89,7 +93,9 @@
     "eitcClaimsThousands": 491,
     "eitcParticipationRate": 78.6,
     "eitcUnclaimedRate": 21.4,
-    "urbanPopPct": 88.7
+    "urbanPopPct": 88.7,
+    "youngProfessionalPop": 1681429,
+    "collegeEnrollment": 448754
   },
   "AR": {
     "cookPVI": "R+17",
@@ -110,7 +116,9 @@
     "eitcClaimsThousands": 257,
     "eitcParticipationRate": 80.5,
     "eitcUnclaimedRate": 19.5,
-    "urbanPopPct": 53.5
+    "urbanPopPct": 53.5,
+    "youngProfessionalPop": 675103,
+    "collegeEnrollment": 160900
   },
   "CA": {
     "cookPVI": "D+14",
@@ -131,7 +139,9 @@
     "eitcClaimsThousands": 2400,
     "eitcParticipationRate": 77.4,
     "eitcUnclaimedRate": 22.6,
-    "urbanPopPct": 94.2
+    "urbanPopPct": 94.2,
+    "youngProfessionalPop": 9407442,
+    "collegeEnrollment": 2999042
   },
   "CO": {
     "cookPVI": "D+4",
@@ -152,7 +162,9 @@
     "eitcClaimsThousands": 287,
     "eitcParticipationRate": 77.3,
     "eitcUnclaimedRate": 22.7,
-    "urbanPopPct": 86.6
+    "urbanPopPct": 86.6,
+    "youngProfessionalPop": 1438747,
+    "collegeEnrollment": 378313
   },
   "CT": {
     "cookPVI": "D+7",
@@ -173,7 +185,9 @@
     "eitcClaimsThousands": 193,
     "eitcParticipationRate": 82.0,
     "eitcUnclaimedRate": 18.0,
-    "urbanPopPct": 87.4
+    "urbanPopPct": 87.4,
+    "youngProfessionalPop": 781268,
+    "collegeEnrollment": 254803
   },
   "DE": {
     "cookPVI": "D+7",
@@ -194,7 +208,9 @@
     "eitcClaimsThousands": 65,
     "eitcParticipationRate": 82.4,
     "eitcUnclaimedRate": 17.6,
-    "urbanPopPct": 83.0
+    "urbanPopPct": 83.0,
+    "youngProfessionalPop": 213380,
+    "collegeEnrollment": 64334
   },
   "FL": {
     "cookPVI": "R+3",
@@ -215,7 +231,9 @@
     "eitcClaimsThousands": 1900,
     "eitcParticipationRate": 82.0,
     "eitcUnclaimedRate": 18.0,
-    "urbanPopPct": 91.5
+    "urbanPopPct": 91.5,
+    "youngProfessionalPop": 4553112,
+    "collegeEnrollment": 1344978
   },
   "GA": {
     "cookPVI": "R+3",
@@ -236,7 +254,9 @@
     "eitcClaimsThousands": 962,
     "eitcParticipationRate": 82.1,
     "eitcUnclaimedRate": 17.9,
-    "urbanPopPct": 76.4
+    "urbanPopPct": 76.4,
+    "youngProfessionalPop": 2517033,
+    "collegeEnrollment": 696312
   },
   "HI": {
     "cookPVI": "D+15",
@@ -257,7 +277,9 @@
     "eitcClaimsThousands": 82,
     "eitcParticipationRate": 83.3,
     "eitcUnclaimedRate": 16.7,
-    "urbanPopPct": 90.9
+    "urbanPopPct": 90.9,
+    "youngProfessionalPop": 311313,
+    "collegeEnrollment": 87330
   },
   "ID": {
     "cookPVI": "R+19",
@@ -278,7 +300,9 @@
     "eitcClaimsThousands": 107,
     "eitcParticipationRate": 80.7,
     "eitcUnclaimedRate": 19.3,
-    "urbanPopPct": 67.2
+    "urbanPopPct": 67.2,
+    "youngProfessionalPop": 430965,
+    "collegeEnrollment": 121705
   },
   "IL": {
     "cookPVI": "D+7",
@@ -299,7 +323,9 @@
     "eitcClaimsThousands": 788,
     "eitcParticipationRate": 81.0,
     "eitcUnclaimedRate": 19.0,
-    "urbanPopPct": 87.2
+    "urbanPopPct": 87.2,
+    "youngProfessionalPop": 2868069,
+    "collegeEnrollment": 802926
   },
   "IN": {
     "cookPVI": "R+11",
@@ -320,7 +346,9 @@
     "eitcClaimsThousands": 454,
     "eitcParticipationRate": 83.3,
     "eitcUnclaimedRate": 16.7,
-    "urbanPopPct": 72.0
+    "urbanPopPct": 72.0,
+    "youngProfessionalPop": 1548037,
+    "collegeEnrollment": 399356
   },
   "IA": {
     "cookPVI": "R+6",
@@ -341,7 +369,9 @@
     "eitcClaimsThousands": 170,
     "eitcParticipationRate": 80.7,
     "eitcUnclaimedRate": 19.3,
-    "urbanPopPct": 60.2
+    "urbanPopPct": 60.2,
+    "youngProfessionalPop": 714753,
+    "collegeEnrollment": 200182
   },
   "KS": {
     "cookPVI": "R+10",
@@ -362,7 +392,9 @@
     "eitcClaimsThousands": 169,
     "eitcParticipationRate": 78.3,
     "eitcUnclaimedRate": 21.7,
-    "urbanPopPct": 71.2
+    "urbanPopPct": 71.2,
+    "youngProfessionalPop": 675413,
+    "collegeEnrollment": 192868
   },
   "KY": {
     "cookPVI": "R+16",
@@ -383,7 +415,9 @@
     "eitcClaimsThousands": 344,
     "eitcParticipationRate": 82.5,
     "eitcUnclaimedRate": 17.5,
-    "urbanPopPct": 56.2
+    "urbanPopPct": 56.2,
+    "youngProfessionalPop": 998462,
+    "collegeEnrollment": 246226
   },
   "LA": {
     "cookPVI": "R+12",
@@ -404,7 +438,9 @@
     "eitcClaimsThousands": 451,
     "eitcParticipationRate": 81.6,
     "eitcUnclaimedRate": 18.4,
-    "urbanPopPct": 72.6
+    "urbanPopPct": 72.6,
+    "youngProfessionalPop": 1044604,
+    "collegeEnrollment": 272426
   },
   "ME": {
     "cookPVI": "D+3",
@@ -425,7 +461,9 @@
     "eitcClaimsThousands": 78,
     "eitcParticipationRate": 85.2,
     "eitcUnclaimedRate": 14.8,
-    "urbanPopPct": 38.6
+    "urbanPopPct": 38.6,
+    "youngProfessionalPop": 275123,
+    "collegeEnrollment": 77808
   },
   "MD": {
     "cookPVI": "D+14",
@@ -446,7 +484,9 @@
     "eitcClaimsThousands": 359,
     "eitcParticipationRate": 82.2,
     "eitcUnclaimedRate": 17.8,
-    "urbanPopPct": 87.7
+    "urbanPopPct": 87.7,
+    "youngProfessionalPop": 1340442,
+    "collegeEnrollment": 428263
   },
   "MA": {
     "cookPVI": "D+15",
@@ -467,7 +507,9 @@
     "eitcClaimsThousands": 320,
     "eitcParticipationRate": 81.7,
     "eitcUnclaimedRate": 18.3,
-    "urbanPopPct": 92.0
+    "urbanPopPct": 92.0,
+    "youngProfessionalPop": 1662509,
+    "collegeEnrollment": 546227
   },
   "MI": {
     "cookPVI": "D+1",
@@ -488,7 +530,9 @@
     "eitcClaimsThousands": 664,
     "eitcParticipationRate": 82.8,
     "eitcUnclaimedRate": 17.2,
-    "urbanPopPct": 72.5
+    "urbanPopPct": 72.5,
+    "youngProfessionalPop": 2245020,
+    "collegeEnrollment": 620347
   },
   "MN": {
     "cookPVI": "D+1",
@@ -509,7 +553,9 @@
     "eitcClaimsThousands": 275,
     "eitcParticipationRate": 81.9,
     "eitcUnclaimedRate": 18.1,
-    "urbanPopPct": 72.4
+    "urbanPopPct": 72.4,
+    "youngProfessionalPop": 1248743,
+    "collegeEnrollment": 333549
   },
   "MS": {
     "cookPVI": "R+10",
@@ -530,7 +576,9 @@
     "eitcClaimsThousands": 319,
     "eitcParticipationRate": 80.2,
     "eitcUnclaimedRate": 19.8,
-    "urbanPopPct": 46.3
+    "urbanPopPct": 46.3,
+    "youngProfessionalPop": 659835,
+    "collegeEnrollment": 183969
   },
   "MO": {
     "cookPVI": "R+10",
@@ -551,7 +599,9 @@
     "eitcClaimsThousands": 415,
     "eitcParticipationRate": 79.3,
     "eitcUnclaimedRate": 20.7,
-    "urbanPopPct": 69.2
+    "urbanPopPct": 69.2,
+    "youngProfessionalPop": 1377219,
+    "collegeEnrollment": 354657
   },
   "MT": {
     "cookPVI": "R+11",
@@ -572,7 +622,9 @@
     "eitcClaimsThousands": 64,
     "eitcParticipationRate": 75.1,
     "eitcUnclaimedRate": 24.9,
-    "urbanPopPct": 53.0
+    "urbanPopPct": 53.0,
+    "youngProfessionalPop": 242049,
+    "collegeEnrollment": 59358
   },
   "NE": {
     "cookPVI": "R+12",
@@ -593,7 +645,9 @@
     "eitcClaimsThousands": 108,
     "eitcParticipationRate": 83.2,
     "eitcUnclaimedRate": 16.8,
-    "urbanPopPct": 69.2
+    "urbanPopPct": 69.2,
+    "youngProfessionalPop": 444750,
+    "collegeEnrollment": 131017
   },
   "NV": {
     "cookPVI": "D+1",
@@ -614,7 +668,9 @@
     "eitcClaimsThousands": 234,
     "eitcParticipationRate": 82.2,
     "eitcUnclaimedRate": 17.8,
-    "urbanPopPct": 94.1
+    "urbanPopPct": 94.1,
+    "youngProfessionalPop": 704949,
+    "collegeEnrollment": 165777
   },
   "NH": {
     "cookPVI": "D+1",
@@ -635,7 +691,9 @@
     "eitcClaimsThousands": 57,
     "eitcParticipationRate": 80.0,
     "eitcUnclaimedRate": 20.0,
-    "urbanPopPct": 57.3
+    "urbanPopPct": 57.3,
+    "youngProfessionalPop": 297571,
+    "collegeEnrollment": 83582
   },
   "NJ": {
     "cookPVI": "D+6",
@@ -656,7 +714,9 @@
     "eitcClaimsThousands": 519,
     "eitcParticipationRate": 81.1,
     "eitcUnclaimedRate": 18.9,
-    "urbanPopPct": 93.8
+    "urbanPopPct": 93.8,
+    "youngProfessionalPop": 1965479,
+    "collegeEnrollment": 597751
   },
   "NM": {
     "cookPVI": "D+4",
@@ -677,7 +737,9 @@
     "eitcClaimsThousands": 177,
     "eitcParticipationRate": 83.6,
     "eitcUnclaimedRate": 16.4,
-    "urbanPopPct": 72.4
+    "urbanPopPct": 72.4,
+    "youngProfessionalPop": 476379,
+    "collegeEnrollment": 133106
   },
   "NY": {
     "cookPVI": "D+10",
@@ -698,7 +760,9 @@
     "eitcClaimsThousands": 1400,
     "eitcParticipationRate": 83.7,
     "eitcUnclaimedRate": 16.3,
-    "urbanPopPct": 87.3
+    "urbanPopPct": 87.3,
+    "youngProfessionalPop": 4602367,
+    "collegeEnrollment": 1384207
   },
   "NC": {
     "cookPVI": "R+3",
@@ -719,7 +783,9 @@
     "eitcClaimsThousands": 786,
     "eitcParticipationRate": 79.7,
     "eitcUnclaimedRate": 20.3,
-    "urbanPopPct": 65.3
+    "urbanPopPct": 65.3,
+    "youngProfessionalPop": 2415163,
+    "collegeEnrollment": 682605
   },
   "ND": {
     "cookPVI": "R+17",
@@ -740,7 +806,9 @@
     "eitcClaimsThousands": 38,
     "eitcParticipationRate": 79.6,
     "eitcUnclaimedRate": 20.4,
-    "urbanPopPct": 57.1
+    "urbanPopPct": 57.1,
+    "youngProfessionalPop": 197172,
+    "collegeEnrollment": 59217
   },
   "OH": {
     "cookPVI": "R+6",
@@ -761,7 +829,9 @@
     "eitcClaimsThousands": 792,
     "eitcParticipationRate": 82.6,
     "eitcUnclaimedRate": 17.4,
-    "urbanPopPct": 77.3
+    "urbanPopPct": 77.3,
+    "youngProfessionalPop": 2596663,
+    "collegeEnrollment": 671575
   },
   "OK": {
     "cookPVI": "R+20",
@@ -782,7 +852,9 @@
     "eitcClaimsThousands": 308,
     "eitcParticipationRate": 79.1,
     "eitcUnclaimedRate": 20.9,
-    "urbanPopPct": 63.5
+    "urbanPopPct": 63.5,
+    "youngProfessionalPop": 929153,
+    "collegeEnrollment": 232088
   },
   "OR": {
     "cookPVI": "D+5",
@@ -803,7 +875,9 @@
     "eitcClaimsThousands": 218,
     "eitcParticipationRate": 78.4,
     "eitcUnclaimedRate": 21.6,
-    "urbanPopPct": 78.6
+    "urbanPopPct": 78.6,
+    "youngProfessionalPop": 955751,
+    "collegeEnrollment": 245716
   },
   "PA": {
     "cookPVI": "D+1",
@@ -824,7 +898,9 @@
     "eitcClaimsThousands": 784,
     "eitcParticipationRate": 82.8,
     "eitcUnclaimedRate": 17.2,
-    "urbanPopPct": 77.2
+    "urbanPopPct": 77.2,
+    "youngProfessionalPop": 2852592,
+    "collegeEnrollment": 797476
   },
   "RI": {
     "cookPVI": "D+10",
@@ -845,7 +921,9 @@
     "eitcClaimsThousands": 67,
     "eitcParticipationRate": 82.4,
     "eitcUnclaimedRate": 17.6,
-    "urbanPopPct": 90.2
+    "urbanPopPct": 90.2,
+    "youngProfessionalPop": 262097,
+    "collegeEnrollment": 93399
   },
   "SC": {
     "cookPVI": "R+8",
@@ -866,7 +944,9 @@
     "eitcClaimsThousands": 425,
     "eitcParticipationRate": 80.7,
     "eitcUnclaimedRate": 19.3,
-    "urbanPopPct": 66.9
+    "urbanPopPct": 66.9,
+    "youngProfessionalPop": 1146980,
+    "collegeEnrollment": 296613
   },
   "SD": {
     "cookPVI": "R+14",
@@ -887,7 +967,9 @@
     "eitcClaimsThousands": 51,
     "eitcParticipationRate": 82.3,
     "eitcUnclaimedRate": 17.7,
-    "urbanPopPct": 53.2
+    "urbanPopPct": 53.2,
+    "youngProfessionalPop": 197348,
+    "collegeEnrollment": 46728
   },
   "TN": {
     "cookPVI": "R+14",
@@ -908,7 +990,9 @@
     "eitcClaimsThousands": 538,
     "eitcParticipationRate": 82.0,
     "eitcUnclaimedRate": 18.0,
-    "urbanPopPct": 65.5
+    "urbanPopPct": 65.5,
+    "youngProfessionalPop": 1585987,
+    "collegeEnrollment": 382813
   },
   "TX": {
     "cookPVI": "R+5",
@@ -929,7 +1013,9 @@
     "eitcClaimsThousands": 2500,
     "eitcParticipationRate": 80.6,
     "eitcUnclaimedRate": 19.4,
-    "urbanPopPct": 84.1
+    "urbanPopPct": 84.1,
+    "youngProfessionalPop": 7142094,
+    "collegeEnrollment": 1863888
   },
   "UT": {
     "cookPVI": "R+13",
@@ -950,7 +1036,9 @@
     "eitcClaimsThousands": 153,
     "eitcParticipationRate": 75.4,
     "eitcUnclaimedRate": 24.6,
-    "urbanPopPct": 90.6
+    "urbanPopPct": 90.6,
+    "youngProfessionalPop": 872677,
+    "collegeEnrollment": 268046
   },
   "VT": {
     "cookPVI": "D+16",
@@ -971,7 +1059,9 @@
     "eitcClaimsThousands": 34,
     "eitcParticipationRate": 80.0,
     "eitcUnclaimedRate": 20.0,
-    "urbanPopPct": 35.1
+    "urbanPopPct": 35.1,
+    "youngProfessionalPop": 141753,
+    "collegeEnrollment": 47343
   },
   "VA": {
     "cookPVI": "D+3",
@@ -992,7 +1082,9 @@
     "eitcClaimsThousands": 512,
     "eitcParticipationRate": 82.2,
     "eitcUnclaimedRate": 17.8,
-    "urbanPopPct": 76.3
+    "urbanPopPct": 76.3,
+    "youngProfessionalPop": 1977398,
+    "collegeEnrollment": 604286
   },
   "WA": {
     "cookPVI": "D+7",
@@ -1013,7 +1105,9 @@
     "eitcClaimsThousands": 352,
     "eitcParticipationRate": 77.4,
     "eitcUnclaimedRate": 22.6,
-    "urbanPopPct": 84.0
+    "urbanPopPct": 84.0,
+    "youngProfessionalPop": 1829373,
+    "collegeEnrollment": 442395
   },
   "WV": {
     "cookPVI": "R+22",
@@ -1034,7 +1128,9 @@
     "eitcClaimsThousands": 126,
     "eitcParticipationRate": 85.1,
     "eitcUnclaimedRate": 14.9,
-    "urbanPopPct": 44.6
+    "urbanPopPct": 44.6,
+    "youngProfessionalPop": 368148,
+    "collegeEnrollment": 92386
   },
   "WI": {
     "cookPVI": "EVEN",
@@ -1055,7 +1151,9 @@
     "eitcClaimsThousands": 302,
     "eitcParticipationRate": 78.9,
     "eitcUnclaimedRate": 21.1,
-    "urbanPopPct": 68.3
+    "urbanPopPct": 68.3,
+    "youngProfessionalPop": 1284040,
+    "collegeEnrollment": 349476
   },
   "WY": {
     "cookPVI": "R+25",
@@ -1076,7 +1174,9 @@
     "eitcClaimsThousands": 31,
     "eitcParticipationRate": 78.6,
     "eitcUnclaimedRate": 21.4,
-    "urbanPopPct": 60.1
+    "urbanPopPct": 60.1,
+    "youngProfessionalPop": 125916,
+    "collegeEnrollment": 35392
   },
   "DC": {
     "cookPVI": "D+43",
@@ -1084,7 +1184,9 @@
     "senator1": "",
     "senator1Party": "",
     "senator2": "",
-    "senator2Party": ""
+    "senator2Party": "",
+    "youngProfessionalPop": 212270,
+    "collegeEnrollment": 58719
   },
   "AS": {
     "cookPVI": "",
@@ -1116,7 +1218,9 @@
     "senator1": "",
     "senator1Party": "",
     "senator2": "",
-    "senator2Party": ""
+    "senator2Party": "",
+    "youngProfessionalPop": 725856,
+    "collegeEnrollment": 233653
   },
   "VI": {
     "cookPVI": "",

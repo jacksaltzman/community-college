@@ -121,6 +121,8 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         eitcParticipationRate: stInfo.eitcParticipationRate ?? null,
         eitcUnclaimedRate: stInfo.eitcUnclaimedRate ?? null,
         urbanPopPct: stInfo.urbanPopPct ?? null,
+        youngProfessionalPop: stInfo.youngProfessionalPop ?? null,
+        collegeEnrollment: stInfo.collegeEnrollment ?? null,
       }
     })
   }, [campuses, statesData])
@@ -152,7 +154,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
       {
         id: 'enrollment',
         accessorKey: 'enrollment',
-        header: 'Total Enrollment',
+        header: 'CC Enrollment',
         meta: { isNumeric: true, fieldKey: 'state_enrollment' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => numFmt.format(getValue()),
@@ -398,6 +400,42 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
         },
         sortDescFirst: true,
       },
+      {
+        id: 'youngProfessionalPop',
+        accessorKey: 'youngProfessionalPop',
+        header: 'Young Professionals',
+        meta: { isNumeric: true, fieldKey: 'young_professional_pop' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? numFmt.format(v) : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'collegeEnrollment',
+        accessorKey: 'collegeEnrollment',
+        header: 'College Enrollment',
+        meta: { isNumeric: true, fieldKey: 'college_enrollment' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? numFmt.format(v) : '\u2014'
+        },
+        sortDescFirst: true,
+      },
+      {
+        id: 'urbanPopPct',
+        accessorKey: 'urbanPopPct',
+        header: 'Urban Pop %',
+        meta: { isNumeric: true, fieldKey: 'urban_pop_pct' },
+        filterFn: numericRangeFilter,
+        cell: ({ getValue }) => {
+          const v = getValue()
+          return v != null ? `${v.toFixed(1)}%` : '\u2014'
+        },
+        sortDescFirst: true,
+      },
     ],
     [navigate, expandedGroups],
   )
@@ -443,7 +481,7 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
   const handleExport = useCallback(() => {
     const headers = [
       'State',
-      'Total Enrollment',
+      'CC Enrollment',
       'Campus Count',
       'District Count',
       'Avg Districts Reached',
@@ -465,11 +503,13 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
       'EITC Claims (thousands)',
       'EITC Participation Rate (%)',
       'EITC Unclaimed Rate (%)',
+      'Young Professionals (18-34)',
+      'College Enrollment',
       'Urban Pop (%)',
     ]
     const notes = [
       'State abbreviation',
-      'Sum of enrollment across all campuses in state',
+      'Sum of community college enrollment across all campuses in state',
       'Number of community college campuses',
       'Number of unique congressional districts reached',
       'Average districts reached per campus',
@@ -491,6 +531,8 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
       'EITC claims in thousands',
       'EITC participation rate',
       'EITC unclaimed rate',
+      'Population aged 18-34 (ACS 2023 5-Year)',
+      'Total college/university enrollment (ACS 2023 5-Year)',
       'Urban population percentage',
     ]
 
@@ -536,6 +578,8 @@ export default function StatesTable({ campuses, statesData, sources, navigate, p
           d.eitcClaimsThousands ?? '',
           d.eitcParticipationRate ?? '',
           d.eitcUnclaimedRate ?? '',
+          d.youngProfessionalPop ?? '',
+          d.collegeEnrollment ?? '',
           d.urbanPopPct ?? '',
         ]
           .map(csvEscape)
