@@ -57,34 +57,31 @@ const INITIAL_VIEW = {
 
 export default function TargetMap({ rankedStates, hoveredState, onHoverState, onSelectState, campuses, selectedState, districtsMeta }) {
   const mapRef = useRef(null)
-  const [viewState, setViewState] = useState(INITIAL_VIEW)
   const [tooltip, setTooltip] = useState(null)
 
-  /* ── Zoom to selected state ── */
+  /* ── Fly to selected state (or reset) ── */
   useEffect(() => {
+    const map = mapRef.current?.getMap()
+    if (!map) return
+
     if (!selectedState) {
-      setViewState((prev) => {
-        // Only reset if we're not already at initial view
-        if (Math.abs(prev.zoom - INITIAL_VIEW.zoom) < 0.1) return prev
-        return { ...prev, longitude: INITIAL_VIEW.longitude, latitude: INITIAL_VIEW.latitude, zoom: INITIAL_VIEW.zoom }
+      map.flyTo({
+        center: [INITIAL_VIEW.longitude, INITIAL_VIEW.latitude],
+        zoom: INITIAL_VIEW.zoom,
+        duration: 600,
       })
       return
     }
 
     const bounds = districtsMeta?.stateBounds?.[selectedState]
     if (bounds && bounds.length === 4) {
-      // Compute center and zoom from bounds
-      const cLng = (bounds[0] + bounds[2]) / 2
-      const cLat = (bounds[1] + bounds[3]) / 2
-      // Rough zoom from bounds span
-      const lngSpan = bounds[2] - bounds[0]
-      const latSpan = bounds[3] - bounds[1]
-      const maxSpan = Math.max(lngSpan, latSpan)
-      const zoom = Math.min(8, Math.max(3, Math.log2(360 / maxSpan) - 0.5))
-      setViewState({ longitude: cLng, latitude: cLat, zoom })
+      map.fitBounds(
+        [[bounds[0], bounds[1]], [bounds[2], bounds[3]]],
+        { padding: 40, duration: 600, maxZoom: 8 },
+      )
     } else if (STATE_CENTROIDS[selectedState]) {
       const [lng, lat] = STATE_CENTROIDS[selectedState]
-      setViewState({ longitude: lng, latitude: lat, zoom: 5.5 })
+      map.flyTo({ center: [lng, lat], zoom: 5.5, duration: 600 })
     }
   }, [selectedState, districtsMeta])
 
@@ -244,7 +241,7 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState, on
       } catch (_) {}
     })
 
-    // Dim default place labels so our markers stand out
+    // Dim city labels so our markers stand out, but keep state labels visible
     ;[
       'settlement-major-label',
       'settlement-minor-label',
@@ -254,14 +251,23 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState, on
         map.setPaintProperty(id, 'text-opacity', 0.3)
       } catch (_) {}
     })
+
+    // Make state name labels more visible
+    ;[
+      'state-label',
+    ].forEach((id) => {
+      try {
+        map.setPaintProperty(id, 'text-opacity', 0.8)
+        map.setPaintProperty(id, 'text-color', '#333333')
+      } catch (_) {}
+    })
   }, [])
 
   return (
     <div className="target-map-wrap">
       <Map
         ref={mapRef}
-        {...viewState}
-        onMove={(evt) => setViewState(evt.viewState)}
+        initialViewState={INITIAL_VIEW}
         mapboxAccessToken={MAPBOX_TOKEN}
         mapStyle="mapbox://styles/mapbox/light-v11"
         projection="mercator"
