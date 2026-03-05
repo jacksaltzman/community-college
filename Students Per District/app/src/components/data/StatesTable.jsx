@@ -8,6 +8,7 @@ import {
 } from '@tanstack/react-table'
 import TableControls from './TableControls'
 import { numericRangeFilter, makeGlobalSearchFilter } from './tableFilters'
+import SourceFootnote from './SourceFootnote'
 import Toast from '../Toast'
 import {
   DndContext,
@@ -32,7 +33,7 @@ const globalSearchFilter = makeGlobalSearchFilter(['state', 'cookPVI', 'senator1
 
 /* ── Main Component ── */
 
-export default function StatesTable({ campuses, statesData, navigate, params }) {
+export default function StatesTable({ campuses, statesData, sources, navigate, params }) {
   const [globalFilter, setGlobalFilter] = useState(params?.state || '')
   const [sorting, setSorting] = useState([{ id: 'enrollment', desc: true }])
   const [columnFilters, setColumnFilters] = useState([])
@@ -152,7 +153,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         id: 'enrollment',
         accessorKey: 'enrollment',
         header: 'Total Enrollment',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, fieldKey: 'state_enrollment' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => numFmt.format(getValue()),
         sortDescFirst: true,
@@ -161,7 +162,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         id: 'campusCount',
         accessorKey: 'campusCount',
         header: 'Campus Count',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, fieldKey: 'state_campus_count' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => numFmt.format(getValue()),
         sortDescFirst: true,
@@ -170,7 +171,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         id: 'districtCount',
         accessorKey: 'districtCount',
         header: 'District Count',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, fieldKey: 'state_district_count' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => numFmt.format(getValue()),
         sortDescFirst: true,
@@ -179,7 +180,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         id: 'avgDistrictsReached',
         accessorKey: 'avgDistrictsReached',
         header: 'Avg Districts Reached',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, fieldKey: 'state_avg_districts_reached' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => getValue().toFixed(1),
         sortDescFirst: true,
@@ -188,6 +189,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         id: 'cookPVI',
         accessorKey: 'cookPVI',
         header: 'Cook PVI',
+        meta: { fieldKey: 'state_cook_pvi' },
         filterFn: 'includesString',
         cell: ({ getValue }) => getValue() || '\u2014',
         sortingFn: (rowA, rowB) => {
@@ -204,7 +206,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         id: 'midtermTurnout2022',
         accessorKey: 'midtermTurnout2022',
         header: '2022 Turnout',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, fieldKey: 'midterm_turnout_2022' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -221,6 +223,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                 id: 'senator1Name',
                 accessorKey: 'senator1',
                 header: 'Name',
+                meta: { fieldKey: 'senator_name' },
                 filterFn: 'includesString',
                 cell: ({ getValue }) => getValue() || '\u2014',
               },
@@ -228,6 +231,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                 id: 'senator1Party',
                 accessorKey: 'senator1Party',
                 header: 'Party',
+                meta: { fieldKey: 'senator_party' },
                 filterFn: 'includesString',
                 cell: ({ getValue }) => getValue() || '\u2014',
                 size: 60,
@@ -236,7 +240,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                 id: 'senator1LastMargin',
                 accessorKey: 'senator1LastMargin',
                 header: 'Margin',
-                meta: { isNumeric: true },
+                meta: { isNumeric: true, fieldKey: 'senator_last_margin' },
                 filterFn: numericRangeFilter,
                 cell: ({ getValue }) => {
                   const v = getValue()
@@ -249,7 +253,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                 id: 'senator1NextElection',
                 accessorKey: 'senator1NextElection',
                 header: 'Election',
-                meta: { isNumeric: true },
+                meta: { isNumeric: true, fieldKey: 'senator_next_election' },
                 filterFn: numericRangeFilter,
                 cell: ({ getValue }) => getValue() ?? '\u2014',
                 size: 80,
@@ -258,7 +262,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                 id: 'senator1TaxCommittees',
                 accessorKey: 'senator1TaxCommittees',
                 header: 'Tax Cmte',
-                meta: { isNumeric: true },
+                meta: { isNumeric: true, fieldKey: 'senator_tax_committees' },
                 filterFn: numericRangeFilter,
                 cell: ({ getValue }) => {
                   const v = getValue()
@@ -275,7 +279,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
             header: 'Senator 1',
             filterFn: 'includesString',
             cell: ({ getValue }) => getValue() || '\u2014',
-            meta: { collapsedGroup: 'senator1Group' },
+            meta: { collapsedGroup: 'senator1Group', fieldKey: 'senator_name' },
           }]
       ),
       ...(expandedGroups.has('senator2Group')
@@ -287,6 +291,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                 id: 'senator2Name',
                 accessorKey: 'senator2',
                 header: 'Name',
+                meta: { fieldKey: 'senator_name' },
                 filterFn: 'includesString',
                 cell: ({ getValue }) => getValue() || '\u2014',
               },
@@ -294,6 +299,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                 id: 'senator2Party',
                 accessorKey: 'senator2Party',
                 header: 'Party',
+                meta: { fieldKey: 'senator_party' },
                 filterFn: 'includesString',
                 cell: ({ getValue }) => getValue() || '\u2014',
                 size: 60,
@@ -302,7 +308,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                 id: 'senator2LastMargin',
                 accessorKey: 'senator2LastMargin',
                 header: 'Margin',
-                meta: { isNumeric: true },
+                meta: { isNumeric: true, fieldKey: 'senator_last_margin' },
                 filterFn: numericRangeFilter,
                 cell: ({ getValue }) => {
                   const v = getValue()
@@ -315,7 +321,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                 id: 'senator2NextElection',
                 accessorKey: 'senator2NextElection',
                 header: 'Election',
-                meta: { isNumeric: true },
+                meta: { isNumeric: true, fieldKey: 'senator_next_election' },
                 filterFn: numericRangeFilter,
                 cell: ({ getValue }) => getValue() ?? '\u2014',
                 size: 80,
@@ -324,7 +330,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                 id: 'senator2TaxCommittees',
                 accessorKey: 'senator2TaxCommittees',
                 header: 'Tax Cmte',
-                meta: { isNumeric: true },
+                meta: { isNumeric: true, fieldKey: 'senator_tax_committees' },
                 filterFn: numericRangeFilter,
                 cell: ({ getValue }) => {
                   const v = getValue()
@@ -341,14 +347,14 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
             header: 'Senator 2',
             filterFn: 'includesString',
             cell: ({ getValue }) => getValue() || '\u2014',
-            meta: { collapsedGroup: 'senator2Group' },
+            meta: { collapsedGroup: 'senator2Group', fieldKey: 'senator_name' },
           }]
       ),
       {
         id: 'adultPop18',
         accessorKey: 'adultPop18',
         header: 'Adult Pop (18+)',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, fieldKey: 'adult_pop_18' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -360,7 +366,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         id: 'totalFedTaxPaidB',
         accessorKey: 'totalFedTaxPaidB',
         header: 'Fed Tax Paid ($B)',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, fieldKey: 'total_fed_tax_paid' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -372,7 +378,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         id: 'eitcClaimsThousands',
         accessorKey: 'eitcClaimsThousands',
         header: 'EITC Claims (K)',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, fieldKey: 'eitc_claims' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -384,7 +390,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
         id: 'eitcUnclaimedRate',
         accessorKey: 'eitcUnclaimedRate',
         header: 'EITC Unclaimed',
-        meta: { isNumeric: true },
+        meta: { isNumeric: true, fieldKey: 'eitc_unclaimed_rate' },
         filterFn: numericRangeFilter,
         cell: ({ getValue }) => {
           const v = getValue()
@@ -619,6 +625,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
 
                             /* Collapsed senator column appearing as placeholder in group row */
                             if (placeholderCollapsedId) {
+                              const pfk = leafHeader.column.columnDef.meta?.fieldKey
                               return (
                                 <DraggableHeader
                                   key={header.id}
@@ -635,12 +642,14 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                                       {flexRender(leafHeader.column.columnDef.header, leafHeader.getContext())}
                                       <span className="col-group-toggle-icon">+</span>
                                     </span>
+                                    {pfk && <SourceFootnote fieldKey={pfk} sources={sources} />}
                                     {sortIcon(leafHeader.column)}
                                   </span>
                                 </DraggableHeader>
                               )
                             }
 
+                            const leafFieldKey = leafHeader.column.columnDef.meta?.fieldKey
                             return (
                               <DraggableHeader
                                 key={header.id}
@@ -650,6 +659,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                               >
                                 <span className="th-content" onClick={leafHeader.column.getToggleSortingHandler()}>
                                   {flexRender(leafHeader.column.columnDef.header, leafHeader.getContext())}
+                                  {leafFieldKey && <SourceFootnote fieldKey={leafFieldKey} sources={sources} />}
                                   {sortIcon(leafHeader.column)}
                                 </span>
                               </DraggableHeader>
@@ -683,6 +693,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                         const collapsedGroupId = header.column.columnDef.meta?.collapsedGroup
                         if (collapsedGroupId) {
                           const isNum = header.column.columnDef.meta?.isNumeric
+                          const cfk = header.column.columnDef.meta?.fieldKey
                           return (
                             <DraggableHeader
                               key={header.id}
@@ -698,6 +709,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                                   {flexRender(header.column.columnDef.header, header.getContext())}
                                   <span className="col-group-toggle-icon">+</span>
                                 </span>
+                                {cfk && <SourceFootnote fieldKey={cfk} sources={sources} />}
                                 {sortIcon(header.column)}
                               </span>
                             </DraggableHeader>
@@ -706,11 +718,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
 
                         /* Leaf header — sortable, filterable */
                         const isNum = header.column.columnDef.meta?.isNumeric
-                        const allLeafHeaders = headerGroups
-                          .flatMap(hg => hg.headers)
-                          .filter(h => !h.isPlaceholder && h.colSpan === 1)
-                        const leafIdx = allLeafHeaders.indexOf(header)
-                        const alignRight = leafIdx >= allLeafHeaders.length - 3
+                        const fieldKey = header.column.columnDef.meta?.fieldKey
 
                         return (
                           <DraggableHeader
@@ -720,6 +728,7 @@ export default function StatesTable({ campuses, statesData, navigate, params }) 
                           >
                             <span className="th-content" onClick={header.column.getToggleSortingHandler()}>
                               {flexRender(header.column.columnDef.header, header.getContext())}
+                              {fieldKey && <SourceFootnote fieldKey={fieldKey} sources={sources} />}
                               {sortIcon(header.column)}
                             </span>
                           </DraggableHeader>

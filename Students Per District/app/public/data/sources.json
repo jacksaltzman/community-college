@@ -87,6 +87,43 @@
       "variable": "B01001_001E (total), B01001_007E-010E + B01001_031E-034E (male + female 18-24)",
       "geography": "Congressional District (118th Congress)",
       "description": "Percentage of total population aged 18-24"
+    },
+    "derived_campus_aggregation": {
+      "name": "Derived: Aggregated from Campuses Tab",
+      "provider": "Computed from IPEDS campus-level data",
+      "vintage": "2022-23",
+      "description": "Sum or count aggregated across all community college campuses in each state. Campus enrollment from IPEDS EFFY2023; district reach from Census CD118 intersection analysis."
+    },
+    "us_elections_project_2022": {
+      "name": "2022 Midterm Voter Turnout",
+      "provider": "United States Elections Project / UF Election Lab",
+      "url": "https://www.electproject.org/2022g",
+      "vintage": "2022",
+      "retrieved": "2026-03-02",
+      "description": "Voting Eligible Population (VEP) turnout rate for the 2022 midterm elections by state"
+    },
+    "senate_gov_119": {
+      "name": "U.S. Senators (119th Congress)",
+      "provider": "U.S. Senate / Accountable 50-State Analysis v43.6",
+      "url": "https://www.senate.gov/senators/",
+      "vintage": "January 2025",
+      "retrieved": "2026-03-02",
+      "description": "Senator name, party, next election year, last election margin, and tax-relevant committee assignments"
+    },
+    "accountable_50state_eitc": {
+      "name": "EITC & Federal Tax Statistics",
+      "provider": "Accountable 50-State Analysis v43.6 (compiled from IRS Statistics of Income)",
+      "url": "https://www.irs.gov/statistics/soi-tax-stats-individual-income-tax-statistics",
+      "vintage": "2022 tax year",
+      "retrieved": "2026-03-02",
+      "description": "State-level EITC claims, participation rates, unclaimed rates, total filers, and total federal tax paid"
+    },
+    "accountable_50state_pop": {
+      "name": "Adult Population & Urbanization",
+      "provider": "Accountable 50-State Analysis v43.6 (compiled from U.S. Census Bureau)",
+      "vintage": "2020-2023",
+      "retrieved": "2026-03-02",
+      "description": "State-level adult population (18+) and urban population percentage"
     }
   },
   "fieldMap": {
@@ -109,6 +146,21 @@
     "median_income": "acs5_2023_b19013",
     "poverty_rate": "acs5_2023_b17001",
     "pct_associates_plus": "acs5_2023_b15003",
-    "pct_18_24": "acs5_2023_b01001"
+    "pct_18_24": "acs5_2023_b01001",
+    "state_enrollment": "derived_campus_aggregation",
+    "state_campus_count": "derived_campus_aggregation",
+    "state_district_count": "derived_campus_aggregation",
+    "state_avg_districts_reached": "derived_campus_aggregation",
+    "state_cook_pvi": "cook_pvi_2024",
+    "midterm_turnout_2022": "us_elections_project_2022",
+    "senator_name": "senate_gov_119",
+    "senator_party": "senate_gov_119",
+    "senator_next_election": "senate_gov_119",
+    "senator_last_margin": "senate_gov_119",
+    "senator_tax_committees": "senate_gov_119",
+    "adult_pop_18": "accountable_50state_pop",
+    "total_fed_tax_paid": "accountable_50state_eitc",
+    "eitc_claims": "accountable_50state_eitc",
+    "eitc_unclaimed_rate": "accountable_50state_eitc"
   }
 }
