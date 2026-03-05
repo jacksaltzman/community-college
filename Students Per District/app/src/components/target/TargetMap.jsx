@@ -55,7 +55,7 @@ const INITIAL_VIEW = {
   zoom: 3.5,
 }
 
-export default function TargetMap({ rankedStates, hoveredState, onHoverState, campuses, selectedState, districtsMeta }) {
+export default function TargetMap({ rankedStates, hoveredState, onHoverState, onSelectState, campuses, selectedState, districtsMeta }) {
   const mapRef = useRef(null)
   const [viewState, setViewState] = useState(INITIAL_VIEW)
   const [tooltip, setTooltip] = useState(null)
@@ -198,6 +198,26 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState, ca
     setTooltip(null)
   }, [onHoverState])
 
+  /* ── Click handler — select/deselect a state ── */
+  const handleClick = useCallback(
+    (e) => {
+      if (!onSelectState) return
+      const map = mapRef.current?.getMap()
+      if (!map) return
+
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: ['target-state-fill'],
+      })
+
+      if (features && features.length > 0) {
+        const stCode = features[0].properties.state
+        // Toggle: click same state again to deselect
+        onSelectState(selectedState === stCode ? null : stCode)
+      }
+    },
+    [onSelectState, selectedState],
+  )
+
   /* ── Basemap overrides on style load ── */
   const handleStyleLoad = useCallback(() => {
     const map = mapRef.current?.getMap()
@@ -248,6 +268,7 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState, ca
         onLoad={handleStyleLoad}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
+        onClick={handleClick}
         style={{ width: '100%', height: '100%' }}
         interactiveLayerIds={['target-state-fill']}
       >

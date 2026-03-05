@@ -22,7 +22,7 @@ function DimensionRow({ dim, weight, defaultWeight, onChange }) {
     if (enabled) {
       onChange(dim.id, 0)
     } else {
-      onChange(dim.id, prevWeightRef.current || defaultWeight)
+      onChange(dim.id, prevWeightRef.current || defaultWeight || 10)
     }
   }, [enabled, dim.id, defaultWeight, onChange])
 

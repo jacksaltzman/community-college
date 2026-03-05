@@ -5,22 +5,18 @@ export const DIMENSIONS = [
   { id: 'taxDensity', label: 'Tax Density', scoreKey: 'taxDensityScore', fields: ['totalFilers', 'totalFedTaxPaidB'], desc: 'Concentration of tax filing activity and federal tax revenue', formula: 'Min-max normalization of average federal tax paid per filer (Total Fed Tax Paid / Total Filers). Range: 0\u2013100.' },
   { id: 'eitcOpportunity', label: 'EITC Opportunity', scoreKey: 'eitcOpportunityScore', fields: ['eitcClaimsThousands', 'eitcParticipationRate', 'eitcUnclaimedRate'], desc: 'Potential for EITC outreach based on claims volume and unclaimed benefits', formula: '50% \u00d7 min-max(EITC claim rate) + 50% \u00d7 min-max(unclaimed rate). Equal blend of participation and opportunity.' },
   { id: 'urbanConcentration', label: 'Urban Concentration', scoreKey: 'urbanConcentrationScore', fields: ['urbanPopPct'], desc: 'Urban population share as a proxy for market accessibility', formula: 'Min-max normalization of Census 2020 urban population percentage. Range: 0\u2013100.' },
-  { id: 'filingComplexity', label: 'Filing Complexity', scoreKey: 'filingComplexityScore', fields: [], desc: 'Complexity of state tax filing requirements', formula: 'Tiered by state income tax type: no income tax = 0, flat rate = 50, graduated brackets = 100.' },
-  { id: 'digitalAdoption', label: 'Digital Adoption', scoreKey: 'digitalAdoptionScore', fields: [], desc: 'Digital readiness and technology adoption rates', formula: 'Min-max normalization of FDIC fully-banked household rate. Range: 0\u2013100.' },
   { id: 'youngProfConcentration', label: 'Young Prof Concentration', scoreKey: 'youngProfConcentrationScore', fields: ['youngProfessionalPop'], desc: 'Concentration of young professionals in the target demographic', formula: 'Min-max normalization of ACS 2023 BA+ rate among adults 25\u201334. Range: 0\u2013100.' },
   { id: 'competitiveDistrictDensity', label: 'Competitive District Density', scoreKey: 'competitiveDistrictDensityScore', fields: [], desc: 'Number of politically competitive congressional districts', formula: 'Min-max normalization of fraction of districts with Cook PVI within \u00b18. Range: 0\u2013100.' },
 ]
 
 export const DEFAULT_ACQ_WEIGHTS = {
-  senatorResponsiveness: 3,
-  civicEngagement: 20,
-  senatorInfluence: 2,
-  taxDensity: 5,
+  senatorResponsiveness: 5,
+  civicEngagement: 25,
+  senatorInfluence: 3,
+  taxDensity: 7,
   eitcOpportunity: 0,
-  urbanConcentration: 15,
-  filingComplexity: 12,
-  digitalAdoption: 10,
-  youngProfConcentration: 33,
+  urbanConcentration: 20,
+  youngProfConcentration: 40,
   competitiveDistrictDensity: 0,
 }
 
@@ -30,9 +26,7 @@ export const DEFAULT_CIVIC_WEIGHTS = {
   senatorInfluence: 18,
   taxDensity: 3,
   eitcOpportunity: 2,
-  urbanConcentration: 1,
-  filingComplexity: 0,
-  digitalAdoption: 1,
+  urbanConcentration: 2,
   youngProfConcentration: 0,
   competitiveDistrictDensity: 10,
 }

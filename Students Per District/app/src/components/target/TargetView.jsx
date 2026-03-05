@@ -245,6 +245,7 @@ export default function TargetView({ data, navigate, params }) {
               rankedStates={filteredStates}
               hoveredState={hoveredState}
               onHoverState={setHoveredState}
+              onSelectState={handleSelectState}
               campuses={data?.campuses}
               selectedState={selectedState}
               districtsMeta={data?.districtsMeta}
