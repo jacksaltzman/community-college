@@ -49,7 +49,17 @@
     "eitcUnclaimedRate": 20.8,
     "urbanPopPct": 56.2,
     "youngProfessionalPop": 1129287,
-    "collegeEnrollment": 314536
+    "collegeEnrollment": 314536,
+    "taxDensityScore": 21.2,
+    "eitcOpportunityScore": 63.1,
+    "urbanConcentrationScore": 35.7,
+    "civicEngagementScore": 16.1,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 66.5,
+    "digitalAdoptionScore": 22.2,
+    "youngProfConcentrationScore": 14.8,
+    "competitiveDistrictDensityScore": 14.3
   },
   "AK": {
     "cookPVI": "R+9",
@@ -72,7 +82,17 @@
     "eitcUnclaimedRate": 24.9,
     "urbanPopPct": 65.5,
     "youngProfessionalPop": 181846,
-    "collegeEnrollment": 36784
+    "collegeEnrollment": 36784,
+    "taxDensityScore": 37.3,
+    "eitcOpportunityScore": 55.7,
+    "urbanConcentrationScore": 51.4,
+    "civicEngagementScore": 59.4,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 0.0,
+    "senatorResponsivenessScore": 96.9,
+    "digitalAdoptionScore": 65.9,
+    "youngProfConcentrationScore": 3.8,
+    "competitiveDistrictDensityScore": 100.0
   },
   "AZ": {
     "cookPVI": "R+2",
@@ -95,7 +115,17 @@
     "eitcUnclaimedRate": 21.4,
     "urbanPopPct": 88.7,
     "youngProfessionalPop": 1681429,
-    "collegeEnrollment": 448754
+    "collegeEnrollment": 448754,
+    "taxDensityScore": 33.2,
+    "eitcOpportunityScore": 51.8,
+    "urbanConcentrationScore": 90.7,
+    "civicEngagementScore": 56.4,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 51.5,
+    "youngProfConcentrationScore": 26.5,
+    "competitiveDistrictDensityScore": 55.6
   },
   "AR": {
     "cookPVI": "R+17",
@@ -118,7 +148,17 @@
     "eitcUnclaimedRate": 19.5,
     "urbanPopPct": 53.5,
     "youngProfessionalPop": 675103,
-    "collegeEnrollment": 160900
+    "collegeEnrollment": 160900,
+    "taxDensityScore": 12.1,
+    "eitcOpportunityScore": 56.9,
+    "urbanConcentrationScore": 31.1,
+    "civicEngagementScore": 30.2,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 41.4,
+    "digitalAdoptionScore": 28.7,
+    "youngProfConcentrationScore": 6.9,
+    "competitiveDistrictDensityScore": 25.0
   },
   "CA": {
     "cookPVI": "D+14",
@@ -141,7 +181,17 @@
     "eitcUnclaimedRate": 22.6,
     "urbanPopPct": 94.2,
     "youngProfessionalPop": 9407442,
-    "collegeEnrollment": 2999042
+    "collegeEnrollment": 2999042,
+    "taxDensityScore": 75.2,
+    "eitcOpportunityScore": 53.6,
+    "urbanConcentrationScore": 100.0,
+    "civicEngagementScore": 34.9,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 57.2,
+    "digitalAdoptionScore": 72.5,
+    "youngProfConcentrationScore": 50.5,
+    "competitiveDistrictDensityScore": 38.5
   },
   "CO": {
     "cookPVI": "D+4",
@@ -164,7 +214,17 @@
     "eitcUnclaimedRate": 22.7,
     "urbanPopPct": 86.6,
     "youngProfessionalPop": 1438747,
-    "collegeEnrollment": 378313
+    "collegeEnrollment": 378313,
+    "taxDensityScore": 63.8,
+    "eitcOpportunityScore": 44.5,
+    "urbanConcentrationScore": 87.1,
+    "civicEngagementScore": 86.6,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 88.0,
+    "youngProfConcentrationScore": 75.3,
+    "competitiveDistrictDensityScore": 50.0
   },
   "CT": {
     "cookPVI": "D+7",
@@ -187,7 +247,17 @@
     "eitcUnclaimedRate": 18.0,
     "urbanPopPct": 87.4,
     "youngProfessionalPop": 781268,
-    "collegeEnrollment": 254803
+    "collegeEnrollment": 254803,
+    "taxDensityScore": 100.0,
+    "eitcOpportunityScore": 24.0,
+    "urbanConcentrationScore": 88.5,
+    "civicEngagementScore": 54.0,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 74.1,
+    "digitalAdoptionScore": 85.6,
+    "youngProfConcentrationScore": 66.7,
+    "competitiveDistrictDensityScore": 60.0
   },
   "DE": {
     "cookPVI": "D+7",
@@ -210,7 +280,17 @@
     "eitcUnclaimedRate": 17.6,
     "urbanPopPct": 83.0,
     "youngProfessionalPop": 213380,
-    "collegeEnrollment": 64334
+    "collegeEnrollment": 64334,
+    "taxDensityScore": 35.9,
+    "eitcOpportunityScore": 30.2,
+    "urbanConcentrationScore": 81.0,
+    "civicEngagementScore": 34.6,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 89.1,
+    "digitalAdoptionScore": 59.3,
+    "youngProfConcentrationScore": 26.8,
+    "competitiveDistrictDensityScore": 100.0
   },
   "FL": {
     "cookPVI": "R+3",
@@ -233,7 +313,17 @@
     "eitcUnclaimedRate": 18.0,
     "urbanPopPct": 91.5,
     "youngProfessionalPop": 4553112,
-    "collegeEnrollment": 1344978
+    "collegeEnrollment": 1344978,
+    "taxDensityScore": 35.1,
+    "eitcOpportunityScore": 43.6,
+    "urbanConcentrationScore": 95.4,
+    "civicEngagementScore": 52.3,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 0.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 55.1,
+    "youngProfConcentrationScore": 31.6,
+    "competitiveDistrictDensityScore": 50.0
   },
   "GA": {
     "cookPVI": "R+3",
@@ -256,7 +346,17 @@
     "eitcUnclaimedRate": 17.9,
     "urbanPopPct": 76.4,
     "youngProfessionalPop": 2517033,
-    "collegeEnrollment": 696312
+    "collegeEnrollment": 696312,
+    "taxDensityScore": 29.3,
+    "eitcOpportunityScore": 48.4,
+    "urbanConcentrationScore": 69.9,
+    "civicEngagementScore": 65.1,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 38.3,
+    "youngProfConcentrationScore": 33.3,
+    "competitiveDistrictDensityScore": 21.4
   },
   "HI": {
     "cookPVI": "D+15",
@@ -279,7 +379,17 @@
     "eitcUnclaimedRate": 16.7,
     "urbanPopPct": 90.9,
     "youngProfessionalPop": 311313,
-    "collegeEnrollment": 87330
+    "collegeEnrollment": 87330,
+    "taxDensityScore": 41.9,
+    "eitcOpportunityScore": 20.5,
+    "urbanConcentrationScore": 94.4,
+    "civicEngagementScore": 26.8,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 25.7,
+    "digitalAdoptionScore": 82.6,
+    "youngProfConcentrationScore": 31.3,
+    "competitiveDistrictDensityScore": 0.0
   },
   "ID": {
     "cookPVI": "R+19",
@@ -302,7 +412,17 @@
     "eitcUnclaimedRate": 19.3,
     "urbanPopPct": 67.2,
     "youngProfessionalPop": 430965,
-    "collegeEnrollment": 121705
+    "collegeEnrollment": 121705,
+    "taxDensityScore": 24.8,
+    "eitcOpportunityScore": 34.6,
+    "urbanConcentrationScore": 54.3,
+    "civicEngagementScore": 33.9,
+    "senatorInfluenceScore": 100.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 43.8,
+    "digitalAdoptionScore": 69.5,
+    "youngProfConcentrationScore": 15.8,
+    "competitiveDistrictDensityScore": 0.0
   },
   "IL": {
     "cookPVI": "D+7",
@@ -325,7 +445,17 @@
     "eitcUnclaimedRate": 19.0,
     "urbanPopPct": 87.2,
     "youngProfessionalPop": 2868069,
-    "collegeEnrollment": 802926
+    "collegeEnrollment": 802926,
+    "taxDensityScore": 56.4,
+    "eitcOpportunityScore": 34.8,
+    "urbanConcentrationScore": 88.2,
+    "civicEngagementScore": 44.6,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 59.9,
+    "youngProfConcentrationScore": 63.9,
+    "competitiveDistrictDensityScore": 35.3
   },
   "IN": {
     "cookPVI": "R+11",
@@ -348,7 +478,17 @@
     "eitcUnclaimedRate": 16.7,
     "urbanPopPct": 72.0,
     "youngProfessionalPop": 1548037,
-    "collegeEnrollment": 399356
+    "collegeEnrollment": 399356,
+    "taxDensityScore": 15.1,
+    "eitcOpportunityScore": 27.6,
+    "urbanConcentrationScore": 62.4,
+    "civicEngagementScore": 15.8,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 71.6,
+    "digitalAdoptionScore": 49.1,
+    "youngProfConcentrationScore": 26.5,
+    "competitiveDistrictDensityScore": 22.2
   },
   "IA": {
     "cookPVI": "R+6",
@@ -371,7 +511,17 @@
     "eitcUnclaimedRate": 19.3,
     "urbanPopPct": 60.2,
     "youngProfessionalPop": 714753,
-    "collegeEnrollment": 200182
+    "collegeEnrollment": 200182,
+    "taxDensityScore": 19.9,
+    "eitcOpportunityScore": 31.6,
+    "urbanConcentrationScore": 42.5,
+    "civicEngagementScore": 65.1,
+    "senatorInfluenceScore": 75.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 89.8,
+    "youngProfConcentrationScore": 28.2,
+    "competitiveDistrictDensityScore": 75.0
   },
   "KS": {
     "cookPVI": "R+10",
@@ -394,7 +544,17 @@
     "eitcUnclaimedRate": 21.7,
     "urbanPopPct": 71.2,
     "youngProfessionalPop": 675413,
-    "collegeEnrollment": 192868
+    "collegeEnrollment": 192868,
+    "taxDensityScore": 27.3,
+    "eitcOpportunityScore": 46.3,
+    "urbanConcentrationScore": 61.1,
+    "civicEngagementScore": 50.7,
+    "senatorInfluenceScore": 55.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 87.8,
+    "digitalAdoptionScore": 79.6,
+    "youngProfConcentrationScore": 32.6,
+    "competitiveDistrictDensityScore": 25.0
   },
   "KY": {
     "cookPVI": "R+16",
@@ -417,7 +577,17 @@
     "eitcUnclaimedRate": 17.5,
     "urbanPopPct": 56.2,
     "youngProfessionalPop": 998462,
-    "collegeEnrollment": 246226
+    "collegeEnrollment": 246226,
+    "taxDensityScore": 12.4,
+    "eitcOpportunityScore": 40.2,
+    "urbanConcentrationScore": 35.7,
+    "civicEngagementScore": 41.3,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 79.2,
+    "digitalAdoptionScore": 36.5,
+    "youngProfConcentrationScore": 10.7,
+    "competitiveDistrictDensityScore": 16.7
   },
   "LA": {
     "cookPVI": "R+12",
@@ -440,7 +610,17 @@
     "eitcUnclaimedRate": 18.4,
     "urbanPopPct": 72.6,
     "youngProfessionalPop": 1044604,
-    "collegeEnrollment": 272426
+    "collegeEnrollment": 272426,
+    "taxDensityScore": 19.0,
+    "eitcOpportunityScore": 57.9,
+    "urbanConcentrationScore": 63.5,
+    "civicEngagementScore": 31.9,
+    "senatorInfluenceScore": 65.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 55.8,
+    "digitalAdoptionScore": 14.4,
+    "youngProfConcentrationScore": 5.5,
+    "competitiveDistrictDensityScore": 16.7
   },
   "ME": {
     "cookPVI": "D+3",
@@ -463,7 +643,17 @@
     "eitcUnclaimedRate": 14.8,
     "urbanPopPct": 38.6,
     "youngProfessionalPop": 275123,
-    "collegeEnrollment": 77808
+    "collegeEnrollment": 77808,
+    "taxDensityScore": 25.1,
+    "eitcOpportunityScore": 9.7,
+    "urbanConcentrationScore": 5.9,
+    "civicEngagementScore": 95.0,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 81.4,
+    "youngProfConcentrationScore": 39.5,
+    "competitiveDistrictDensityScore": 50.0
   },
   "MD": {
     "cookPVI": "D+14",
@@ -486,7 +676,17 @@
     "eitcUnclaimedRate": 17.8,
     "urbanPopPct": 87.7,
     "youngProfessionalPop": 1340442,
-    "collegeEnrollment": 428263
+    "collegeEnrollment": 428263,
+    "taxDensityScore": 73.2,
+    "eitcOpportunityScore": 26.1,
+    "urbanConcentrationScore": 89.0,
+    "civicEngagementScore": 44.6,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 55.5,
+    "digitalAdoptionScore": 71.3,
+    "youngProfConcentrationScore": 67.0,
+    "competitiveDistrictDensityScore": 25.0
   },
   "MA": {
     "cookPVI": "D+15",
@@ -509,7 +709,17 @@
     "eitcUnclaimedRate": 18.3,
     "urbanPopPct": 92.0,
     "youngProfessionalPop": 1662509,
-    "collegeEnrollment": 546227
+    "collegeEnrollment": 546227,
+    "taxDensityScore": 95.0,
+    "eitcOpportunityScore": 20.3,
+    "urbanConcentrationScore": 96.3,
+    "civicEngagementScore": 54.7,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 48.2,
+    "digitalAdoptionScore": 93.4,
+    "youngProfConcentrationScore": 100.0,
+    "competitiveDistrictDensityScore": 22.2
   },
   "MI": {
     "cookPVI": "D+1",
@@ -532,7 +742,17 @@
     "eitcUnclaimedRate": 17.2,
     "urbanPopPct": 72.5,
     "youngProfessionalPop": 2245020,
-    "collegeEnrollment": 620347
+    "collegeEnrollment": 620347,
+    "taxDensityScore": 21.0,
+    "eitcOpportunityScore": 29.0,
+    "urbanConcentrationScore": 63.3,
+    "civicEngagementScore": 88.6,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 46.7,
+    "youngProfConcentrationScore": 31.3,
+    "competitiveDistrictDensityScore": 38.5
   },
   "MN": {
     "cookPVI": "D+1",
@@ -555,7 +775,17 @@
     "eitcUnclaimedRate": 18.1,
     "urbanPopPct": 72.4,
     "youngProfessionalPop": 1248743,
-    "collegeEnrollment": 333549
+    "collegeEnrollment": 333549,
+    "taxDensityScore": 45.8,
+    "eitcOpportunityScore": 21.3,
+    "urbanConcentrationScore": 63.1,
+    "civicEngagementScore": 93.6,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 97.6,
+    "youngProfConcentrationScore": 60.1,
+    "competitiveDistrictDensityScore": 37.5
   },
   "MS": {
     "cookPVI": "R+10",
@@ -578,7 +808,17 @@
     "eitcUnclaimedRate": 19.8,
     "urbanPopPct": 46.3,
     "youngProfessionalPop": 659835,
-    "collegeEnrollment": 183969
+    "collegeEnrollment": 183969,
+    "taxDensityScore": 0.4,
+    "eitcOpportunityScore": 74.8,
+    "urbanConcentrationScore": 19.0,
+    "civicEngagementScore": 0.0,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 90.8,
+    "digitalAdoptionScore": 0.0,
+    "youngProfConcentrationScore": 4.1,
+    "competitiveDistrictDensityScore": 0.0
   },
   "MO": {
     "cookPVI": "R+10",
@@ -601,7 +841,17 @@
     "eitcUnclaimedRate": 20.7,
     "urbanPopPct": 69.2,
     "youngProfessionalPop": 1377219,
-    "collegeEnrollment": 354657
+    "collegeEnrollment": 354657,
+    "taxDensityScore": 20.8,
+    "eitcOpportunityScore": 48.1,
+    "urbanConcentrationScore": 57.7,
+    "civicEngagementScore": 57.4,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 73.6,
+    "digitalAdoptionScore": 52.1,
+    "youngProfConcentrationScore": 30.2,
+    "competitiveDistrictDensityScore": 12.5
   },
   "MT": {
     "cookPVI": "R+11",
@@ -624,7 +874,17 @@
     "eitcUnclaimedRate": 24.9,
     "urbanPopPct": 53.0,
     "youngProfessionalPop": 242049,
-    "collegeEnrollment": 59358
+    "collegeEnrollment": 59358,
+    "taxDensityScore": 28.8,
+    "eitcOpportunityScore": 61.0,
+    "urbanConcentrationScore": 30.3,
+    "civicEngagementScore": 69.5,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 92.1,
+    "digitalAdoptionScore": 76.6,
+    "youngProfConcentrationScore": 27.1,
+    "competitiveDistrictDensityScore": 50.0
   },
   "NE": {
     "cookPVI": "R+12",
@@ -647,7 +907,17 @@
     "eitcUnclaimedRate": 16.8,
     "urbanPopPct": 69.2,
     "youngProfessionalPop": 444750,
-    "collegeEnrollment": 131017
+    "collegeEnrollment": 131017,
+    "taxDensityScore": 29.8,
+    "eitcOpportunityScore": 19.7,
+    "urbanConcentrationScore": 57.7,
+    "civicEngagementScore": 53.4,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 82.9,
+    "digitalAdoptionScore": 87.4,
+    "youngProfConcentrationScore": 34.7,
+    "competitiveDistrictDensityScore": 66.7
   },
   "NV": {
     "cookPVI": "D+1",
@@ -670,7 +940,17 @@
     "eitcUnclaimedRate": 17.8,
     "urbanPopPct": 94.1,
     "youngProfessionalPop": 704949,
-    "collegeEnrollment": 165777
+    "collegeEnrollment": 165777,
+    "taxDensityScore": 32.7,
+    "eitcOpportunityScore": 37.5,
+    "urbanConcentrationScore": 99.8,
+    "civicEngagementScore": 44.6,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 0.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 41.3,
+    "youngProfConcentrationScore": 1.0,
+    "competitiveDistrictDensityScore": 100.0
   },
   "NH": {
     "cookPVI": "D+1",
@@ -693,7 +973,17 @@
     "eitcUnclaimedRate": 20.0,
     "urbanPopPct": 57.3,
     "youngProfessionalPop": 297571,
-    "collegeEnrollment": 83582
+    "collegeEnrollment": 83582,
+    "taxDensityScore": 55.8,
+    "eitcOpportunityScore": 25.7,
+    "urbanConcentrationScore": 37.6,
+    "civicEngagementScore": 79.9,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 0.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 100.0,
+    "youngProfConcentrationScore": 54.3,
+    "competitiveDistrictDensityScore": 100.0
   },
   "NJ": {
     "cookPVI": "D+6",
@@ -716,7 +1006,17 @@
     "eitcUnclaimedRate": 18.9,
     "urbanPopPct": 93.8,
     "youngProfessionalPop": 1965479,
-    "collegeEnrollment": 597751
+    "collegeEnrollment": 597751,
+    "taxDensityScore": 85.0,
+    "eitcOpportunityScore": 30.4,
+    "urbanConcentrationScore": 99.3,
+    "civicEngagementScore": 28.5,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 94.7,
+    "digitalAdoptionScore": 77.8,
+    "youngProfConcentrationScore": 83.2,
+    "competitiveDistrictDensityScore": 58.3
   },
   "NM": {
     "cookPVI": "D+4",
@@ -739,7 +1039,17 @@
     "eitcUnclaimedRate": 16.4,
     "urbanPopPct": 72.4,
     "youngProfessionalPop": 476379,
-    "collegeEnrollment": 133106
+    "collegeEnrollment": 133106,
+    "taxDensityScore": 10.7,
+    "eitcOpportunityScore": 37.8,
+    "urbanConcentrationScore": 63.1,
+    "civicEngagementScore": 46.3,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 33.5,
+    "youngProfConcentrationScore": 0.0,
+    "competitiveDistrictDensityScore": 100.0
   },
   "NY": {
     "cookPVI": "D+10",
@@ -762,7 +1072,17 @@
     "eitcUnclaimedRate": 16.3,
     "urbanPopPct": 87.3,
     "youngProfessionalPop": 4602367,
-    "collegeEnrollment": 1384207
+    "collegeEnrollment": 1384207,
+    "taxDensityScore": 75.7,
+    "eitcOpportunityScore": 25.6,
+    "urbanConcentrationScore": 88.3,
+    "civicEngagementScore": 33.6,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 75.8,
+    "digitalAdoptionScore": 61.7,
+    "youngProfConcentrationScore": 82.8,
+    "competitiveDistrictDensityScore": 38.5
   },
   "NC": {
     "cookPVI": "R+3",
@@ -785,7 +1105,17 @@
     "eitcUnclaimedRate": 20.3,
     "urbanPopPct": 65.3,
     "youngProfessionalPop": 2415163,
-    "collegeEnrollment": 682605
+    "collegeEnrollment": 682605,
+    "taxDensityScore": 24.0,
+    "eitcOpportunityScore": 50.7,
+    "urbanConcentrationScore": 51.1,
+    "civicEngagementScore": 50.3,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 45.5,
+    "youngProfConcentrationScore": 41.6,
+    "competitiveDistrictDensityScore": 42.9
   },
   "ND": {
     "cookPVI": "R+17",
@@ -808,7 +1138,17 @@
     "eitcUnclaimedRate": 20.4,
     "urbanPopPct": 57.1,
     "youngProfessionalPop": 197172,
-    "collegeEnrollment": 59217
+    "collegeEnrollment": 59217,
+    "taxDensityScore": 26.8,
+    "eitcOpportunityScore": 33.3,
+    "urbanConcentrationScore": 37.2,
+    "civicEngagementScore": 30.9,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 48.8,
+    "digitalAdoptionScore": 91.0,
+    "youngProfConcentrationScore": 37.8,
+    "competitiveDistrictDensityScore": 0.0
   },
   "OH": {
     "cookPVI": "R+6",
@@ -831,7 +1171,17 @@
     "eitcUnclaimedRate": 17.4,
     "urbanPopPct": 77.3,
     "youngProfessionalPop": 2596663,
-    "collegeEnrollment": 671575
+    "collegeEnrollment": 671575,
+    "taxDensityScore": 19.0,
+    "eitcOpportunityScore": 30.9,
+    "urbanConcentrationScore": 71.4,
+    "civicEngagementScore": 49.0,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 50.9,
+    "youngProfConcentrationScore": 29.6,
+    "competitiveDistrictDensityScore": 40.0
   },
   "OK": {
     "cookPVI": "R+20",
@@ -854,7 +1204,17 @@
     "eitcUnclaimedRate": 20.9,
     "urbanPopPct": 63.5,
     "youngProfessionalPop": 929153,
-    "collegeEnrollment": 232088
+    "collegeEnrollment": 232088,
+    "taxDensityScore": 16.1,
+    "eitcOpportunityScore": 58.0,
+    "urbanConcentrationScore": 48.1,
+    "civicEngagementScore": 23.8,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 39.8,
+    "digitalAdoptionScore": 35.3,
+    "youngProfConcentrationScore": 3.1,
+    "competitiveDistrictDensityScore": 0.0
   },
   "OR": {
     "cookPVI": "D+5",
@@ -877,7 +1237,17 @@
     "eitcUnclaimedRate": 21.6,
     "urbanPopPct": 78.6,
     "youngProfessionalPop": 955751,
-    "collegeEnrollment": 245716
+    "collegeEnrollment": 245716,
+    "taxDensityScore": 41.9,
+    "eitcOpportunityScore": 43.0,
+    "urbanConcentrationScore": 73.6,
+    "civicEngagementScore": 100.0,
+    "senatorInfluenceScore": 90.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 92.2,
+    "digitalAdoptionScore": 79.0,
+    "youngProfConcentrationScore": 36.1,
+    "competitiveDistrictDensityScore": 50.0
   },
   "PA": {
     "cookPVI": "D+1",
@@ -900,7 +1270,17 @@
     "eitcUnclaimedRate": 17.2,
     "urbanPopPct": 77.2,
     "youngProfessionalPop": 2852592,
-    "collegeEnrollment": 797476
+    "collegeEnrollment": 797476,
+    "taxDensityScore": 31.8,
+    "eitcOpportunityScore": 25.0,
+    "urbanConcentrationScore": 71.2,
+    "civicEngagementScore": 73.5,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 64.1,
+    "youngProfConcentrationScore": 56.0,
+    "competitiveDistrictDensityScore": 41.2
   },
   "RI": {
     "cookPVI": "D+10",
@@ -923,7 +1303,17 @@
     "eitcUnclaimedRate": 17.6,
     "urbanPopPct": 90.2,
     "youngProfessionalPop": 262097,
-    "collegeEnrollment": 93399
+    "collegeEnrollment": 93399,
+    "taxDensityScore": 35.9,
+    "eitcOpportunityScore": 26.6,
+    "urbanConcentrationScore": 93.2,
+    "civicEngagementScore": 37.2,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 58.7,
+    "digitalAdoptionScore": 74.3,
+    "youngProfConcentrationScore": 61.2,
+    "competitiveDistrictDensityScore": 50.0
   },
   "SC": {
     "cookPVI": "R+8",
@@ -946,7 +1336,17 @@
     "eitcUnclaimedRate": 19.3,
     "urbanPopPct": 66.9,
     "youngProfessionalPop": 1146980,
-    "collegeEnrollment": 296613
+    "collegeEnrollment": 296613,
+    "taxDensityScore": 18.4,
+    "eitcOpportunityScore": 50.7,
+    "urbanConcentrationScore": 53.8,
+    "civicEngagementScore": 34.6,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 83.8,
+    "digitalAdoptionScore": 37.7,
+    "youngProfConcentrationScore": 23.0,
+    "competitiveDistrictDensityScore": 28.6
   },
   "SD": {
     "cookPVI": "R+14",
@@ -969,7 +1369,17 @@
     "eitcUnclaimedRate": 17.7,
     "urbanPopPct": 53.2,
     "youngProfessionalPop": 197348,
-    "collegeEnrollment": 46728
+    "collegeEnrollment": 46728,
+    "taxDensityScore": 24.9,
+    "eitcOpportunityScore": 25.1,
+    "urbanConcentrationScore": 30.6,
+    "civicEngagementScore": 69.1,
+    "senatorInfluenceScore": 75.0,
+    "filingComplexityScore": 0.0,
+    "senatorResponsivenessScore": 47.7,
+    "digitalAdoptionScore": 89.2,
+    "youngProfConcentrationScore": 44.0,
+    "competitiveDistrictDensityScore": 0.0
   },
   "TN": {
     "cookPVI": "R+14",
@@ -992,7 +1402,17 @@
     "eitcUnclaimedRate": 18.0,
     "urbanPopPct": 65.5,
     "youngProfessionalPop": 1585987,
-    "collegeEnrollment": 382813
+    "collegeEnrollment": 382813,
+    "taxDensityScore": 25.7,
+    "eitcOpportunityScore": 41.3,
+    "urbanConcentrationScore": 51.4,
+    "civicEngagementScore": 2.7,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 0.0,
+    "senatorResponsivenessScore": 59.0,
+    "digitalAdoptionScore": 41.9,
+    "youngProfConcentrationScore": 32.0,
+    "competitiveDistrictDensityScore": 11.1
   },
   "TX": {
     "cookPVI": "R+5",
@@ -1015,7 +1435,17 @@
     "eitcUnclaimedRate": 19.4,
     "urbanPopPct": 84.1,
     "youngProfessionalPop": 7142094,
-    "collegeEnrollment": 1863888
+    "collegeEnrollment": 1863888,
+    "taxDensityScore": 43.3,
+    "eitcOpportunityScore": 52.8,
+    "urbanConcentrationScore": 82.9,
+    "civicEngagementScore": 31.2,
+    "senatorInfluenceScore": 65.0,
+    "filingComplexityScore": 0.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 34.7,
+    "youngProfConcentrationScore": 31.6,
+    "competitiveDistrictDensityScore": 13.2
   },
   "UT": {
     "cookPVI": "R+13",
@@ -1038,7 +1468,17 @@
     "eitcUnclaimedRate": 24.6,
     "urbanPopPct": 90.6,
     "youngProfessionalPop": 872677,
-    "collegeEnrollment": 268046
+    "collegeEnrollment": 268046,
+    "taxDensityScore": 28.2,
+    "eitcOpportunityScore": 56.1,
+    "urbanConcentrationScore": 93.9,
+    "civicEngagementScore": 48.0,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 46.4,
+    "digitalAdoptionScore": 90.4,
+    "youngProfConcentrationScore": 41.2,
+    "competitiveDistrictDensityScore": 0.0
   },
   "VT": {
     "cookPVI": "D+16",
@@ -1061,7 +1501,17 @@
     "eitcUnclaimedRate": 20.0,
     "urbanPopPct": 35.1,
     "youngProfessionalPop": 141753,
-    "collegeEnrollment": 47343
+    "collegeEnrollment": 47343,
+    "taxDensityScore": 30.1,
+    "eitcOpportunityScore": 31.7,
+    "urbanConcentrationScore": 0.0,
+    "civicEngagementScore": 78.9,
+    "senatorInfluenceScore": 65.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 36.9,
+    "digitalAdoptionScore": 95.8,
+    "youngProfConcentrationScore": 71.1,
+    "competitiveDistrictDensityScore": 0.0
   },
   "VA": {
     "cookPVI": "D+3",
@@ -1084,7 +1534,17 @@
     "eitcUnclaimedRate": 17.8,
     "urbanPopPct": 76.3,
     "youngProfessionalPop": 1977398,
-    "collegeEnrollment": 604286
+    "collegeEnrollment": 604286,
+    "taxDensityScore": 63.7,
+    "eitcOpportunityScore": 27.5,
+    "urbanConcentrationScore": 69.7,
+    "civicEngagementScore": 50.7,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 80.2,
+    "youngProfConcentrationScore": 60.8,
+    "competitiveDistrictDensityScore": 45.5
   },
   "WA": {
     "cookPVI": "D+7",
@@ -1107,7 +1567,17 @@
     "eitcUnclaimedRate": 22.6,
     "urbanPopPct": 84.0,
     "youngProfessionalPop": 1829373,
-    "collegeEnrollment": 442395
+    "collegeEnrollment": 442395,
+    "taxDensityScore": 67.6,
+    "eitcOpportunityScore": 43.7,
+    "urbanConcentrationScore": 82.7,
+    "civicEngagementScore": 76.5,
+    "senatorInfluenceScore": 65.0,
+    "filingComplexityScore": 0.0,
+    "senatorResponsivenessScore": 77.9,
+    "digitalAdoptionScore": 83.8,
+    "youngProfConcentrationScore": 54.3,
+    "competitiveDistrictDensityScore": 30.0
   },
   "WV": {
     "cookPVI": "R+22",
@@ -1130,7 +1600,17 @@
     "eitcUnclaimedRate": 14.9,
     "urbanPopPct": 44.6,
     "youngProfessionalPop": 368148,
-    "collegeEnrollment": 92386
+    "collegeEnrollment": 92386,
+    "taxDensityScore": 0.0,
+    "eitcOpportunityScore": 24.1,
+    "urbanConcentrationScore": 16.1,
+    "civicEngagementScore": 9.7,
+    "senatorInfluenceScore": 10.0,
+    "filingComplexityScore": 50.0,
+    "senatorResponsivenessScore": 46.4,
+    "digitalAdoptionScore": 19.8,
+    "youngProfConcentrationScore": 0.7,
+    "competitiveDistrictDensityScore": 0.0
   },
   "WI": {
     "cookPVI": "EVEN",
@@ -1153,7 +1633,17 @@
     "eitcUnclaimedRate": 21.1,
     "urbanPopPct": 68.3,
     "youngProfessionalPop": 1284040,
-    "collegeEnrollment": 349476
+    "collegeEnrollment": 349476,
+    "taxDensityScore": 20.9,
+    "eitcOpportunityScore": 38.4,
+    "urbanConcentrationScore": 56.2,
+    "civicEngagementScore": 91.6,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 100.0,
+    "senatorResponsivenessScore": 100.0,
+    "digitalAdoptionScore": 83.2,
+    "youngProfConcentrationScore": 44.0,
+    "competitiveDistrictDensityScore": 50.0
   },
   "WY": {
     "cookPVI": "R+25",
@@ -1176,7 +1666,17 @@
     "eitcUnclaimedRate": 21.4,
     "urbanPopPct": 60.1,
     "youngProfessionalPop": 125916,
-    "collegeEnrollment": 35392
+    "collegeEnrollment": 35392,
+    "taxDensityScore": 39.8,
+    "eitcOpportunityScore": 40.8,
+    "urbanConcentrationScore": 42.3,
+    "civicEngagementScore": 44.0,
+    "senatorInfluenceScore": 60.0,
+    "filingComplexityScore": 0.0,
+    "senatorResponsivenessScore": 0.1,
+    "digitalAdoptionScore": 80.8,
+    "youngProfConcentrationScore": 23.0,
+    "competitiveDistrictDensityScore": 0.0
   },
   "DC": {
     "cookPVI": "D+43",
