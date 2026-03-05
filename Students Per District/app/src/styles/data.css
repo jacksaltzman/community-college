@@ -20,17 +20,12 @@
   flex-shrink: 0;
   flex-wrap: wrap;
 }
-.data-toolbar-left {
+.data-toolbar-right {
   display: flex;
   gap: 6px;
   align-items: center;
-  flex-wrap: wrap;
-}
-.data-toolbar-right {
-  display: flex;
-  gap: 12px;
-  align-items: center;
   margin-left: auto;
+  flex-wrap: wrap;
 }
 
 /* ── Toolbar Button ── */
@@ -580,9 +575,6 @@
     align-items: stretch;
     padding: 12px 16px;
     gap: 8px;
-  }
-  .data-toolbar-left {
-    flex-wrap: wrap;
   }
   .data-toolbar-right {
     flex-wrap: wrap;
