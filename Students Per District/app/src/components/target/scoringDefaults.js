@@ -7,17 +7,19 @@ export const DIMENSIONS = [
   { id: 'urbanConcentration', label: 'Urban Concentration', scoreKey: 'urbanConcentrationScore', fields: ['urbanPopPct'], desc: 'Urban population share as a proxy for market accessibility', formula: 'Min-max normalization of Census 2020 urban population percentage. Range: 0\u2013100.' },
   { id: 'youngProfConcentration', label: 'Young Prof Concentration', scoreKey: 'youngProfConcentrationScore', fields: ['youngProfessionalPop'], desc: 'Concentration of young professionals in the target demographic', formula: 'Min-max normalization of ACS 2023 BA+ rate among adults 25\u201334. Range: 0\u2013100.' },
   { id: 'competitiveDistrictDensity', label: 'Competitive District Density', scoreKey: 'competitiveDistrictDensityScore', fields: [], desc: 'Number of politically competitive congressional districts', formula: 'Min-max normalization of fraction of districts with Cook PVI within \u00b18. Range: 0\u2013100.' },
+  { id: 'ccEnrollment', label: 'CC Enrollment', scoreKey: 'ccEnrollmentScore', fields: ['ccEnrollment'], desc: 'Total community college enrollment in the state \u2014 more students means easier user acquisition', formula: 'Min-max normalization of total CC enrollment (IPEDS EFFY2023) across 50 states. Range: 0\u2013100.' },
 ]
 
 export const DEFAULT_ACQ_WEIGHTS = {
   senatorResponsiveness: 5,
-  civicEngagement: 25,
+  civicEngagement: 20,
   senatorInfluence: 3,
   taxDensity: 7,
   eitcOpportunity: 0,
-  urbanConcentration: 20,
-  youngProfConcentration: 40,
+  urbanConcentration: 15,
+  youngProfConcentration: 30,
   competitiveDistrictDensity: 0,
+  ccEnrollment: 20,
 }
 
 export const DEFAULT_CIVIC_WEIGHTS = {
@@ -29,6 +31,7 @@ export const DEFAULT_CIVIC_WEIGHTS = {
   urbanConcentration: 2,
   youngProfConcentration: 0,
   competitiveDistrictDensity: 10,
+  ccEnrollment: 0,
 }
 
 export const QUADRANT_COLORS = {
@@ -55,6 +58,7 @@ export const FIELD_LABELS = {
   eitcUnclaimedRate: 'EITC Unclaimed %',
   urbanPopPct: 'Urban Pop %',
   youngProfessionalPop: 'Young Professionals',
+  ccEnrollment: 'CC Enrollment',
 }
 
 export const AVAILABLE_RAW_FIELDS = [

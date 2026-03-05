@@ -12,6 +12,7 @@ const DIMENSION_SCORE_KEYS = {
   digitalAdoption: 'digitalAdoptionScore',
   youngProfConcentration: 'youngProfConcentrationScore',
   competitiveDistrictDensity: 'competitiveDistrictDensityScore',
+  ccEnrollment: 'ccEnrollmentScore',
 }
 
 /* ── Helpers ── */
@@ -103,6 +104,19 @@ export default function useTargetScoring(statesData, campuses, config) {
       (k) => k !== '_meta' && k.length === 2 && statesData[k].civicEngagementScore !== undefined
     )
 
+    /* ── 3b. Compute CC Enrollment score (min-max normalized) ── */
+    const ccEnrollmentByState = {}
+    const rawEnroll = stateCodes.map((code) => {
+      const agg = campusAgg[code]
+      return agg ? agg.ccEnrollment : 0
+    })
+    const enrollMin = Math.min(...rawEnroll)
+    const enrollMax = Math.max(...rawEnroll)
+    const enrollRange = enrollMax - enrollMin || 1
+    stateCodes.forEach((code, i) => {
+      ccEnrollmentByState[code] = ((rawEnroll[i] - enrollMin) / enrollRange) * 100
+    })
+
     /* ── 4. Compute custom field percentile ranks ── */
     const customPercentiles = {} // { fieldKey: { [stateCode]: percentile } }
     for (const cf of customFields) {
@@ -120,7 +134,10 @@ export default function useTargetScoring(statesData, campuses, config) {
 
     /* ── 5. Score each state ── */
     const scored = stateCodes.map((code) => {
-      const stateData = statesData[code] || {}
+      const stateData = {
+        ...(statesData[code] || {}),
+        ccEnrollmentScore: ccEnrollmentByState[code] ?? 0,
+      }
       const agg = campusAgg[code] || { ccEnrollment: 0, campusCount: 0, uniqueDistricts: new Set() }
 
       // Base lens scores from dimension weights
