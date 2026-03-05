@@ -83,6 +83,10 @@
   z-index: 100;
   padding: 8px 0;
 }
+.toolbar-item:last-child .toolbar-dropdown {
+  left: auto;
+  right: 0;
+}
 
 /* ── Dropdown list (Hide fields, Group) ── */
 .toolbar-dropdown-list {
