@@ -30,7 +30,7 @@
   background: #3d575e;
 }
 
-/* Results panel */
+/* ── Results panel ── */
 .target-results {
   flex: 1;
   height: 100%;
@@ -39,22 +39,128 @@
   flex-direction: column;
 }
 
-/* Summary bar */
+/* ── Summary bar ── */
 .target-summary-bar {
-  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px;
   background: #F3F0EB;
   border-bottom: 1px solid var(--border-light);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 13px;
   color: var(--gray-body);
   flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 5;
 }
 .target-summary-bar strong {
   color: var(--black);
   font-weight: 600;
 }
+.target-summary-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.target-summary-sep {
+  color: var(--gray-muted);
+  margin: 0 2px;
+}
+.target-summary-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
 
-/* Empty state */
+/* ── Text button (expand/collapse) ── */
+.target-text-btn {
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--teal);
+  cursor: pointer;
+  padding: 4px 0;
+  white-space: nowrap;
+}
+.target-text-btn:hover {
+  text-decoration: underline;
+}
+
+/* ── View toggle ── */
+.target-view-toggle {
+  display: flex;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.target-view-btn {
+  padding: 5px 8px;
+  border: none;
+  background: white;
+  color: var(--gray-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: background 0.12s, color 0.12s;
+}
+.target-view-btn:not(:last-child) {
+  border-right: 1px solid var(--border-light);
+}
+.target-view-btn.active {
+  background: var(--hover-bg);
+  color: var(--black);
+}
+.target-view-btn:hover:not(.active) {
+  background: #FAFAF8;
+}
+
+/* ── PVI badge colors ── */
+.target-pvi {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.target-pvi.d-lean {
+  background: #DBEAFE;
+  color: #1E40AF;
+}
+.target-pvi.r-lean {
+  background: #FEE2E2;
+  color: #B91C1C;
+}
+.target-pvi.swing {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+/* ── Party dot ── */
+.target-party-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+  background: var(--gray-muted);
+}
+.target-party-dot.party-d {
+  background: #2563EB;
+}
+.target-party-dot.party-r {
+  background: #DC2626;
+}
+
+/* ── Empty state ── */
 .target-empty {
   flex: 1;
   display: flex;
@@ -66,14 +172,14 @@
   padding: 40px;
 }
 
-/* Tree container */
+/* ── Tree container ── */
 .target-tree {
   flex: 1;
   overflow-y: auto;
   padding: 0;
 }
 
-/* Chevron */
+/* ── Chevron ── */
 .target-chevron {
   display: inline-flex;
   align-items: center;
@@ -90,12 +196,12 @@
   transform: rotate(90deg);
 }
 
-/* State row */
+/* ── State row ── */
 .target-state-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 12px 20px;
+  padding: 10px 20px;
   cursor: pointer;
   border-bottom: 1px solid var(--border-light);
   border-left: 4px solid var(--teal);
@@ -107,27 +213,14 @@
 .target-state-name {
   font-family: var(--font-heading);
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--black);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   white-space: nowrap;
 }
 
-/* PVI badge */
-.target-pvi {
-  font-family: var(--font-body);
-  font-size: 11px;
-  font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 10px;
-  background: var(--hover-bg);
-  color: var(--gray-body);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-/* Meta text (counts) */
+/* ── Meta text (counts) ── */
 .target-meta {
   font-family: var(--font-body);
   font-size: 12px;
@@ -137,12 +230,12 @@
   flex-shrink: 0;
 }
 
-/* District row */
+/* ── District row ── */
 .target-district-row {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 20px 10px 44px;
+  padding: 9px 20px 9px 40px;
   cursor: pointer;
   border-bottom: 1px solid var(--border-light);
   transition: background 0.12s;
@@ -164,9 +257,11 @@
   font-size: 12px;
   color: var(--gray-body);
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
 }
 
-/* Campus list */
+/* ── Campus list ── */
 .target-campus-list {
   border-bottom: 1px solid var(--border-light);
 }
@@ -174,7 +269,7 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 8px 20px 8px 68px;
+  padding: 7px 20px 7px 64px;
   border-bottom: 1px solid #F5F3EF;
   font-family: var(--font-body);
   font-size: 13px;
@@ -223,8 +318,75 @@
   color: var(--gray-muted);
 }
 
-/* Mobile responsive */
+/* ── Flat table view ── */
+.target-table-wrap {
+  flex: 1;
+  overflow: auto;
+}
+.target-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-body);
+  font-size: 13px;
+}
+.target-table th {
+  position: sticky;
+  top: 0;
+  background: #F3F0EB;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-muted);
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 2px solid var(--border-light);
+  white-space: nowrap;
+}
+.target-table th.num {
+  text-align: right;
+}
+.target-table td {
+  padding: 7px 12px;
+  border-bottom: 1px solid #F5F3EF;
+  color: var(--gray-body);
+  vertical-align: middle;
+}
+.target-table td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.target-table td.muted {
+  color: var(--gray-muted);
+  font-size: 12px;
+}
+.target-table tr:hover td {
+  background: #FAFAF8;
+}
+.target-table .campus-link {
+  color: var(--teal);
+  text-decoration: none;
+  font-weight: 500;
+}
+.target-table .campus-link:hover {
+  text-decoration: underline;
+}
+.target-table .target-pvi {
+  margin-left: 6px;
+  font-size: 10px;
+  padding: 1px 6px;
+}
+.target-table .target-party-dot {
+  margin-right: 4px;
+}
+
+/* ── Mobile responsive ── */
 @media (max-width: 768px) {
+  .target-summary-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
   .target-state-row {
     flex-wrap: wrap;
     gap: 6px;
@@ -250,5 +412,8 @@
   .target-campus-districts {
     width: auto;
     font-size: 11px;
+  }
+  .target-table-wrap {
+    font-size: 12px;
   }
 }

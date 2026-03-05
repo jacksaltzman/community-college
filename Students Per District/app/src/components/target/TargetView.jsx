@@ -145,6 +145,7 @@ export default function TargetView({ data, navigate }) {
     finalStates.sort((a, b) => a.code.localeCompare(b.code))
 
     let totalCampuses = 0
+    let totalEnrollment = 0
     const seenCampuses = new Set()
     finalStates.forEach((s) => {
       Object.values(s.districts).forEach((d) => {
@@ -153,6 +154,7 @@ export default function TargetView({ data, navigate }) {
           if (!seenCampuses.has(id)) {
             seenCampuses.add(id)
             totalCampuses++
+            totalEnrollment += c.properties.enrollment || 0
           }
         })
       })
@@ -164,6 +166,7 @@ export default function TargetView({ data, navigate }) {
         states: finalStates.length,
         districts: finalStates.reduce((s, st) => s + st.districtCount, 0),
         campuses: totalCampuses,
+        enrollment: totalEnrollment,
       },
     }
   }, [campusesData, districtsMeta, statesData, campusFilters, districtFilters, stateFilters, matchesPVI])
