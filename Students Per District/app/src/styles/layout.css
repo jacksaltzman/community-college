@@ -22,6 +22,9 @@
   align-items: center;
   gap: 12px;
   flex-shrink: 0;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
 }
 .nav-brand-logo {
   height: 18px;

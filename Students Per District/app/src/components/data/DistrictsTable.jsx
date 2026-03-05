@@ -421,7 +421,6 @@ export default function DistrictsTable({ campuses, districtsMeta, sources, navig
                         >
                           <span className="th-content" onClick={header.column.getToggleSortingHandler()}>
                             {flexRender(header.column.columnDef.header, header.getContext())}
-                            {sortIcon(header.column)}
                             {fieldKey && <SourceFootnote fieldKey={fieldKey} sources={sources} />}
                           </span>
                         </DraggableHeader>

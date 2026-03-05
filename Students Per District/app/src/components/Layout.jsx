@@ -32,14 +32,21 @@ export default function Layout({ page, subView, params, navigate, data }) {
     <>
       {/* ── Top Navigation Bar ── */}
       <nav className="top-nav">
-        <div className="nav-brand">
+        <a
+          className="nav-brand"
+          href="#map/states"
+          onClick={(e) => {
+            e.preventDefault()
+            navigate('map', 'states')
+          }}
+        >
           <img
             src="/accountable_logo.avif"
             alt="Accountable"
             className="nav-brand-logo"
           />
           <span className="nav-brand-subtitle" />
-        </div>
+        </a>
 
         {/* Desktop tabs */}
         <div className="nav-tabs">
