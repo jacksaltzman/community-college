@@ -227,7 +227,7 @@ export default function TargetResults({ filteredStates, summary, navigate }) {
 
                 return (
                   <div key={cd} className="target-district-group">
-                    <div className="target-district-row" onClick={() => toggleDistrict(cd)}>
+                    <div className={`target-district-row pvi-border-${pviClass(d.meta.cook_pvi)}`} onClick={() => toggleDistrict(cd)}>
                       <span className={`target-chevron${distOpen ? ' open' : ''}`}>&#9654;</span>
                       <span className="target-district-name">{cd}</span>
                       {d.meta.cook_pvi && <span className={`target-pvi ${pviClass(d.meta.cook_pvi)}`}>{d.meta.cook_pvi}</span>}
