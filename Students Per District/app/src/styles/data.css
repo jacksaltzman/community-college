@@ -422,9 +422,9 @@
   margin-left: 6px;
   border: 1px solid var(--gray-muted);
   border-radius: 3px;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 0;
   color: var(--gray-muted);
   vertical-align: middle;
   flex-shrink: 0;
