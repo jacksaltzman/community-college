@@ -102,74 +102,72 @@ export default function TargetFiltersBar({
 
   return (
     <div className="target-filters-bar">
-      <div className="target-filters-row">
-        <span className="target-filters-label">Filters</span>
+      <span className="target-filters-label">Filters</span>
 
-        {/* ── Categorical pills ── */}
-        {CATEGORICAL_FILTERS.map(({ key, label, options }) => (
-          <div key={key} className={`filter-pill${filters[key] ? ' active' : ''}`}>
-            <span className="filter-pill-label">{label}</span>
-            <select value={filters[key]} onChange={(e) => handleChange(key, e.target.value)}>
-              {options.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        ))}
-
-        {/* ── Right controls ── */}
-        <div className="target-filters-right-controls">
-          {activeCount > 0 && (
-            <button
-              className="target-filters-clear-btn"
-              onClick={handleClear}
-              title="Clear all filters"
-              type="button"
-            >
-              ✕
-            </button>
-          )}
-          <span className="target-filters-count">
-            {resultCount === totalCount
-              ? `${totalCount} states`
-              : `${resultCount} of ${totalCount}`}
-          </span>
-          {onExport && (
-            <button className="toolbar-btn" onClick={onExport} type="button">
-              <span className="toolbar-btn-label">Export</span>
-            </button>
-          )}
+      {/* ── Categorical pills ── */}
+      {CATEGORICAL_FILTERS.map(({ key, label, options }) => (
+        <div key={key} className={`filter-pill${filters[key] ? ' active' : ''}`}>
+          <span className="filter-pill-label">{label}</span>
+          <select value={filters[key]} onChange={(e) => handleChange(key, e.target.value)}>
+            {options.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
         </div>
-      </div>
+      ))}
 
-      <div className="target-filters-row target-filters-numeric-row">
-        {/* ── Numeric pills ── */}
-        {NUMERIC_FILTERS.map(({ key, label }) => {
-          const minKey = `${key}Min`
-          const maxKey = `${key}Max`
-          const isActive = filters[minKey] !== '' || filters[maxKey] !== ''
-          const range = ranges[key] || { min: 0, max: 0 }
-          return (
-            <div key={key} className={`filter-pill${isActive ? ' active' : ''}`}>
-              <span className="filter-pill-label">{label}</span>
-              <input
-                type="number"
-                placeholder={formatCompact(range.min)}
-                value={filters[minKey]}
-                onChange={(e) => handleChange(minKey, e.target.value)}
-              />
-              <span className="filter-pill-dash">–</span>
-              <input
-                type="number"
-                placeholder={formatCompact(range.max)}
-                value={filters[maxKey]}
-                onChange={(e) => handleChange(maxKey, e.target.value)}
-              />
-            </div>
-          )
-        })}
+      <div className="target-filters-divider" />
+
+      {/* ── Numeric pills ── */}
+      {NUMERIC_FILTERS.map(({ key, label }) => {
+        const minKey = `${key}Min`
+        const maxKey = `${key}Max`
+        const isActive = filters[minKey] !== '' || filters[maxKey] !== ''
+        const range = ranges[key] || { min: 0, max: 0 }
+        return (
+          <div key={key} className={`filter-pill${isActive ? ' active' : ''}`}>
+            <span className="filter-pill-label">{label}</span>
+            <input
+              type="number"
+              placeholder={formatCompact(range.min)}
+              value={filters[minKey]}
+              onChange={(e) => handleChange(minKey, e.target.value)}
+            />
+            <span className="filter-pill-dash">–</span>
+            <input
+              type="number"
+              placeholder={formatCompact(range.max)}
+              value={filters[maxKey]}
+              onChange={(e) => handleChange(maxKey, e.target.value)}
+            />
+          </div>
+        )
+      })}
+
+      {/* ── Right controls ── */}
+      <div className="target-filters-right-controls">
+        {activeCount > 0 && (
+          <button
+            className="target-filters-clear-btn"
+            onClick={handleClear}
+            title="Clear all filters"
+            type="button"
+          >
+            ✕
+          </button>
+        )}
+        <span className="target-filters-count">
+          {resultCount === totalCount
+            ? `${totalCount} states`
+            : `${resultCount} of ${totalCount}`}
+        </span>
+        {onExport && (
+          <button className="toolbar-btn" onClick={onExport} type="button">
+            <span className="toolbar-btn-label">Export</span>
+          </button>
+        )}
       </div>
     </div>
   )
