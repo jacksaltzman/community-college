@@ -93,10 +93,12 @@ function DimensionRow({ dim, weight, defaultWeight, onChange }) {
 function AddFieldButton({ lens, existingDimIds, onAdd }) {
   const [open, setOpen] = useState(false)
 
-  // Determine which raw fields overlap with existing dimensions
-  const allDimFieldKeys = new Set()
+  // Map each raw field key to the dimension that already includes it (if any)
+  const fieldToDimLabel = {}
   DIMENSIONS.forEach((d) => {
-    d.fields.forEach((f) => allDimFieldKeys.add(f))
+    d.fields.forEach((f) => {
+      fieldToDimLabel[f] = d.label
+    })
   })
 
   const handleSelect = useCallback(
@@ -119,7 +121,7 @@ function AddFieldButton({ lens, existingDimIds, onAdd }) {
       {open && (
         <div className="scoring-add-field-dropdown">
           {AVAILABLE_RAW_FIELDS.map((field) => {
-            const overlaps = allDimFieldKeys.has(field.key)
+            const parentDim = fieldToDimLabel[field.key]
             return (
               <button
                 key={field.key}
@@ -128,9 +130,9 @@ function AddFieldButton({ lens, existingDimIds, onAdd }) {
                 type="button"
               >
                 {field.label}
-                {overlaps && (
-                  <span className="scoring-field-warning" title="This field overlaps with an existing dimension">
-                    !
+                {parentDim && (
+                  <span className="scoring-field-note">
+                    in {parentDim}
                   </span>
                 )}
               </button>
@@ -209,19 +211,33 @@ export default function ScoringPanel({ config, onConfigChange, collapsed, onTogg
     <div className={`scoring-panel${collapsed ? '' : ' open'}`}>
       {/* ── Header bar ── */}
       <div className="scoring-header" onClick={onToggleCollapsed}>
-        <span className="scoring-title">Scoring Model</span>
+        <span className="scoring-title">
+          <span className={`target-chevron${collapsed ? '' : ' open'}`}>&#9654;</span>
+          Scoring Model
+        </span>
         <span className="scoring-header-right">
+          {!collapsed && (
+            <button
+              className="scoring-reset-link"
+              onClick={(e) => {
+                e.stopPropagation()
+                handleReset()
+              }}
+              type="button"
+            >
+              Reset to defaults
+            </button>
+          )}
           <button
-            className="scoring-reset-link"
+            className="scoring-collapse-btn"
             onClick={(e) => {
               e.stopPropagation()
-              handleReset()
+              onToggleCollapsed()
             }}
             type="button"
           >
-            Reset to defaults
+            {collapsed ? 'Show Model' : 'Hide Model'}
           </button>
-          <span className={`target-chevron${collapsed ? '' : ' open'}`}>&#9654;</span>
         </span>
       </div>
 
@@ -233,7 +249,7 @@ export default function ScoringPanel({ config, onConfigChange, collapsed, onTogg
             <div className="scoring-alpha-labels">
               <span className="scoring-alpha-label-left">Acquisition</span>
               <span className="scoring-alpha-value">{acqPct} / {civicPct}</span>
-              <span className="scoring-alpha-label-right">Civic Leverage</span>
+              <span className="scoring-alpha-label-right">Make Political Change</span>
             </div>
             <input
               type="range"
