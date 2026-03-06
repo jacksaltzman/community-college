@@ -48,7 +48,7 @@ export default function StateDrillDown({ stateData, onBack }) {
             </span>
           </div>
           <div className="drilldown-stat">
-            <span className="drilldown-stat-label">SVS</span>
+            <span className="drilldown-stat-label" title="Strategic Viability Score — weighted blend of Acquisition Score and Political Change Score">SVS</span>
             <span className="drilldown-stat-value">{Math.round(stateInfo.composite)}</span>
           </div>
           <div className="drilldown-stat">

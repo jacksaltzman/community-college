@@ -385,7 +385,7 @@ export default function TargetMap({ rankedStates, hoveredState, onHoverState, on
 
       {/* ── Legend ── */}
       <div className="target-map-legend">
-        <div className="target-map-legend-label">SVS Score</div>
+        <div className="target-map-legend-label" title="Strategic Viability Score — weighted blend of Acquisition Score and Political Change Score">SVS Score</div>
         <div
           className="target-map-legend-bar"
           style={{ background: LEGEND_GRADIENT }}

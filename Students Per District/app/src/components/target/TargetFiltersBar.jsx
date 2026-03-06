@@ -46,7 +46,7 @@ const CATEGORICAL_FILTERS = [
 const NUMERIC_FILTERS = [
   { key: 'ccEnrollment', label: 'Enrollment', field: 'ccEnrollment' },
   { key: 'districtCount', label: 'Districts', field: 'districtCount' },
-  { key: 'composite', label: 'SVS', field: 'composite' },
+  { key: 'composite', label: 'SVS', field: 'composite', title: 'Strategic Viability Score — weighted blend of Acquisition Score and Political Change Score' },
   { key: 'youngProfessionalPop', label: 'YP Pop', field: 'youngProfessionalPop' },
 ]
 
@@ -122,13 +122,13 @@ export default function TargetFiltersBar({
       <div className="target-filters-divider" />
 
       {/* ── Numeric pills ── */}
-      {NUMERIC_FILTERS.map(({ key, label }) => {
+      {NUMERIC_FILTERS.map(({ key, label, title }) => {
         const minKey = `${key}Min`
         const maxKey = `${key}Max`
         const isActive = filters[minKey] !== '' || filters[maxKey] !== ''
         const range = ranges[key] || { min: 0, max: 0 }
         return (
-          <div key={key} className={`filter-pill${isActive ? ' active' : ''}`}>
+          <div key={key} className={`filter-pill${isActive ? ' active' : ''}`} title={title}>
             <span className="filter-pill-label">{label}</span>
             <input
               type="number"

@@ -128,7 +128,7 @@ export default function TargetResultsTable({ rankedStates, navigate, districtsMe
             <th className="target-ranked-th">Quadrant</th>
             <th className="target-ranked-th">Acquisition Score</th>
             <th className="target-ranked-th">Political Change Score</th>
-            <th className="target-ranked-th">Composite SVS</th>
+            <th className="target-ranked-th" title="Strategic Viability Score — weighted blend of Acquisition Score and Political Change Score, adjustable in the Scoring Panel">Composite SVS</th>
             <th className="target-ranked-th num">Campuses</th>
             <th className="target-ranked-th num">Students</th>
             <th className="target-ranked-th num">Districts Reached</th>

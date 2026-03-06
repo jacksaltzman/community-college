@@ -147,7 +147,7 @@ export default function CompactRankedList({
               <th className="compact-list-th num">#CCs</th>
               <th className="compact-list-th num">Students</th>
               <th className="compact-list-th num">Dist.</th>
-              <th className="compact-list-th">SVS</th>
+              <th className="compact-list-th" title="Strategic Viability Score — weighted blend of Acquisition Score and Political Change Score, adjustable in the Scoring Panel">SVS</th>
               <th className="compact-list-th" style={{ width: 24 }} />
             </tr>
           </thead>
